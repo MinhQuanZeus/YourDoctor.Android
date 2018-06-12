@@ -6,11 +6,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.support.design.widget.TabLayout;
 
@@ -45,7 +43,15 @@ public class MainActivity extends AppCompatActivity {
         fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //ScreenManager.openFragment(getSupportFragmentManager(),new AdvisoryMenuFragment(),R.id.rl_container,true);
+               Intent intent = new Intent(MainActivity.this,AdvisoryMenuActivity.class);
 
+// Các dữ liệu gửi kèm
+
+
+// Yêu cầu start Activity chỉ định trong Intent.
+// (Không cần phản hồi từ Activity được gọi)
+                startActivity(intent);
             }
         });
 

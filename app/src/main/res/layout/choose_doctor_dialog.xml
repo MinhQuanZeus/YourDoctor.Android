@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="30dp">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_list_doctor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_cancel_choose_doctor"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/btn_cancel_choose_doctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp"
+        android:text="@string/btn_cancel"
+        android:textColor="@color/primary_text"
+        android:theme="@style/PrimaryButton" />
+
+    <Button
+        android:id="@+id/btn_ok_choose_doctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:text="@string/btn_ok"
+        android:textColor="@color/primary_text"
+        android:theme="@style/PrimaryButton" />
+</RelativeLayout>

@@ -3,6 +3,22 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bottom_button_post_advisory">Gửi</string>
+    <string name="chat">Chat</string>
+    <string name="videocall">Video Call</string>
+
+    <string name="logo_text_menu_advisory">Tạo cuộc tư vấn</string>
+    <string name="specialist">Chuyên môn</string>
+    <string name="long_question">Độ dài câu hỏi</string>
+    <string name="content_question">Nội dung câu hỏi...</string>
+    <string name="dateline_reply">Hạn trả lời câu hỏi</string>
+    <string name="date_reply">Ngày Trả lời:</string>
+    <string name="btn_Date">Ngày</string>
+    <string name="time_reply">Giờ trả lời:</string>
+    <string name="btn_time">Giờ</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="btn_ok">OK</string>
+
     <!--Login-->
     <string name="sign_in">Đăng nhập</string>
     <string name="sign_up">Đăng ký</string>
