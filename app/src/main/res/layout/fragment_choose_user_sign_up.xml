@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.ChooseUserSignUpFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tb_main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary" />
+
+    <ImageView
+        android:id="@+id/banner"
+        android:layout_width="250dp"
+        android:layout_height="300dp"
+        android:layout_below="@+id/tb_main"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/patient_and_doctor"></ImageView>
+
+    <TextView
+        android:id="@+id/tv_intro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/banner"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="16dp"
+        android:text="@string/choose_sign_up"
+        android:textSize="16dp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_intro"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="45dp">
+
+        <com.yd.yourdoctorandroid.custormviews.MyTextView
+            android:id="@+id/btn_patient"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rect"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/patient_sign_up"
+            android:textColor="#fff"
+            android:textSize="16dp" />
+
+        <com.yd.yourdoctorandroid.custormviews.MyTextView
+            android:id="@+id/btn_doctor"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_toRightOf="@id/btn_patient"
+            android:background="@drawable/rect"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/doctor_sign_up"
+            android:textColor="#fff"
+            android:textSize="16dp" />
+    </RelativeLayout>
+</RelativeLayout>
