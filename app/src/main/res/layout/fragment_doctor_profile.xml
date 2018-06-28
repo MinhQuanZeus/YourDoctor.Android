@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    tools:context=".fragments.DoctorProfileFragment">
+
+
+</RelativeLayout>
+<!--<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--tools:context=".fragments.DoctorProfileFragment">-->
+
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:id="@+id/app_bar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="250dp"-->
+        <!--android:fitsSystemWindows="true">-->
+
+
+        <!--<android.support.design.widget.CollapsingToolbarLayout-->
+            <!--android:id="@+id/toolbar_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:fitsSystemWindows="true"-->
+            <!--app:contentScrim="?attr/colorPrimary"-->
+            <!--app:layout_scrollFlags="scroll|exitUntilCollapsed"-->
+            <!--app:toolbarId="@+id/toolbar">-->
+
+            <!--<ImageView-->
+                <!--android:id="@+id/iv_topsong"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:background="@color/colorAccent"-->
+                <!--android:scaleType="centerCrop" />-->
+
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:id="@+id/tb_back_from_profile"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="?attr/actionBarSize"-->
+                <!--app:layout_collapseMode="pin" />-->
+
+            <!--<RelativeLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_name_doctor"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_marginBottom="40dp"-->
+                    <!--android:text="Lê Thế Anh"-->
+                    <!--android:textSize="20dp" />-->
+
+                <!--<RatingBar-->
+                    <!--android:id="@+id/rb_doctorranking"-->
+                    <!--style="@style/customRatingBar"-->
+                    <!--android:layout_width="120dp"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_alignParentStart="true"-->
+                    <!--android:layout_margin="10dp"-->
+                    <!--android:isIndicator="true"-->
+                    <!--android:progressTint="@color/duskYellow"-->
+
+                    <!--/>-->
+            <!--</RelativeLayout>-->
+
+        <!--</android.support.design.widget.CollapsingToolbarLayout>-->
+    <!--</android.support.design.widget.AppBarLayout>-->
+
+    <!--<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--xmlns:tools="http://schemas.android.com/tools"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="5dp"-->
+        <!--android:padding="5dp"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+
+        <!--<RelativeLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content">-->
+
+            <!--<LinearLayout-->
+                <!--android:id="@+id/menu_profile_doctor"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_marginTop="15dp"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/ic_chat_black_24dp" />-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="Chat" />-->
+                <!--</LinearLayout>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/ic_video_call_black_24dp" />-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="Video Call" />-->
+                <!--</LinearLayout>-->
+
+                <!--<LinearLayout-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical">-->
+
+                    <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/ic_report_black_24dp" />-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="Báo Cáo" />-->
+                <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--&lt;!&ndash;<LinearLayout&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_below="@id/menu_profile_doctor"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_marginTop="20dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:orientation="vertical">&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="70dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginStart="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="10dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="@color/primary_text"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingStart="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingTop="5dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingBottom="5dp">&ndash;&gt;-->
+                    <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_centerVertical="true"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/iv_birthday"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="40dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="40dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:src="@drawable/ic_today_black_24dp"/>&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toEndOf="@id/iv_birthday"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_bithday_doctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_above="@id/tv_birthdaydoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginStart="15dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:lines="2"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="06/05/1996"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textAlignment="center"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textSize="18dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textStyle="bold" />&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginStart="15dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toEndOf="@id/iv_birthday"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_birthdaydoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_alignParentBottom="true"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Ngày sinh" />&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+                <!--&lt;!&ndash;<view&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginStart="30dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginEnd="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_gravity="center"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="250dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="1dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="@color/cpb_grey">&ndash;&gt;-->
+                <!--&lt;!&ndash;</view>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="70dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginEnd="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginStart="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="10dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="@color/primary_text"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingStart="15dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingTop="5dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingBottom="5dp">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_address_doctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_above="@id/tv_addresssdoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:lines="2"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="123 lê văn lương hà nội"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textAlignment="center"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textSize="18dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textStyle="bold" />&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_addresssdoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_alignParentBottom="true"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Địa Chỉ:" />&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="10dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:orientation="horizontal">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_Specialistdoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Chuyên Khoa:" />&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_Specialist_doctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toEndOf="@id/tv_Specialistdoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:lines="2"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Da liễu , chân tay miệng "&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textAlignment="center" />&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="10dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:orientation="horizontal">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_PlaceGraduatedoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Nơi Tốt Nghiệp:" />&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_Place_Graduate_doctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toEndOf="@id/tv_PlaceGraduatedoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:lines="2"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Trường Đại Học Y Hà nội"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textAlignment="center" />&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="10dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:orientation="horizontal">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_YearGraduatedoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Năm Tốt Nghiệp:" />&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_Year_Graduate_doctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toEndOf="@id/tv_YearGraduatedoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:lines="2"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="2018"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textAlignment="center" />&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="10dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:orientation="horizontal">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_WorkingPlacedoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Nơi Làm việc hiện tại:" />&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<TextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/tv_Working_Place_doctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_toEndOf="@id/tv_WorkingPlacedoctor"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:lines="2"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Bệnh viện Bạch Mai Hà Nội"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textAlignment="center" />&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+            <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+
+
+        <!--</RelativeLayout>-->
+
+
+    <!--</android.support.v4.widget.NestedScrollView>-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="20dp"-->
+        <!--app:layout_anchor="@id/app_bar"-->
+        <!--app:layout_anchorGravity="bottom|end"-->
+        <!--app:src="@drawable/ic_favorite_border_black_24dp" />-->
+
+<!--</android.support.design.widget.CoordinatorLayout>-->

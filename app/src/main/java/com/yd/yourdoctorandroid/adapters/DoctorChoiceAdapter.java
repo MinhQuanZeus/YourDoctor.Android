@@ -1,7 +1,9 @@
 package com.yd.yourdoctorandroid.adapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,30 +26,23 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
     private List<Doctor> chosenDoctorList;
     private Context context;
     private View.OnClickListener onClickListener;
-
+    Dialog dialog;
+    Doctor doctorChoice;
     public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
         this.onClickListener = onItemClickListener;
     }
 
-    public DoctorChoiceAdapter(List<Doctor> chosenDoctorList, Context context) {
+    public DoctorChoiceAdapter(List<Doctor> chosenDoctorList, Context context , Dialog dialog) {
 
         //this.chosenDoctorList = chosenDoctorList;
         this.context = context;
-
-        //for test
-        chosenDoctorList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Doctor doctor = new Doctor();
-            doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-            doctor.setFirst_name("Le");
-            doctor.setLast_name("Anh");
-            doctor.setCurrent_rating((float) 3.3);
-            chosenDoctorList.add(doctor);
-        }
-
-
         this.chosenDoctorList = chosenDoctorList;
+        this.dialog = dialog;
 
+    }
+
+    public Doctor getdoctorChoice(){
+        return doctorChoice;
     }
 
     @NonNull
@@ -58,7 +53,7 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
         view.setOnClickListener(onClickListener);
         return new DoctorChoiceAdapter.DoctorChoiceViewHolder(view);
     }
-
+    View previousView;
     @Override
     public void onBindViewHolder(@NonNull final DoctorChoiceAdapter.DoctorChoiceViewHolder holder, int position) {
         holder.setData(chosenDoctorList.get(position));
@@ -67,6 +62,14 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 // EventBus.getDefault().post(new OnClickTopSong(holder.getTopSongModel()));
+                if(previousView != null){
+                    previousView.setBackground(ContextCompat.getDrawable(context, R.color.primary_text));
+                }
+                previousView = view;
+
+                view.setBackground(ContextCompat.getDrawable(context, R.color.colorPrimary));
+                doctorChoice = holder.getdoctorModel();
+               // dialog.dismiss();
             }
         });
     }
