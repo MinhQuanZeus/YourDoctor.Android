@@ -1,6 +1,4 @@
-package com.yd.yourdoctorandroid.network.getDoctorRankingSpecialist;
-
-import com.yd.yourdoctorandroid.models.Doctor;
+package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 
 import java.util.List;
 

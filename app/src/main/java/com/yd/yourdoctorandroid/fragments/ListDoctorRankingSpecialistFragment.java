@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,18 +14,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.adapters.DoctorChoiceAdapter;
 import com.yd.yourdoctorandroid.adapters.DoctorRankingSpecialistAdapter;
 import com.yd.yourdoctorandroid.managers.PaginationScrollListener;
 import com.yd.yourdoctorandroid.models.Doctor;
-import com.yd.yourdoctorandroid.network.RetrofitFactory;
-import com.yd.yourdoctorandroid.network.getDoctorRankingSpecialist.DoctorRanking;
-import com.yd.yourdoctorandroid.network.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
-import com.yd.yourdoctorandroid.network.getDoctorRankingSpecialist.MainObjectRanking;
-import com.yd.yourdoctorandroid.network.getSpecialistService.GetSpecialistService;
+import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.DoctorRanking;
+import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
+import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.MainObjectRanking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +134,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
     }
 
     private void loadFirstPage() {
-        GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstence().createService(GetDoctorRankingSpecialist.class);
+        GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
         getDoctorRankingSpecialist.getMainObjectRanking(specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
@@ -176,7 +172,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
     private void loadNextPage() {
 
-        GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstence().createService(GetDoctorRankingSpecialist.class);
+        GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
         getDoctorRankingSpecialist.getMainObjectRanking(specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {

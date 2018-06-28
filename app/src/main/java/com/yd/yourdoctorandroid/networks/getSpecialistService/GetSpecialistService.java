@@ -1,8 +1,7 @@
-package com.yd.yourdoctorandroid.network.getSpecialistService;
+package com.yd.yourdoctorandroid.networks.getSpecialistService;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 
 public interface GetSpecialistService {
 

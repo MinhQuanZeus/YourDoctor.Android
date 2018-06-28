@@ -1,4 +1,4 @@
-package com.yd.yourdoctorandroid.network.getDoctorRankingSpecialist;
+package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

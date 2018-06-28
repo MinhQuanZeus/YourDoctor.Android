@@ -1,4 +1,4 @@
-package com.yd.yourdoctorandroid.network.getDoctorRankingSpecialist;
+package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 
 public class DoctorRanking {
 

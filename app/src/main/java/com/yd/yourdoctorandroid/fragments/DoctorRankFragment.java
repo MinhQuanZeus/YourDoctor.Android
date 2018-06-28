@@ -17,10 +17,10 @@ import android.view.ViewGroup;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.network.RetrofitFactory;
-import com.yd.yourdoctorandroid.network.getSpecialistService.GetSpecialistService;
-import com.yd.yourdoctorandroid.network.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.network.getSpecialistService.Specialist;
+import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.Specialist;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import okhttp3.MediaType;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,7 +104,7 @@ public class DoctorRankFragment extends Fragment {
 
     private void setUpSpecialists() {
 
-        GetSpecialistService getSpecialistService = RetrofitFactory.getInstence().createService(GetSpecialistService.class);
+        GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
         getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
             @Override
             public synchronized void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {

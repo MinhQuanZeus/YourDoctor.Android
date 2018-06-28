@@ -1,4 +1,4 @@
-package com.yd.yourdoctorandroid.network.getSpecialistService;
+package com.yd.yourdoctorandroid.networks.getSpecialistService;
 
 import java.util.List;
 
