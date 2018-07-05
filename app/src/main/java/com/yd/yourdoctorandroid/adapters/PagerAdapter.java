@@ -4,9 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
+import com.yd.yourdoctorandroid.fragments.HistoryTransactionFragment;
 import com.yd.yourdoctorandroid.fragments.HomeFragment;
-import com.yd.yourdoctorandroid.fragments.MenuFragment;
 import com.yd.yourdoctorandroid.fragments.NotifyFragment;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
@@ -27,9 +26,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return new HomeFragment();
             case 2:
-                return new DoctorRankFragment();
-            case 3:
-                return new MenuFragment();
+                return new HistoryTransactionFragment();
             default:
                 return new HomeFragment();
         }

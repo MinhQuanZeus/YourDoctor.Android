@@ -16,9 +16,11 @@ public class RetrofitFactory {
 
     private RetrofitFactory() {
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://your-doctor-auth.azurewebsites.net/api/")
+                .baseUrl("https://10.22.117.175/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        //https://your-doctor-auth.azurewebsites.net/api/
+        // https://your-doctor.herokuapp.com/
     }
 
     public static <ServiceClass> ServiceClass createService(Class<ServiceClass> serviceClass){
