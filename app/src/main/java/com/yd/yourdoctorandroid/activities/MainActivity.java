@@ -26,6 +26,7 @@ import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
+import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
 import com.yd.yourdoctorandroid.fragments.ListDoctorRankingSpecialistFragment;
 import com.yd.yourdoctorandroid.fragments.UserProfileFragment;
@@ -91,10 +92,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ScreenManager.openFragment(getSupportFragmentManager(),new AdvisoryMenuFragment(),R.id.rl_container,true);
-              /// Intent intent = new Intent(MainActivity.this,AdvisoryMenuActivity.class);
-
-// Các dữ liệu gửi kèm
 
                 ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
             }
@@ -190,7 +187,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_logout_main: {
+                //Test
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rl_container, true, true);
                 break;
+
             }
         }
 

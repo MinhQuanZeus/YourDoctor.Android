@@ -11,8 +11,8 @@
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-        android:layout_width="60dp"
-        android:layout_height="60dp" />
+        android:layout_width="70dp"
+        android:layout_height="70dp" />
 
     <TextView
         android:layout_below="@id/iv_ava_user"
@@ -24,7 +24,7 @@
         android:orientation="horizontal"
         android:text="Lê Thế Anh"
         android:textColor="#fff"
-        android:textSize="19sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <LinearLayout
@@ -41,7 +41,7 @@
             android:layout_marginTop="10dp"
             android:text="Số dư tài khoản : "
             android:textColor="#fff"
-            android:textSize="19sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
 
         <TextView
@@ -52,7 +52,7 @@
             android:layout_marginTop="10dp"
             android:text="50000000đ"
             android:textColor="#fff"
-            android:textSize="19sp"
+            android:textSize="17sp"
             android:textStyle="bold" />
     </LinearLayout>
 

@@ -139,15 +139,16 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
                 MainObjectRanking mainObject = response.body();
-                List<DoctorRanking> doctorRankingList = mainObject.getList_id_doctor();
+                Log.e("haha" , response.body().toString());
+                List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
                 List<Doctor> doctorList = new ArrayList<>();
                 if (doctorRankingList != null && doctorRankingList.size() > 0) {
                     for (DoctorRanking doctorRanking : doctorRankingList) {
                         Doctor doctor = new Doctor();
                         doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-                        doctor.setFirst_name(doctorRanking.getDoctor_id().getFirst_name());
-                        doctor.setLast_name(doctorRanking.getDoctor_id().getLast_name());
-                        doctor.setCurrent_rating((float) doctorRanking.getCurrent_rating());
+                        doctor.setFirst_name(doctorRanking.getDoctorId().getFirstName());
+                        doctor.setLast_name(doctorRanking.getDoctorId().getLastName());
+                        doctor.setCurrent_rating((float) doctorRanking.getCurrentRating());
                         doctorList.add(doctor);
                     }
 
@@ -158,7 +159,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                     if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
                     else isLastPage = true;
                 }
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
 
             }
 
@@ -167,6 +168,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                 Log.d("Anhle", "Fail: " + t.getMessage());
             }
         });
+        progressBar.setVisibility(View.GONE);
 
     }
 
@@ -177,14 +179,14 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
                 MainObjectRanking mainObject = response.body();
-                List<DoctorRanking> doctorRankingList = mainObject.getList_id_doctor();
+                List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
                 List<Doctor> doctorList = new ArrayList<>();
                 for (DoctorRanking doctorRanking : doctorRankingList) {
                     Doctor doctor = new Doctor();
                     doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-                    doctor.setFirst_name(doctorRanking.getDoctor_id().getFirst_name());
-                    doctor.setLast_name(doctorRanking.getDoctor_id().getLast_name());
-                    doctor.setCurrent_rating((float) doctorRanking.getCurrent_rating());
+                    doctor.setFirst_name(doctorRanking.getDoctorId().getFirstName());
+                    doctor.setLast_name(doctorRanking.getDoctorId().getLastName());
+                    doctor.setCurrent_rating((float) doctorRanking.getCurrentRating());
                     doctorList.add(doctor);
                 }
                 doctorRankingAdapter.removeLoadingFooter();  // 2

@@ -28,11 +28,12 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
     private View.OnClickListener onClickListener;
     Dialog dialog;
     Doctor doctorChoice;
+
     public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
         this.onClickListener = onItemClickListener;
     }
 
-    public DoctorChoiceAdapter(List<Doctor> chosenDoctorList, Context context , Dialog dialog) {
+    public DoctorChoiceAdapter(List<Doctor> chosenDoctorList, Context context, Dialog dialog) {
 
         //this.chosenDoctorList = chosenDoctorList;
         this.context = context;
@@ -41,7 +42,7 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
 
     }
 
-    public Doctor getdoctorChoice(){
+    public Doctor getdoctorChoice() {
         return doctorChoice;
     }
 
@@ -53,7 +54,9 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
         view.setOnClickListener(onClickListener);
         return new DoctorChoiceAdapter.DoctorChoiceViewHolder(view);
     }
+
     View previousView;
+
     @Override
     public void onBindViewHolder(@NonNull final DoctorChoiceAdapter.DoctorChoiceViewHolder holder, int position) {
         holder.setData(chosenDoctorList.get(position));
@@ -61,15 +64,15 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                // EventBus.getDefault().post(new OnClickTopSong(holder.getTopSongModel()));
-                if(previousView != null){
+
+                if (previousView != null) {
                     previousView.setBackground(ContextCompat.getDrawable(context, R.color.primary_text));
                 }
                 previousView = view;
 
                 view.setBackground(ContextCompat.getDrawable(context, R.color.colorPrimary));
                 doctorChoice = holder.getdoctorModel();
-               // dialog.dismiss();
+
             }
         });
     }
@@ -91,7 +94,7 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
             iv_item_doctor_chosen = itemView.findViewById(R.id.iv_item_doctor_chosen);
             tv_name_doctor_chosen = itemView.findViewById(R.id.tv_name_doctor_chosen);
             rb_doctorChosen = itemView.findViewById(R.id.rb_doctorChosen);
-            //this.view = itemView;
+
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

@@ -20,7 +20,7 @@
         android:layout_below="@+id/tb_main"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp"
-        android:background="@drawable/patient_and_doctor"></ImageView>
+        android:background="@drawable/patient_and_doctor" />
 
     <TextView
         android:id="@+id/tv_intro"

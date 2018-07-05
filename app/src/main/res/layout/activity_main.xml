@@ -5,8 +5,8 @@
     android:id="@+id/draw_layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:clickable="true"
+    android:fitsSystemWindows="true"
     tools:context=".activities.MainActivity">
 
 
@@ -20,12 +20,13 @@
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
             android:background="@color/colorPrimary">
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="wrap_content"
                 android:background="@drawable/gradientbackground"
-                app:title="Your Doctor"/>
+                app:title="Your Doctor" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_question"
@@ -35,8 +36,8 @@
                 android:layout_below="@id/toolbar"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
-                android:src="@drawable/ic_question_answer_black_24dp"
-                app:backgroundTint="@color/primary_text" />
+                app:backgroundTint="@color/primary_text"
+                app:srcCompat="@drawable/ic_question_answer_black_24dp" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/view_pager"
@@ -50,7 +51,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true" />
-
         </RelativeLayout>
     </FrameLayout>
 
@@ -60,8 +60,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        app:menu="@menu/drawer_view_menu"/>
-        <!--app:headerLayout="@layout/nav_header_main"-->
+        app:menu="@menu/drawer_view_menu" />
+    <!--app:headerLayout="@layout/nav_header_main"-->
 
 </android.support.v4.widget.DrawerLayout>
 

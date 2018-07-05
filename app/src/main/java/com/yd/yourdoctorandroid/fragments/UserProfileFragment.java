@@ -3,6 +3,7 @@ package com.yd.yourdoctorandroid.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -33,7 +34,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 public class UserProfileFragment extends Fragment implements View.OnClickListener{
 
     @BindView(R.id.iv_ava_profile)
-    ImageView iv_ava_profile;
+    de.hdodenhof.circleimageview.CircleImageView iv_ava_profile;
 
     @BindView(R.id.btn_edit_profile)
     Button btn_edit_profile;
@@ -45,7 +46,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     Toolbar tb_back_from_profile;
 
     @BindView(R.id.iv_choose_image)
-    ImageView iv_choose_image;
+    de.hdodenhof.circleimageview.CircleImageView iv_choose_image;
 
     @BindView(R.id.ed_firstname)
     EditText ed_firstname;
@@ -147,10 +148,14 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         et_old_password =  view.findViewById(R.id.et_old_password);
         et_new_password = view.findViewById(R.id.et_new_password);
         et_confirm_new_password = view.findViewById(R.id.et_confirm_new_password);
+        et_old_password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+        et_new_password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+        et_confirm_new_password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         tv_message_change_password = view.findViewById(R.id.tv_message_change_password);
         progress_change_password = view.findViewById(R.id.progress_change_password);
         builder.setView(view);
         builder.setTitle("Thay đổi mật khẩu");
+
         builder.setPositiveButton("Thay đổi", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -249,7 +254,6 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                                   int dayOfMonth) {
                 tv_birthday_user.setText(
                         (dayOfMonth) + "/" + (monthOfYear + 1) + "/" + year);
-
 //                cal.set(year, monthOfYear, dayOfMonth);
 //                dateFinish = cal.getTime();
             }

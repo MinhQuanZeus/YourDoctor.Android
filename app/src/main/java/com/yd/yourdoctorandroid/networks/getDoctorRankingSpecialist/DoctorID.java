@@ -3,8 +3,9 @@ package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 public class DoctorID {
     
     String _id;
-    String first_name;
-    String last_name;
+    String firstName;
+    String middleName;
+    String lastName;
 
     public String get_id() {
         return _id;
@@ -14,19 +15,27 @@ public class DoctorID {
         this._id = _id;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getMiddleName() {
+        return middleName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

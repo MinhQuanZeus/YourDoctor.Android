@@ -75,4 +75,22 @@
     <string name="ERROR0025">Vui lòng nhập Họ và Tên</string>
     <string name="ERROR0026">Vui lòng nhập Role của User</string>
     <string name="ERROR0027">Vui lòng nhập số điện thoại</string>
+    <string name="introduce_doctor_text">
+        "Bác sĩ sinh vào ngày %1$s.\n"
+        "Địa chỉ tại %2$s.\n"
+        "Chuyên ngành gồm %3$s.\n"
+        "Bác sĩ tốt nghiệp tại %4$s vào năm %5$s.\n"
+        "Hiện tại bác sĩ đang làm việc ở %6$s.\n"
+    </string>
+    <string name="action_settings">Settings</string>
+    <string name="back">Trở về</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="enter_password">Nhập lại mật khẩu mới</string>
+    <string name="choose_doctor">Hãy chọn bác sĩ cho bạn</string>
+    <string name="report">Báo cáo</string>
+    <string name="info_doctor">Thông tin về bác sĩ</string>
+    <string name="change_password">Đổi Mật Khẩu</string>
+    <string name="edit">Chỉnh sửa</string>
+
 </resources>
