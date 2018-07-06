@@ -2,25 +2,22 @@ package com.yd.yourdoctorandroid.activities;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.support.design.widget.TabLayout;
 
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
@@ -28,9 +25,10 @@ import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
-import com.yd.yourdoctorandroid.fragments.ListDoctorRankingSpecialistFragment;
 import com.yd.yourdoctorandroid.fragments.UserProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -65,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupUI();
+        Log.d("MainActivity", "USER_INFO");
+        Log.d("MainActivity", SharedPrefs.getInstance().get("USER_INFO", Patient.class).toString());
+        Log.d("MainActivity", SharedPrefs.getInstance().get("JWT_TOKEN", String.class));
     }
 
     private void setupUI() {

@@ -24,6 +24,7 @@ import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Login;
 import com.yd.yourdoctorandroid.networks.services.LoginService;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.IOException;
@@ -42,6 +43,8 @@ import retrofit2.Response;
  */
 public class LoginFragment extends Fragment {
 
+    public static final String JWT_TOKEN = "JWT_TOKEN";
+    public static final String USER_INFO = "USER_INFO";
     TextView tvSignUp;
     @BindView(R.id.ed_phone)
     EditText edPhone;
@@ -127,6 +130,8 @@ public class LoginFragment extends Fragment {
             public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                 btnLogin.revertAnimation();
                 if (response.code() == 200 || response.code() == 201) {
+                    SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+                    SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                     Intent intent = new Intent(getActivity(), MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -47,6 +47,7 @@ import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Patient;
 import com.yd.yourdoctorandroid.networks.services.RegisterPatientService;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.ByteArrayInputStream;
@@ -58,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,6 +68,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -78,6 +83,9 @@ import static android.app.Activity.RESULT_OK;
  * A simple {@link Fragment} subclass.
  */
 public class RegisterFragment extends Fragment {
+    public static final String JWT_TOKEN = "JWT_TOKEN";
+    public static final String USER_INFO = "USER_INFO";
+
     public static final String TAG = "RegisterFragment";
     public static final int REQUEST_PERMISSION_CODE = 1;
     private static final int REQUEST_TAKE_PHOTO = 1;
@@ -87,6 +95,7 @@ public class RegisterFragment extends Fragment {
     private String mImagePathToBeAttached;
     private Bitmap mImageToBeAttached;
     private String phoneNumber;
+    private String filename;
 
     public RegisterFragment setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
@@ -156,6 +165,8 @@ public class RegisterFragment extends Fragment {
     }
 
     private void setUp(View view) {
+        filename = UUID.randomUUID().toString();
+
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.tb_main);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setTitle(R.string.sign_up);
@@ -213,7 +224,7 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    private String uploadImage() throws Exception{
+    private String uploadImage() throws Exception {
         Log.d("UPLOAD", "uploadImage");
         final String imageName = AzureImageManager.randomString(10);
         try {
@@ -263,14 +274,7 @@ public class RegisterFragment extends Fragment {
         }
         btnSignUp.startAnimation();
         String avatar = null;
-        try {
-            if (this.mImageToBeAttached != null){
-                avatar = uploadImage();
-            }
-            onCreateUser(avatar);
-        } catch (Exception e) {
-            Toast.makeText(getActivity(), getResources().getText(R.string.error_upload), Toast.LENGTH_SHORT).show();
-        }
+        onCreateUser(avatar);
 
     }
 
@@ -283,14 +287,33 @@ public class RegisterFragment extends Fragment {
         String address = edAddress.getText().toString();
         int gender = getGender();
         Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, gender, birthday, address, 1);
+        MultipartBody.Part avatarUpload = null;
+        // Map is used to multipart the file using okhttp3.RequestBody
+        File file = null;
+        if (mImageToBeAttached != null) {
+            file = Utils.persistImage(mImageToBeAttached, filename, getContext());
+            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+            avatarUpload = MultipartBody.Part.createFormData("avatar", file.getName(), requestBody);
+        }
+
+
         Log.d("CREATE USER", patient.toString());
         RegisterPatientService registerPatientService = RetrofitFactory.getInstance().createService(RegisterPatientService.class);
-        registerPatientService.register(patient)
+        final File finalFile = file;
+        registerPatientService.register(avatarUpload, patient)
                 .enqueue(new Callback<AuthResponse>() {
                     @Override
                     public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
                         btnSignUp.revertAnimation();
+                        if (finalFile != null) {
+                            try {
+                                finalFile.delete();
+                            } catch (Exception e) {
+                            }
+                        }
                         if (response.code() == 200 || response.code() == 201) {
+                            SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+                            SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -308,6 +331,12 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void onFailure(Call<AuthResponse> call, Throwable t) {
                         btnSignUp.revertAnimation();
+                        if (finalFile != null) {
+                            try {
+                                finalFile.delete();
+                            } catch (Exception e) {
+                            }
+                        }
                         if (t instanceof SocketTimeoutException) {
                             Toast.makeText(getActivity(), getResources().getText(R.string.error_timeout), Toast.LENGTH_SHORT).show();
                         }
@@ -323,6 +352,7 @@ public class RegisterFragment extends Fragment {
         edLname.setEnabled(true);
         edLname.setEnabled(true);
     }
+
     private void disableAll() {
         edFname.setEnabled(false);
         edAddress.setEnabled(false);
@@ -334,13 +364,13 @@ public class RegisterFragment extends Fragment {
 
     private int getGender() {
         int checked = 1;
-        if (rbMale.isChecked()){
+        if (rbMale.isChecked()) {
             checked = 1;
         }
-        if (rbFmale.isChecked()){
+        if (rbFmale.isChecked()) {
             checked = 2;
         }
-        if (rbOther.isChecked()){
+        if (rbOther.isChecked()) {
             checked = 3;
         }
         return checked;
@@ -520,6 +550,7 @@ public class RegisterFragment extends Fragment {
         if (mImageToBeAttached != null) {
             mImageToBeAttached.recycle();
             mImageToBeAttached = null;
+            ivAvatar.setImageResource(R.drawable.patient_avatar);
         }
     }
 
