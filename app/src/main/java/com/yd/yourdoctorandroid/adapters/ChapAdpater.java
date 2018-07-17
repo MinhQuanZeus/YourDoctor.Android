@@ -27,8 +27,8 @@ public class ChapAdpater extends RecyclerView.Adapter {
     private List<Record> mMessageList;
 
     public ChapAdpater(Context context, List<Record> messageList , String currentUserID) {
-        mContext = context;
-        mMessageList = messageList;
+        this.mContext = context;
+        this.mMessageList = messageList;
         this.currentUserID = currentUserID;
     }
 

@@ -56,6 +56,7 @@ public class ChatActivity extends AppCompatActivity {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
+
         try {
             mSocket = IO.socket(URL_SERVER);
         } catch (URISyntaxException e) {
@@ -63,18 +64,21 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         mSocket.connect();
-//        mSocket.emit("createRoom",chatHistoryID);
-//        mSocket.emit("addUser",currentPaitent.getId());
-//
-//        mSocket.on("newMessage",onNewMessage);
-//
-//
-//        btnChat.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mSocket.emit("sendMessage",currentPaitent.getId(),idDoctor,mEditText.getText().toString());
-//            }
-//        });
+        Log.e("current ID" , currentPaitent.getId());
+        chatApapter = new ChapAdpater(getApplicationContext(),mListMessage,currentPaitent.getId());
+        recyclerView.setAdapter(chatApapter);
+        mSocket.emit("createRoom",chatHistoryID);
+        mSocket.emit("addUser",currentPaitent.getId());
+
+        mSocket.on("newMessage",onNewMessage);
+
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSocket.emit("sendMessage",currentPaitent.getId(),idDoctor,mEditText.getText().toString());
+            }
+        });
 
     }
 
@@ -85,9 +89,11 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void run() {
 
+
                     JSONObject data = (JSONObject) args[0];
                     String message;
                     message = data.optString("data");
+                    Log.e("emitt anh le",message );
 
                     try {
                         JSONObject jsonObject = new JSONObject(message);
@@ -96,7 +102,10 @@ public class ChatActivity extends AppCompatActivity {
                         message1.value = jsonObject.getString("mess");
 //                        message1.createdAt = jsonObject.getString("createdAt");
 //                        message1.type = jsonObject.getString("type");
+                        Log.e("sender id", message1.recorderID);
+                        Log.e("value" ,message1.value  );
                         mListMessage.add(message1);
+                        chatApapter.notifyDataSetChanged();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -104,7 +113,7 @@ public class ChatActivity extends AppCompatActivity {
                     // mListMessage.add(new Message("anhle"));
                     Log.e("message" , message);
                     Log.e("data" , data.toString());
-                    chatApapter.notifyDataSetChanged();
+                   // chatApapter.notifyDataSetChanged();
                 }
             });
         }
