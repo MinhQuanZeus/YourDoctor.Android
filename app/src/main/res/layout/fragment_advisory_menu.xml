@@ -8,29 +8,13 @@
     android:clickable="true"
     tools:context=".fragments.AdvisoryMenuFragment">
 
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/tb_main"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorPrimary">
-
-        <ImageView
-            android:id="@+id/iv_back_from_menu_advisory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/ic_arrow_back_black_24dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/logo_text_menu_advisory"
-            android:textColor="@color/primary_text"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-    </android.support.v7.widget.Toolbar>
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradientbackground"
+        app:titleTextColor="@color/white" />
 
 
     <RadioGroup
@@ -38,7 +22,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tb_main"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginStart="10dp">
 
         <RadioButton
             android:id="@+id/rb_choose_chat"
@@ -63,8 +48,8 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_below="@id/rb_group"
-        android:layout_margin="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:text="@string/specialist"
         android:textColor="@color/colorPrimaryDark"
@@ -75,7 +60,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@id/rb_group"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_toEndOf="@id/tv_speclist"
         android:textAlignment="center" />
 
@@ -86,14 +71,15 @@
         android:layout_below="@id/sp_speclist"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="5dp">
+        >
 
         <TextView
             android:id="@+id/tv_logo_chooseDoctor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@id/btn_choose_Doctor"
-            android:text="@string/choose_doctor" />
+            android:text="@string/choose_doctor"
+            android:layout_marginStart="10dp"/>
 
         <ImageView
             android:id="@+id/iv_item_doctor_chosen"
@@ -144,7 +130,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/btn_post"
         android:layout_below="@id/rl_doctorChoose"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:visibility="visible">
 
         <TextView
@@ -222,9 +208,17 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@drawable/buttonstyleithgradient"
         android:gravity="center"
         android:text="@string/bottom_button_post_advisory"
         android:textColor="@color/primary_text" />
+    <ProgressBar
+        android:id="@+id/pb_ranking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        />
+
 </RelativeLayout>

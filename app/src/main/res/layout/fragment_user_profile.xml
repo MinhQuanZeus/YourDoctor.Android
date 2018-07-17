@@ -17,6 +17,7 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/tb_back_from_profile"
+            app:titleTextColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/gradientbackground" />
@@ -67,6 +68,17 @@
                 android:textColor="#fff"
                 android:textSize="19sp"
                 android:textStyle="bold" />
+            <EditText
+                android:id="@+id/ed_middlename"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@null"
+                android:editable="false"
+                android:text="Snoe"
+                android:textColor="#fff"
+                android:textSize="19sp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/ed_lastname"
@@ -94,23 +106,39 @@
             android:textSize="17sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_remain_money_profile"
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="30000 đ"
-            android:textColor="#fff"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_remain_money_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="30000"
+                android:textColor="#fff"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=" đ"
+                android:textColor="#fff"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -159,10 +187,12 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        >
 
         <Button
             android:id="@+id/btn_change_password"

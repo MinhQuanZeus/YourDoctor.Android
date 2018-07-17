@@ -14,13 +14,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.Specialist;
+import com.yd.yourdoctorandroid.networks.models.Specialist;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +48,7 @@ public class DoctorRankFragment extends Fragment {
     @BindView(R.id.tb_logo_specialist)
     Toolbar tb_logo_specialist;
 
+
     Unbinder butterKnife;
     private List<Specialist> specialists = new ArrayList<>();
 
@@ -59,10 +62,10 @@ public class DoctorRankFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_doctor_rank, container, false);
-
-        setUpSpecialists();
-
         butterKnife = ButterKnife.bind(this, view);
+        specialists = LoadDefaultModel.getInstance().getSpecialists();
+        setupViewPager(vp_doctorRanking);
+        vp_doctorRanking.setCurrentItem(0);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(tb_logo_specialist);
         final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -73,9 +76,7 @@ public class DoctorRankFragment extends Fragment {
         tb_logo_specialist.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ScreenManager.backFragment(getFragmentManager());
-
             }
         });
 
@@ -95,36 +96,12 @@ public class DoctorRankFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-
             }
         });
+
         return view;
     }
 
-
-    private void setUpSpecialists() {
-
-        GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
-        getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
-            @Override
-            public synchronized void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
-                Log.e("AnhLe", "success: " + response.body());
-                MainObjectSpecialist mainObjectSpecialist = response.body();
-                List<Specialist> specialist = mainObjectSpecialist.getSpecialist();
-
-                specialists = specialist;
-                setupViewPager(vp_doctorRanking);
-                vp_doctorRanking.setCurrentItem(0);
-
-            }
-
-            @Override
-            public synchronized void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
-                Log.e("AnhLe", "Fail: " + t.getMessage());
-            }
-        });
-
-    }
 
 
     private void setupViewPager(ViewPager viewPager) {
@@ -141,14 +118,11 @@ public class DoctorRankFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        butterKnife.unbind();
+        //butterKnife.unbind();
     }
 
 
-    class ViewPagerAdapter extends FragmentStatePagerAdapter
-
-    {
-
+    class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private List specialists;
 
         public ViewPagerAdapter(FragmentManager fm, List<Specialist> specialists) {

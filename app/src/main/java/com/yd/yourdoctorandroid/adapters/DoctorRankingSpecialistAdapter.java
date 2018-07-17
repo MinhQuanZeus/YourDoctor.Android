@@ -15,15 +15,17 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
-import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
+import com.yd.yourdoctorandroid.events.OnClickDoctorChosen;
+import com.yd.yourdoctorandroid.fragments.DoctorFavoriteListFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.networks.models.Doctor;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Unbinder;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class DoctorRankingSpecialistAdapter extends RecyclerView.Adapter<DoctorRankingSpecialistAdapter.DoctorRankingSpecialistViewHolder> {
@@ -104,7 +106,10 @@ public class DoctorRankingSpecialistAdapter extends RecyclerView.Adapter<DoctorR
 ////                EventBus.getDefault().postSticky(new OnClickMusicTypeModel(holder.getMusicTypeModel()));
 
                         // ScreenManager.openFragment(((FragmentActivity)context).getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rl_container, true);
-
+                        DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
+                        doctorProfileFragment.setDoctorID(holder.getdoctorModel().getDoctorId());
+                        ScreenManager.openFragment(((FragmentActivity)context).getSupportFragmentManager(), doctorProfileFragment, R.id.rl_container, true, true);
+                       // EventBus.getDefault().postSticky(new OnClickDoctorChosen(holder.getdoctorModel()));
                     }
                 });
                 break;
@@ -180,9 +185,9 @@ public class DoctorRankingSpecialistAdapter extends RecyclerView.Adapter<DoctorR
         TextView tv_name_doctor_ranking;
         ImageView iv_item_doctor_ranking;
         RatingBar rb_doctorranking;
-        ImageView iv_btnChat;
-        ImageView iv_btnVideoCall;
-        ImageView iv_btnFavorite;
+//        ImageView iv_btnChat;
+//        ImageView iv_btnVideoCall;
+//        ImageView iv_btnFavorite;
 
         private ItemClickListener itemClickListener;
         private Doctor doctorModel;
@@ -193,9 +198,9 @@ public class DoctorRankingSpecialistAdapter extends RecyclerView.Adapter<DoctorR
             tv_name_doctor_ranking = itemView.findViewById(R.id.tv_name_doctor_ranking);
             iv_item_doctor_ranking = itemView.findViewById(R.id.iv_item_doctor_ranking);
             rb_doctorranking = itemView.findViewById(R.id.rb_doctorranking);
-            iv_btnChat = itemView.findViewById(R.id.iv_btnChat);
-            iv_btnVideoCall = itemView.findViewById(R.id.iv_btnVideoCall);
-            iv_btnFavorite = itemView.findViewById(R.id.iv_btnFavorite);
+//            iv_btnChat = itemView.findViewById(R.id.iv_btnChat);
+//            iv_btnVideoCall = itemView.findViewById(R.id.iv_btnVideoCall);
+//            iv_btnFavorite = itemView.findViewById(R.id.iv_btnFavorite);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -209,8 +214,8 @@ public class DoctorRankingSpecialistAdapter extends RecyclerView.Adapter<DoctorR
                 if (context == null) Log.d("Anhle", "context bi null");
 
                 Picasso.with(context).load(doctorModel.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_ranking);
-                tv_name_doctor_ranking.setText(doctorModel.getFirst_name() + " " + doctorModel.getLast_name());
-                rb_doctorranking.setRating(doctorModel.getCurrent_rating());
+                tv_name_doctor_ranking.setText(doctorModel.getFirstName() + " "+ doctorModel.getMiddleName() +" " + doctorModel.getLastName());
+                rb_doctorranking.setRating(doctorModel.getCurrentRating());
                 tv_number_rank.setText((positon + 1) + "");
 
             }

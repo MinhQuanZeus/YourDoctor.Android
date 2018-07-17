@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
+    android:layout_height="80dp"
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:padding="5dp"
@@ -11,16 +11,16 @@
     <TextView
         android:layout_alignParentStart="true"
         android:id="@+id/tv_number_rank"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:textSize="20dp"
         android:layout_centerVertical="true"
         android:gravity="center"
         android:textStyle="bold"/>
     <ImageView
         android:id="@+id/iv_item_doctor_ranking"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/tv_number_rank"/>
 
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:layout_toRightOf="@id/iv_item_doctor_ranking"
-        android:textSize="16sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         android:layout_marginTop="10dp"/>
 
@@ -45,28 +45,28 @@
         android:paddingTop="5dp"
         android:isIndicator="true"
         android:progressTint="@color/duskYellow" />
-    <ImageView
-        android:layout_marginStart="15dp"
-        android:id="@+id/iv_btnChat"
-        android:layout_toRightOf="@id/rb_doctorranking"
-        android:layout_below="@id/tv_name_doctor_ranking"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:srcCompat="@drawable/ic_chat_black_24dp"/>
-    <ImageView
-        android:layout_marginStart="15dp"
-        android:id="@+id/iv_btnVideoCall"
-        android:layout_toEndOf="@id/iv_btnChat"
-        android:layout_below="@id/tv_name_doctor_ranking"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:srcCompat="@drawable/ic_video_call_black_24dp"/>
-    <ImageView
-        android:layout_marginStart="15dp"
-        android:id="@+id/iv_btnFavorite"
-        android:layout_toEndOf="@id/iv_btnVideoCall"
-        android:layout_below="@id/tv_name_doctor_ranking"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:srcCompat="@drawable/ic_favorite_border_black_24dp"/>
+    <!--<ImageView-->
+        <!--android:layout_marginStart="15dp"-->
+        <!--android:id="@+id/iv_btnChat"-->
+        <!--android:layout_toRightOf="@id/rb_doctorranking"-->
+        <!--android:layout_below="@id/tv_name_doctor_ranking"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--app:srcCompat="@drawable/ic_chat_black_24dp"/>-->
+    <!--<ImageView-->
+        <!--android:layout_marginStart="15dp"-->
+        <!--android:id="@+id/iv_btnVideoCall"-->
+        <!--android:layout_toEndOf="@id/iv_btnChat"-->
+        <!--android:layout_below="@id/tv_name_doctor_ranking"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--app:srcCompat="@drawable/ic_video_call_black_24dp"/>-->
+    <!--<ImageView-->
+        <!--android:layout_marginStart="15dp"-->
+        <!--android:id="@+id/iv_btnFavorite"-->
+        <!--android:layout_toEndOf="@id/iv_btnVideoCall"-->
+        <!--android:layout_below="@id/tv_name_doctor_ranking"-->
+        <!--android:layout_width="40dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--app:srcCompat="@drawable/ic_favorite_border_black_24dp"/>-->
 </RelativeLayout>

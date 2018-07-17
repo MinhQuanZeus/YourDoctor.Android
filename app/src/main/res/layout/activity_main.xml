@@ -21,8 +21,10 @@
             android:layout_gravity="center_vertical"
             android:background="@color/colorPrimary">
 
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
+                app:titleTextColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/gradientbackground"
@@ -51,8 +53,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true" />
+            <ProgressBar
+                android:id="@+id/pb_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"/>
         </RelativeLayout>
     </FrameLayout>
+
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view_menu"

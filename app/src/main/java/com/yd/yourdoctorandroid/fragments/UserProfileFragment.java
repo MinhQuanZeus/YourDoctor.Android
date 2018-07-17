@@ -23,6 +23,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -66,6 +68,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     @BindView(R.id.tv_phone_number_user)
     TextView tv_phone_number_user;
 
+    @BindView(R.id.ed_middlename)
+    EditText ed_middlename;
+
     EditText et_old_password;
 
     EditText et_new_password;
@@ -77,6 +82,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     ProgressBar progress_change_password;
 
     AlertDialog dialogChangePassword;
+
+
+    Patient currentPatient;
 
     public UserProfileFragment() {
         // Required empty public constructor
@@ -95,7 +103,18 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private void setupUI(View view) {
 
         ButterKnife.bind(this,view);
-        Picasso.with(getContext()).load("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg").transform(new CropCircleTransformation()).into(iv_ava_profile);
+        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+
+        Picasso.with(getContext()).load(currentPatient.getAvatar()).transform(new CropCircleTransformation()).into(iv_ava_profile);
+        ed_firstname.setText(currentPatient.getfName());
+        ed_middlename.setText(currentPatient.getmName());
+        ed_lastname.setText(currentPatient.getlName());
+
+        ed_address_user.setText(currentPatient.getAddress());
+        tv_remain_money_profile.setText(currentPatient.getRemainMoney()+"");
+        tv_birthday_user.setText(currentPatient.getBirthday());
+        tv_phone_number_user.setText(currentPatient.getPhoneNumber());
+
         ed_firstname.setEnabled(false);
         iv_choose_image.setOnClickListener(this);
         btn_change_password.setOnClickListener(this);

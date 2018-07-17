@@ -286,7 +286,7 @@ public class RegisterFragment extends Fragment {
         String birthday = edBirthday.getText().toString();
         String address = edAddress.getText().toString();
         int gender = getGender();
-        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, gender, birthday, address, 1);
+        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, gender, birthday, address, 1,0, null);
         MultipartBody.Part avatarUpload = null;
         // Map is used to multipart the file using okhttp3.RequestBody
         File file = null;

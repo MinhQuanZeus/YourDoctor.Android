@@ -1,7 +1,7 @@
 package com.yd.yourdoctorandroid.events;
 
 
-import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.networks.models.Doctor;
 
 public class OnClickDoctorChosen {
     private Doctor doctorModel;

@@ -31,6 +31,7 @@
                     android:id="@+id/tb_back_from_profile_doctor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:titleTextColor="@color/white"
                     android:background="@drawable/gradientbackground"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
@@ -173,7 +174,6 @@
                     android:layout_below="@id/tv_info_logo"
                     android:layout_centerHorizontal="true"
                     android:layout_margin="@dimen/text_margin"
-                    android:text="@string/introduce_doctor_text"
                     android:textAlignment="center"
                     android:textColor="@color/colorText"
                     android:textSize="15dp" />
@@ -190,7 +190,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fab_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -199,5 +199,10 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_favorite_border_black_24dp" />
+    <ProgressBar
+        android:id="@+id/pb_profile_doctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 </android.support.design.widget.CoordinatorLayout>

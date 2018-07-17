@@ -17,22 +17,38 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
+import com.yd.yourdoctorandroid.fragments.DoctorFavoriteListFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
 import com.yd.yourdoctorandroid.fragments.UserProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.FavoriteDoctor;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListDoctorFavoriteService;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectFavoriteList;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
+import com.yd.yourdoctorandroid.networks.models.Doctor;
 import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -53,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @BindView(R.id.toolbar)
     Toolbar tb_main;
+
+    @BindView(R.id.pb_main)
+    ProgressBar pb_main;
+
+    Patient currentPatient;
 
     ImageView iv_ava_user;
     TextView tv_name_user;
@@ -81,7 +102,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
-        Picasso.with(this).load("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg").transform(new CropCircleTransformation()).into(iv_ava_user);
+        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+        if(currentPatient != null){
+            tv_name_user.setText(currentPatient.getfName() + " " + currentPatient.getmName() == null? "" : currentPatient.getmName() + " " + currentPatient.getlName());
+            Picasso.with(this).load(currentPatient.getAvatar().toString()).transform(new CropCircleTransformation()).into(iv_ava_user);
+            tv_money_user.setText(currentPatient.getRemainMoney() + "" );
+        }
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, draw_layout_main, tb_main, R.string.app_name, R.string.app_name);
@@ -134,7 +161,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+        loadData();
+    }
 
+    private void loadData() {
+        LoadDefaultModel.getInstance();
+        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
+        getListIDFavoriteDoctor.getMainObjectIDFavorite(currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+            @Override
+            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
+                MainObjectIDFavorite mainObject = response.body();
+                if(mainObject != null){
+                    currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                    SharedPrefs.getInstance().put("USER_INFO", currentPatient);
+                }
+                pb_main.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
+                Log.d("Anhle", "Fail: " + t.getMessage());
+                pb_main.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override
@@ -174,6 +223,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_favorite_doctor_main: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
                 break;
             }
             case R.id.nav_exchange_money_main: {

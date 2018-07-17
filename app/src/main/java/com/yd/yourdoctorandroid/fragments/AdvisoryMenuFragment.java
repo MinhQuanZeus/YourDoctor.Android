@@ -1,26 +1,28 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
-import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -32,7 +34,15 @@ import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorChoiceAdapter;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.networks.models.Doctor;
+import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisoryService;
+import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.MainObjectTypeAdivosry;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
+import com.yd.yourdoctorandroid.networks.models.Specialist;
+import com.yd.yourdoctorandroid.networks.models.TypeAdvisory;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,6 +55,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,8 +103,11 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     @BindView(R.id.rb_doctorChosen)
     RatingBar rb_doctorChosen;
 
-    @BindView(R.id.iv_back_from_menu_advisory)
-    ImageView iv_back_from_menu_advisory;
+    @BindView(R.id.tb_main)
+    Toolbar tb_main;
+
+    @BindView(R.id.pb_ranking)
+    ProgressBar progressBar;
 
     Unbinder butterKnife;
 
@@ -100,16 +116,15 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     Date hourFinish;
     DoctorChoiceAdapter doctorChoiceAdapter;
     Doctor doctorChoice;
-    //for test
-    String arrspectlist[] = {
-            "Đa Khoa",
-            "Tim Mạch",
-            "Da liễu"};
 
-    String arrtypechat[] = {
-            "Ngắn",
-            "Dài",
-            "Trung bình"};
+    ArrayList<Specialist> spectlists;
+
+    ArrayList<TypeAdvisory> typeAdvisories;
+
+    String[] arrTypeChatAdvisories;
+    String[] arrTypeVideoCallAdvisories;
+    String arrayspecialists[];
+
 
     public AdvisoryMenuFragment() {
         // Required empty public constructor
@@ -133,22 +148,27 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         btntime.setOnClickListener(this);
         btn_post.setOnClickListener(this);
         btn_choose_Doctor.setOnClickListener(this);
-        iv_back_from_menu_advisory.setOnClickListener(this);
+
+        spectlists = new ArrayList<Specialist>();
+        typeAdvisories = new ArrayList<TypeAdvisory>();
+        ((AppCompatActivity) getActivity()).setSupportActionBar(tb_main);
+        final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+        actionbar.setTitle(R.string.logo_text_menu_advisory);
+
+        tb_main.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ScreenManager.backFragment(getFragmentManager());
+
+            }
+        });
+
         getDefaultInfor();
 
-        ArrayAdapter<String> adapterSpeclist = new ArrayAdapter<String>
-                (
-                        getContext(),
-                        android.R.layout.simple_spinner_item,
-                        arrspectlist
-                );
-
-
-        adapterSpeclist.setDropDownViewResource
-                (android.R.layout.simple_list_item_single_choice);
-
-        sp_speclist.setAdapter(adapterSpeclist);
-
+        setUpSpecialists();
         sp_speclist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 //TODO
@@ -159,18 +179,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        ArrayAdapter<String> adapterTypeChat = new ArrayAdapter<String>
-                (
-                        getContext(),
-                        android.R.layout.simple_spinner_item,
-                        arrtypechat
-                );
-
-        adapterTypeChat.setDropDownViewResource
-                (android.R.layout.simple_list_item_single_choice);
-
-        sp_typeChat.setAdapter(adapterTypeChat);
-
+        setUpTypeAdvisory();
         sp_typeChat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 //TODO
@@ -180,7 +189,78 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                 //TODO
             }
         });
+
     }
+
+    private void setUpSpecialists() {
+
+        spectlists = (ArrayList<Specialist>)  LoadDefaultModel.getInstance().getSpecialists();
+
+        arrayspecialists = new String[spectlists.size()];
+
+        for (int i = 0; i < arrayspecialists.length; i++) {
+            arrayspecialists[i] = spectlists.get(i).getName();
+        }
+
+        setSpinerSpecialist(arrayspecialists);
+
+    }
+
+    private void setUpTypeAdvisory() {
+
+        typeAdvisories = (ArrayList<TypeAdvisory>) LoadDefaultModel.getInstance().getTypeAdvisories();
+        ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
+        ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
+        for (TypeAdvisory typeAdvisory: typeAdvisories) {
+            if(typeAdvisory.getName().contains("Video")){
+                arrlistVideoCall.add(typeAdvisory);
+            }else {
+                arrlistChatType.add(typeAdvisory);
+            }
+        }
+
+        arrTypeChatAdvisories = new String[arrlistChatType.size()];
+        for (int i = 0; i < arrTypeChatAdvisories.length; i++) {
+            arrTypeChatAdvisories[i] = arrlistChatType.get(i).getName();
+        }
+
+        arrTypeVideoCallAdvisories = new String[arrlistVideoCall.size()];
+        for (int i = 0; i < arrTypeVideoCallAdvisories.length; i++) {
+            arrTypeVideoCallAdvisories[i] = arrlistVideoCall.get(i).getName();
+        }
+        setSpinerTypeAdvisory(arrTypeChatAdvisories);
+    }
+
+    private void setSpinerSpecialist(String[] arrSpecilists){
+        ArrayAdapter<String> adapterSpeclist = new ArrayAdapter<String>
+                (
+                        getContext(),
+                        android.R.layout.simple_spinner_item,
+                        arrSpecilists
+                );
+
+        adapterSpeclist.setDropDownViewResource
+                (android.R.layout.simple_list_item_single_choice);
+
+        sp_speclist.setAdapter(adapterSpeclist);
+
+    };
+
+    private void setSpinerTypeAdvisory(String[] arrTypeChatAdvisories){
+        ArrayAdapter<String> adapterTypeAdvisories = new ArrayAdapter<String>
+                (
+                        getContext(),
+                        android.R.layout.simple_spinner_item,
+                        arrTypeChatAdvisories
+                );
+
+        adapterTypeAdvisories.setDropDownViewResource
+                (android.R.layout.simple_list_item_single_choice);
+
+        sp_typeChat.setAdapter(adapterTypeAdvisories);
+        progressBar.setVisibility(View.GONE);
+
+    };
 
     @Override
     public void onClick(View v) {
@@ -188,6 +268,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             case R.id.rb_choose_chat:
                 if (((RadioButton) v).isChecked()) {
                     rl_chat.setVisibility(View.VISIBLE);
+                    setSpinerTypeAdvisory(arrTypeChatAdvisories);
                     //  rl_videocall.setVisibility(View.INVISIBLE);
                 }
 
@@ -195,6 +276,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             case R.id.rb_choose_video_call:
                 if (((RadioButton) v).isChecked()) {
                     rl_chat.setVisibility(View.INVISIBLE);
+                    setSpinerTypeAdvisory(arrTypeVideoCallAdvisories);
                     // rl_videocall.setVisibility(View.VISIBLE);
                 }
                 break;
@@ -212,10 +294,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
             case R.id.btn_post: {
                 //showDialogChooseDoctor();
-            }
-            case R.id.iv_back_from_menu_advisory: {
-                ScreenManager.backFragment(getFragmentManager());
-                break;
             }
 
         }
@@ -313,9 +391,10 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         for (int i = 0; i < 10; i++) {
             Doctor doctor = new Doctor();
             doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-            doctor.setFirst_name("Le");
-            doctor.setLast_name("Anh");
-            doctor.setCurrent_rating((float) 3.3);
+            doctor.setFirstName("Le");
+            doctor.setLastName("Anh");
+            doctor.setMiddleName("The");
+            doctor.setCurrentRating((float) 3.3);
             chosenDoctorList.add(doctor);
         }
 
@@ -339,8 +418,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                 if (doctorChoice != null) {
 
                     Picasso.with(getContext()).load(doctorChoice.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
-                    tv_name_doctor_chosen.setText(doctorChoice.getFirst_name() + " " + doctorChoice.getLast_name());
-                    rb_doctorChosen.setRating(doctorChoice.getCurrent_rating());
+                    tv_name_doctor_chosen.setText(doctorChoice.getFirstName() + " " + doctorChoice.getMiddleName() + " " + doctorChoice.getLastName());
+                    rb_doctorChosen.setRating(doctorChoice.getCurrentRating());
                 }
                 dialog.dismiss();
 
