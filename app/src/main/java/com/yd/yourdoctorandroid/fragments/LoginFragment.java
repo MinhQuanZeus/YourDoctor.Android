@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
@@ -132,7 +133,8 @@ public class LoginFragment extends Fragment {
                 if (response.code() == 200 || response.code() == 201) {
                     SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
                     SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    //fot test chat
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getActivity().startActivity(intent);

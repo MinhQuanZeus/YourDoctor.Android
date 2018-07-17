@@ -15,7 +15,9 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.ChapAdpater;
+import com.yd.yourdoctorandroid.networks.models.Patient;
 import com.yd.yourdoctorandroid.networks.models.Record;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,9 +32,13 @@ public class ChatActivity extends AppCompatActivity {
     private Button btnChat;
     private EditText mEditText;
     private List<Record> mListMessage;
-    private final String URL_SERVER = "http://192.168.124.114:3000";
+    private final String URL_SERVER = "http://192.168.124.106:3000";
     private Socket mSocket;
     private ChapAdpater chatApapter;
+    String chatHistoryID= "5b3cf7a7b4ae0756b4198e05";
+    Patient currentPaitent;
+    String idDoctor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +51,8 @@ public class ChatActivity extends AppCompatActivity {
 
         mListMessage = new ArrayList<>();
 
+        currentPaitent = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+        idDoctor = "5b3cee56e7179a1ccf3c5a67";
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -55,24 +63,18 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         mSocket.connect();
-        mSocket.on("receiver_message",onNewMessage);
-
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSocket.emit("user_login", mEditText.getText().toString());
-                chatApapter = new ChapAdpater(getApplicationContext(), mListMessage, mEditText.getText().toString());
-                recyclerView.setAdapter(chatApapter);
-
-            }
-        });
-
-        btnChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSocket.emit("send_message",mEditText.getText().toString());
-            }
-        });
+//        mSocket.emit("createRoom",chatHistoryID);
+//        mSocket.emit("addUser",currentPaitent.getId());
+//
+//        mSocket.on("newMessage",onNewMessage);
+//
+//
+//        btnChat.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mSocket.emit("sendMessage",currentPaitent.getId(),idDoctor,mEditText.getText().toString());
+//            }
+//        });
 
     }
 
@@ -82,18 +84,18 @@ public class ChatActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
                     JSONObject data = (JSONObject) args[0];
                     String message;
                     message = data.optString("data");
 
                     try {
-
                         JSONObject jsonObject = new JSONObject(message);
                         Record message1 = new Record();
-                        message1.recorderID = jsonObject.getString("recorderID");
-                        message1.value = jsonObject.getString("value");
-                        message1.createdAt = jsonObject.getString("createdAt");
-                        message1.type = jsonObject.getString("type");
+                        message1.recorderID = jsonObject.getString("senderid");
+                        message1.value = jsonObject.getString("mess");
+//                        message1.createdAt = jsonObject.getString("createdAt");
+//                        message1.type = jsonObject.getString("type");
                         mListMessage.add(message1);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -107,5 +109,6 @@ public class ChatActivity extends AppCompatActivity {
             });
         }
     };
+
 }
 

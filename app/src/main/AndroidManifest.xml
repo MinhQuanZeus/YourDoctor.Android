@@ -37,6 +37,9 @@
 
         <activity android:name=".activities.MainActivity">
 
+    </activity>
+        <activity android:name=".activities.ChatActivity">
+
         </activity>
         <activity android:name=".activities.AuthActivity">
             <intent-filter>
