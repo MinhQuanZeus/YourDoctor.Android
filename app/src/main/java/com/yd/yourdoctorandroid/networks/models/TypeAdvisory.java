@@ -3,8 +3,8 @@ package com.yd.yourdoctorandroid.networks.models;
 public class TypeAdvisory {
     String _id;
     String name;
-    String price;
-    String limitNumberRecords;
+    long price;
+    int limitNumberRecords;
     String description;
 
     public String get_id() {
@@ -23,19 +23,19 @@ public class TypeAdvisory {
         this.name = name;
     }
 
-    public String getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
-    public String getLimitNumberRecords() {
+    public int getLimitNumberRecords() {
         return limitNumberRecords;
     }
 
-    public void setLimitNumberRecords(String limitNumberRecords) {
+    public void setLimitNumberRecords(int limitNumberRecords) {
         this.limitNumberRecords = limitNumberRecords;
     }
 

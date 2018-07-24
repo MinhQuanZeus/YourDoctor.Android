@@ -22,7 +22,6 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorCertificationAdapter;
-import com.yd.yourdoctorandroid.events.OnClickDoctorChosen;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.favoriteDoctor.AddFavoriteDoctorService;
@@ -32,18 +31,10 @@ import com.yd.yourdoctorandroid.networks.favoriteDoctor.RemoveFavoriteDoctorServ
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.GetDoctorDetailService;
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.MainObjectDetailDoctor;
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.SpecialistDetail;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.DoctorRanking;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.MainObjectRanking;
 import com.yd.yourdoctorandroid.networks.models.Certification;
-import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
-import com.yd.yourdoctorandroid.networks.models.CommonSuccessResponse;
 import com.yd.yourdoctorandroid.networks.models.Doctor;
 import com.yd.yourdoctorandroid.networks.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;

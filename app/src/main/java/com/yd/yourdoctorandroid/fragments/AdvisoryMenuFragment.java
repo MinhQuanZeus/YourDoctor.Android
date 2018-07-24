@@ -1,9 +1,8 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -19,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -28,28 +26,39 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.adapters.DoctorChoiceAdapter;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.DoctorRecommend;
+import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.GetListRecommentDoctorService;
+import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.MainObjectRecommend;
 import com.yd.yourdoctorandroid.networks.models.Doctor;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisoryService;
 import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.MainObjectTypeAdivosry;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
+import com.yd.yourdoctorandroid.networks.models.Patient;
 import com.yd.yourdoctorandroid.networks.models.Specialist;
 import com.yd.yourdoctorandroid.networks.models.TypeAdvisory;
+import com.yd.yourdoctorandroid.networks.postChatHistory.ChatHistory;
+import com.yd.yourdoctorandroid.networks.postChatHistory.ChatHistoryResponse;
+import com.yd.yourdoctorandroid.networks.postChatHistory.PostChatHistoryService;
+import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentHistory;
+import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentResponse;
+import com.yd.yourdoctorandroid.networks.postPaymentHistory.PostPaymentHistoryService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
-import java.text.SimpleDateFormat;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,11 +94,11 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     @BindView(R.id.et_question)
     EditText et_question;
 
-    @BindView(R.id.btn_date)
-    Button btndate;
-
-    @BindView(R.id.btn_time)
-    Button btntime;
+//    @BindView(R.id.btn_date)
+//    Button btndate;
+//
+//    @BindView(R.id.btn_time)
+//    Button btntime;
 
     @BindView(R.id.btn_choose_Doctor)
     Button btn_choose_Doctor;
@@ -116,6 +125,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     Date hourFinish;
     DoctorChoiceAdapter doctorChoiceAdapter;
     Doctor doctorChoice;
+    Specialist specialistChoice;
+    TypeAdvisory typeAdvisoryChoice;
 
     ArrayList<Specialist> spectlists;
 
@@ -125,6 +136,15 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     String[] arrTypeVideoCallAdvisories;
     String arrayspecialists[];
 
+    boolean isChat;
+
+    Patient currentPatient;
+
+    int countProcess;
+
+    Button btn_cancel_choose ;
+    Button btn_ok_choose ;
+    RecyclerView rv_list_doctor;
 
     public AdvisoryMenuFragment() {
         // Required empty public constructor
@@ -144,13 +164,16 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         butterKnife = ButterKnife.bind(AdvisoryMenuFragment.this, view);
         rb_choose_chat.setOnClickListener(this);
         rb_choose_video_call.setOnClickListener(this);
-        btndate.setOnClickListener(this);
-        btntime.setOnClickListener(this);
+//        btndate.setOnClickListener(this);
+//        btntime.setOnClickListener(this);
         btn_post.setOnClickListener(this);
         btn_choose_Doctor.setOnClickListener(this);
 
+        countProcess = 0;
         spectlists = new ArrayList<Specialist>();
         typeAdvisories = new ArrayList<TypeAdvisory>();
+        isChat = true;
+        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
         ((AppCompatActivity) getActivity()).setSupportActionBar(tb_main);
         final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
@@ -166,12 +189,16 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        getDefaultInfor();
 
         setUpSpecialists();
         sp_speclist.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                //TODO
+                for (int i = 0; i < spectlists.size(); i++) {
+                    if (spectlists.get(i).getName().equals(arrayspecialists[pos])) {
+                        specialistChoice = spectlists.get(i);
+                        break;
+                    }
+                }
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -182,7 +209,22 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         setUpTypeAdvisory();
         sp_typeChat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                //TODO
+                if (isChat) {
+                    for (int i = 0; i < typeAdvisories.size(); i++) {
+                        if (typeAdvisories.get(i).getName().equals(arrTypeChatAdvisories[pos])) {
+                            typeAdvisoryChoice = typeAdvisories.get(i);
+                            break;
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < typeAdvisories.size(); i++) {
+                        if (typeAdvisories.get(i).getName().equals(arrTypeVideoCallAdvisories[pos])) {
+                            typeAdvisoryChoice = typeAdvisories.get(i);
+                            break;
+                        }
+                    }
+                }
+
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -190,48 +232,131 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
         });
 
+
     }
 
     private void setUpSpecialists() {
+        spectlists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
 
-        spectlists = (ArrayList<Specialist>)  LoadDefaultModel.getInstance().getSpecialists();
+        if(spectlists == null){
+            GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
+            getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
+                @Override
+                public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
+                    Log.e("AnhLe", "success: " + response.body());
+                    MainObjectSpecialist mainObjectSpecialist = response.body();
+                    spectlists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                    arrayspecialists = new String[spectlists.size()];
 
-        arrayspecialists = new String[spectlists.size()];
+                    for (int i = 0; i < arrayspecialists.length; i++) {
+                        arrayspecialists[i] = spectlists.get(i).getName();
+                    }
 
-        for (int i = 0; i < arrayspecialists.length; i++) {
-            arrayspecialists[i] = spectlists.get(i).getName();
+                    setSpinerSpecialist(arrayspecialists);
+                    specialistChoice = spectlists.get(0);
+                    checkInvisible();
+                }
+
+                @Override
+                public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
+                    Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                    checkInvisible();
+                }
+            });
+
+        }else {
+            arrayspecialists = new String[spectlists.size()];
+
+            for (int i = 0; i < arrayspecialists.length; i++) {
+                arrayspecialists[i] = spectlists.get(i).getName();
+            }
+
+            setSpinerSpecialist(arrayspecialists);
+            specialistChoice = spectlists.get(0);
+            checkInvisible();
         }
-
-        setSpinerSpecialist(arrayspecialists);
 
     }
 
     private void setUpTypeAdvisory() {
 
         typeAdvisories = (ArrayList<TypeAdvisory>) LoadDefaultModel.getInstance().getTypeAdvisories();
-        ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
-        ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
-        for (TypeAdvisory typeAdvisory: typeAdvisories) {
-            if(typeAdvisory.getName().contains("Video")){
-                arrlistVideoCall.add(typeAdvisory);
-            }else {
-                arrlistChatType.add(typeAdvisory);
+
+        if(typeAdvisories == null){
+            GetAllTypesAdvisoryService getAllTypesAdvisoryService = RetrofitFactory.getInstance().createService(GetAllTypesAdvisoryService.class);
+            getAllTypesAdvisoryService.getMainObjectTypeAdvisories().enqueue(new Callback<MainObjectTypeAdivosry>() {
+                @Override
+                public void onResponse(Call<MainObjectTypeAdivosry> call, Response<MainObjectTypeAdivosry> response) {
+                    Log.e("AnhLe", "success: " + response.body());
+                    MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
+                    typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
+                    ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
+                    ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
+                    for (TypeAdvisory typeAdvisory : typeAdvisories) {
+                        if (typeAdvisory.getName().contains("Video")) {
+                            arrlistVideoCall.add(typeAdvisory);
+                        } else {
+                            arrlistChatType.add(typeAdvisory);
+                        }
+                    }
+
+                    arrTypeChatAdvisories = new String[arrlistChatType.size()];
+                    for (int i = 0; i < arrTypeChatAdvisories.length; i++) {
+                        arrTypeChatAdvisories[i] = arrlistChatType.get(i).getName();
+                    }
+
+                    arrTypeVideoCallAdvisories = new String[arrlistVideoCall.size()];
+                    for (int i = 0; i < arrTypeVideoCallAdvisories.length; i++) {
+                        arrTypeVideoCallAdvisories[i] = arrlistVideoCall.get(i).getName();
+                    }
+                    setSpinerTypeAdvisory(arrTypeChatAdvisories);
+                    typeAdvisoryChoice = typeAdvisories.get(0);
+                    checkInvisible();
+
+                }
+
+                @Override
+                public void onFailure(Call<MainObjectTypeAdivosry> call, Throwable t) {
+                    Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                    checkInvisible();
+                }
+            });
+        }else {
+            ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
+            ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
+            for (TypeAdvisory typeAdvisory : typeAdvisories) {
+                if (typeAdvisory.getName().contains("Video")) {
+                    arrlistVideoCall.add(typeAdvisory);
+                } else {
+                    arrlistChatType.add(typeAdvisory);
+                }
             }
+
+            arrTypeChatAdvisories = new String[arrlistChatType.size()];
+            for (int i = 0; i < arrTypeChatAdvisories.length; i++) {
+                arrTypeChatAdvisories[i] = arrlistChatType.get(i).getName();
+            }
+
+            arrTypeVideoCallAdvisories = new String[arrlistVideoCall.size()];
+            for (int i = 0; i < arrTypeVideoCallAdvisories.length; i++) {
+                arrTypeVideoCallAdvisories[i] = arrlistVideoCall.get(i).getName();
+            }
+            setSpinerTypeAdvisory(arrTypeChatAdvisories);
+            typeAdvisoryChoice = typeAdvisories.get(0);
+            checkInvisible();
         }
 
-        arrTypeChatAdvisories = new String[arrlistChatType.size()];
-        for (int i = 0; i < arrTypeChatAdvisories.length; i++) {
-            arrTypeChatAdvisories[i] = arrlistChatType.get(i).getName();
-        }
 
-        arrTypeVideoCallAdvisories = new String[arrlistVideoCall.size()];
-        for (int i = 0; i < arrTypeVideoCallAdvisories.length; i++) {
-            arrTypeVideoCallAdvisories[i] = arrlistVideoCall.get(i).getName();
-        }
-        setSpinerTypeAdvisory(arrTypeChatAdvisories);
     }
 
-    private void setSpinerSpecialist(String[] arrSpecilists){
+    private void checkInvisible(){
+        countProcess++;
+        if(countProcess == 2){
+            progressBar.setVisibility(View.GONE);
+        }
+    }
+
+    private void setSpinerSpecialist(String[] arrSpecilists) {
         ArrayAdapter<String> adapterSpeclist = new ArrayAdapter<String>
                 (
                         getContext(),
@@ -244,9 +369,9 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
         sp_speclist.setAdapter(adapterSpeclist);
 
-    };
+    }
 
-    private void setSpinerTypeAdvisory(String[] arrTypeChatAdvisories){
+    private void setSpinerTypeAdvisory(String[] arrTypeChatAdvisories) {
         ArrayAdapter<String> adapterTypeAdvisories = new ArrayAdapter<String>
                 (
                         getContext(),
@@ -260,154 +385,280 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         sp_typeChat.setAdapter(adapterTypeAdvisories);
         progressBar.setVisibility(View.GONE);
 
-    };
+    }
+
+    ;
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rb_choose_chat:
                 if (((RadioButton) v).isChecked()) {
+                    isChat = true;
                     rl_chat.setVisibility(View.VISIBLE);
                     setSpinerTypeAdvisory(arrTypeChatAdvisories);
                     //  rl_videocall.setVisibility(View.INVISIBLE);
+                    if (typeAdvisories.size() != 0) {
+                        for (int i = 0; i < typeAdvisories.size(); i++) {
+                            if (typeAdvisories.get(i).getName().equals(arrTypeChatAdvisories[0])) {
+                                typeAdvisoryChoice = typeAdvisories.get(i);
+                                break;
+                            }
+                        }
+                    }
                 }
 
                 break;
             case R.id.rb_choose_video_call:
                 if (((RadioButton) v).isChecked()) {
+                    isChat = false;
                     rl_chat.setVisibility(View.INVISIBLE);
                     setSpinerTypeAdvisory(arrTypeVideoCallAdvisories);
                     // rl_videocall.setVisibility(View.VISIBLE);
+                    if (typeAdvisories.size() != 0) {
+                        for (int i = 0; i < typeAdvisories.size(); i++) {
+                            if (typeAdvisories.get(i).getName().equals(arrTypeVideoCallAdvisories[0])) {
+                                typeAdvisoryChoice = typeAdvisories.get(i);
+                                break;
+                            }
+                        }
+                    }
                 }
                 break;
-            case R.id.btn_date: {
-                showDatePickerDialog();
-                break;
-            }
-            case R.id.btn_time: {
-                showTimePickerDialog();
-                break;
-            }
             case R.id.btn_choose_Doctor: {
                 showDialogChooseDoctor();
                 break;
             }
             case R.id.btn_post: {
-                //showDialogChooseDoctor();
+                // Toast.makeText(getContext(),"specialist " + specialistChoice.getName() + ", " + " Typespecialist " + typeAdvisoryChoice.getName() , Toast.LENGTH_LONG).show();
+                if (doctorChoice == null) {
+                    Toast.makeText(getContext(), "Bạn cần chọn bác sĩ trước !!!", Toast.LENGTH_LONG).show();
+                } else if (isChat && et_question.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Bạn cần nhập nội dung câu hỏi !!!", Toast.LENGTH_LONG).show();
+                } else {
+                    handlePostRequest();
+                }
+                break;
             }
 
         }
     }
 
-    public void showDatePickerDialog() {
-        DatePickerDialog.OnDateSetListener callback = new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year,
-                                  int monthOfYear,
-                                  int dayOfMonth) {
-                btndate.setText(
-                        (dayOfMonth) + "/" + (monthOfYear + 1) + "/" + year);
+    private void handlePostRequest() {
+        progressBar.setVisibility(View.VISIBLE);
 
-                cal.set(year, monthOfYear, dayOfMonth);
-                dateFinish = cal.getTime();
-            }
-        };
+        if (isChat) {
+            //currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice()
+            PaymentHistory paymentHistoryPatient =
+                    new PaymentHistory(currentPatient.getId(),
+                            typeAdvisoryChoice.getPrice(),
+                            currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice(),
+                            typeAdvisoryChoice.get_id(),
+                            1);
+            Log.e("Payment Patient ", paymentHistoryPatient.toString());
+            PostPaymentHistoryService postPaymentHistoryService = RetrofitFactory.getInstance().createService(PostPaymentHistoryService.class);
+            postPaymentHistoryService.addPaymentHistory(paymentHistoryPatient).enqueue(new Callback<PaymentResponse>() {
+                @Override
+                public void onResponse(Call<PaymentResponse> call, Response<PaymentResponse> response) {
+                    Toast.makeText(getContext(), "code la" + response.code(), Toast.LENGTH_LONG).show();
+                    if (response.code() == 200) {
+                        PaymentResponse paymentResponse = (PaymentResponse) response.body();
+                        ChatHistory chatHistory = new ChatHistory();
+                        chatHistory.setContentTopic(et_question.getText().toString());
+                        chatHistory.setPatientId(currentPatient.getId());
+                        chatHistory.setDoctorId(doctorChoice.getDoctorId());
+                        chatHistory.setStatus(1);
+                        chatHistory.setTypeAdvisoryID(typeAdvisoryChoice.get_id());
+                        chatHistory.setPaymentPatientID(paymentResponse.paymentsHistory);
+                        postHistoryChat(chatHistory);
+                        //progressBar.setVisibility(View.GONE);
+                    } else {
+                        Toast.makeText(getContext(), "Đã có lỗi xảy ra 1", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                }
 
-        if (btndate.getText().toString().compareToIgnoreCase("Ngày") != 0) {
-
+                @Override
+                public void onFailure(Call<PaymentResponse> call, Throwable t) {
+                    Log.e("anh le error", " remove");
+                    //progressBar.setVisibility(View.GONE);
+                }
+            });
         }
-        String s = btndate.getText().toString() + "";
-        String strArrtmp[] = s.split("/");
-        int ngay = Integer.parseInt(strArrtmp[0]);
-        int thang = Integer.parseInt(strArrtmp[1]) - 1;
-        int nam = Integer.parseInt(strArrtmp[2]);
-        DatePickerDialog pic = new DatePickerDialog(
-                getContext(),
-                callback, nam, thang, ngay);
-        pic.setTitle("Chọn ngày hoàn thành");
-        pic.show();
+
     }
 
+    private void postHistoryChat(ChatHistory chatHistory) {
+        PostChatHistoryService postChatHistoryService = RetrofitFactory.getInstance().createService(PostChatHistoryService.class);
+        postChatHistoryService.addChatHistory(chatHistory).enqueue(new Callback<ChatHistoryResponse>() {
+            @Override
+            public void onResponse(Call<ChatHistoryResponse> call, Response<ChatHistoryResponse> response) {
+                if (response.code() == 200) {
+                    ChatHistoryResponse chatHistoryResponse = (ChatHistoryResponse) response.body();
 
-    public void showTimePickerDialog() {
-        TimePickerDialog.OnTimeSetListener callback = new TimePickerDialog.OnTimeSetListener() {
-            public void onTimeSet(TimePicker view,
-                                  int hourOfDay, int minute) {
-                String s = hourOfDay + ":" + minute;
-                int hourTam = hourOfDay;
-                if (hourTam > 12)
-                    hourTam = hourTam - 12;
-                btntime.setText
-                        (hourTam + ":" + minute + (hourOfDay > 12 ? " PM" : " AM"));
-                btntime.setTag(s);
-                cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                cal.set(Calendar.MINUTE, minute);
-                hourFinish = cal.getTime();
+                    progressBar.setVisibility(View.GONE);
+                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+                    // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    Bundle bundle=new Bundle();
+//                    bundle.putString("chatHistoryId", chatHistoryResponse.getChatHistory().get_id());
+//                    bundle.putSerializable("doctorChoice", doctorChoice);
+                    intent.putExtra("chatHistoryId",chatHistoryResponse.getChatHistory().get_id());
+                    intent.putExtra("doctorChoiceId",doctorChoice.getDoctorId());
+                    getActivity().startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(), "Đã có lỗi xảy ra 2", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
+                }
             }
-        };
 
-        String s = btntime.getTag().toString() + "";
-        String strArr[] = s.split(":");
-        Log.d("Anhle", s);
-        int gio = Integer.parseInt(strArr[0]);
-        int phut = Integer.parseInt(strArr[1]);
-        TimePickerDialog time = new TimePickerDialog(
-                getContext(),
-                callback, gio, phut, true);
-        time.setTitle("Chọn giờ hoàn thành");
-        time.show();
+            @Override
+            public void onFailure(Call<ChatHistoryResponse> call, Throwable t) {
+                Log.e("anh le error", " remove");
+                progressBar.setVisibility(View.GONE);
+            }
+        });
     }
 
-    public void getDefaultInfor() {
-        cal = Calendar.getInstance();
-        SimpleDateFormat dft = null;
-        dft = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+//    public void showDatePickerDialog() {
+//        DatePickerDialog.OnDateSetListener callback = new DatePickerDialog.OnDateSetListener() {
+//            public void onDateSet(DatePicker view, int year,
+//                                  int monthOfYear,
+//                                  int dayOfMonth) {
+//                btndate.setText(
+//                        (dayOfMonth) + "/" + (monthOfYear + 1) + "/" + year);
+//
+//                cal.set(year, monthOfYear, dayOfMonth);
+//                dateFinish = cal.getTime();
+//            }
+//        };
+//
+//        if (btndate.getText().toString().compareToIgnoreCase("Ngày") != 0) {
+//
+//        }
+//        String s = btndate.getText().toString() + "";
+//        String strArrtmp[] = s.split("/");
+//        int ngay = Integer.parseInt(strArrtmp[0]);
+//        int thang = Integer.parseInt(strArrtmp[1]) - 1;
+//        int nam = Integer.parseInt(strArrtmp[2]);
+//        DatePickerDialog pic = new DatePickerDialog(
+//                getContext(),
+//                callback, nam, thang, ngay);
+//        pic.setTitle("Chọn ngày hoàn thành");
+//        pic.show();
+//    }
 
-        String strDate = dft.format(cal.getTime());
-        //hiển thị lên giao diện
-        btndate.setText(strDate);
-        //Định dạng giờ phút am/pm
-        dft = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-        String strTime = dft.format(cal.getTime());
-        //đưa lên giao diện
-        btntime.setText(strTime);
-        //lấy giờ theo 24 để lập trình theo Tag
-        dft = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        btntime.setTag(dft.format(cal.getTime()));
 
-    }
+//    public void showTimePickerDialog() {
+//        TimePickerDialog.OnTimeSetListener callback = new TimePickerDialog.OnTimeSetListener() {
+//            public void onTimeSet(TimePicker view,
+//                                  int hourOfDay, int minute) {
+//                String s = hourOfDay + ":" + minute;
+//                int hourTam = hourOfDay;
+//                if (hourTam > 12)
+//                    hourTam = hourTam - 12;
+//                btntime.setText
+//                        (hourTam + ":" + minute + (hourOfDay > 12 ? " PM" : " AM"));
+//                btntime.setTag(s);
+//                cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+//                cal.set(Calendar.MINUTE, minute);
+//                hourFinish = cal.getTime();
+//            }
+//        };
+//
+//        String s = btntime.getTag().toString() + "";
+//        String strArr[] = s.split(":");
+//        Log.d("Anhle", s);
+//        int gio = Integer.parseInt(strArr[0]);
+//        int phut = Integer.parseInt(strArr[1]);
+//        TimePickerDialog time = new TimePickerDialog(
+//                getContext(),
+//                callback, gio, phut, true);
+//        time.setTitle("Chọn giờ hoàn thành");
+//        time.show();
+//    }
+
+//    public void getDefaultInfor() {
+//        cal = Calendar.getInstance();
+//        SimpleDateFormat dft = null;
+//        dft = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+//
+//        String strDate = dft.format(cal.getTime());
+//        //hiển thị lên giao diện
+//        btndate.setText(strDate);
+//        //Định dạng giờ phút am/pm
+//        dft = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+//        String strTime = dft.format(cal.getTime());
+//        //đưa lên giao diện
+//        btntime.setText(strTime);
+//        //lấy giờ theo 24 để lập trình theo Tag
+//        dft = new SimpleDateFormat("HH:mm", Locale.getDefault());
+//        btntime.setTag(dft.format(cal.getTime()));
+//
+//    }
 
     public void showDialogChooseDoctor() {
+        progressBar.setVisibility(View.VISIBLE);
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.choose_doctor_dialog);
         dialog.setTitle("Lựa Chọn Bác Sĩ của bạn");
 
         // set the custom dialog components - text, image and button
-        Button btn_cancel_choose = dialog.findViewById(R.id.btn_cancel_choose_doctor);
-        Button btn_ok_choose = dialog.findViewById(R.id.btn_ok_choose_doctor);
-        RecyclerView rv_list_doctor = dialog.findViewById(R.id.rv_list_doctor);
+         btn_cancel_choose = dialog.findViewById(R.id.btn_cancel_choose_doctor);
+         btn_ok_choose = dialog.findViewById(R.id.btn_ok_choose_doctor);
+         rv_list_doctor = dialog.findViewById(R.id.rv_list_doctor);
 
-        final Doctor doctorChoose;
-        List<Doctor> chosenDoctorList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            Doctor doctor = new Doctor();
-            doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-            doctor.setFirstName("Le");
-            doctor.setLastName("Anh");
-            doctor.setMiddleName("The");
-            doctor.setCurrentRating((float) 3.3);
-            chosenDoctorList.add(doctor);
-        }
 
-        doctorChoiceAdapter = new DoctorChoiceAdapter(chosenDoctorList, getContext(), dialog);
-        rv_list_doctor.setAdapter(doctorChoiceAdapter);
-        rv_list_doctor.setLayoutManager(new LinearLayoutManager(getContext()));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-        rv_list_doctor.addItemDecoration(dividerItemDecoration);
+        GetListRecommentDoctorService getListRecommentDoctorService = RetrofitFactory.getInstance().createService(GetListRecommentDoctorService.class);
+        getListRecommentDoctorService.getListRecommentDoctor(specialistChoice.get_id(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
+            @Override
+            public void onResponse(Call<MainObjectRecommend> call, Response<MainObjectRecommend> response) {
+                MainObjectRecommend mainObject = response.body();
+                List<Doctor> doctorList = new ArrayList<>();
+                if(response.code() == 200 && mainObject != null){
+                    List<DoctorRecommend> doctorRecomments = mainObject.getListDoctor();
+                    if (doctorRecomments != null && doctorRecomments.size() > 0) {
+                        for (DoctorRecommend doctorRecomment : doctorRecomments) {
+                            Doctor doctor = new Doctor();
+                            doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
+                            doctor.setFirstName(doctorRecomment.getFirstName());
+                            doctor.setLastName(doctorRecomment.getLastName());
+                            doctor.setMiddleName(doctorRecomment.getMiddleName());
+                            doctor.setCurrentRating((float) doctorRecomment.getCurrentRating());
+                            doctor.setDoctorId(doctorRecomment.getDoctorId());
+                            doctorList.add(doctor);
+                        }
+                        doctorChoiceAdapter = new DoctorChoiceAdapter(doctorList, getContext(), dialog);
+                        rv_list_doctor.setAdapter(doctorChoiceAdapter);
+                        rv_list_doctor.setLayoutManager(new LinearLayoutManager(getContext()));
+                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+                        rv_list_doctor.addItemDecoration(dividerItemDecoration);
+
+
+                    }
+                }
+
+                //progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
+                dialog.show();
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectRecommend> call, Throwable t) {
+                Log.d("Anhle", "Fail: " + t.getMessage());
+                progressBar.setVisibility(View.GONE);
+                dialog.show();
+            }
+        });
+
+
+
         // if button is clicked, close the custom dialog
         btn_cancel_choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -426,7 +677,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        dialog.show();
+
     }
 
     @Override

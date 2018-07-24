@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
-public class ChapAdpater extends RecyclerView.Adapter {
+public class ChatAdpater extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     String currentUserID;
@@ -26,7 +26,7 @@ public class ChapAdpater extends RecyclerView.Adapter {
     private Context mContext;
     private List<Record> mMessageList;
 
-    public ChapAdpater(Context context, List<Record> messageList , String currentUserID) {
+    public ChatAdpater(Context context, List<Record> messageList , String currentUserID) {
         this.mContext = context;
         this.mMessageList = messageList;
         this.currentUserID = currentUserID;
@@ -40,7 +40,7 @@ public class ChapAdpater extends RecyclerView.Adapter {
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
     public int getItemViewType(int position) {
-        String senderid = mMessageList.get(position).recorderID;
+        String senderid = mMessageList.get(position).getRecorderID();
 
         if (senderid.equals(currentUserID)) {
             // If the current user is the sender of the message
@@ -94,14 +94,14 @@ public class ChapAdpater extends RecyclerView.Adapter {
         }
 
         void bind(Record message) {
-            messageText.setText(message.value);
+            messageText.setText(message.getValue());
             Date date = new Date();
-            timeText.setText(date.toString());
+            timeText.setText(message.getCreatedAt());
         }
     }
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText, nameText;
+        TextView messageText, timeText;
         ImageView profileImage;
 
         ReceivedMessageHolder(View itemView) {
@@ -110,20 +110,14 @@ public class ChapAdpater extends RecyclerView.Adapter {
             messageText = (TextView) itemView.findViewById(R.id.text_message_body);
 
             timeText = (TextView) itemView.findViewById(R.id.text_message_time);
-            nameText = (TextView) itemView.findViewById(R.id.text_message_name);
             profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
         }
 
         void bind(Record message) {
-            messageText.setText(message.value);
-
+            messageText.setText(message.getValue());
             Date date = new Date();
-            // Format the stored timestamp into a readable String using method.
-            timeText.setText(date.toString());
-
-            nameText.setText(message.recorderID);
-
-            Picasso.with(mContext).load("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg").transform(new CropCircleTransformation()).into(profileImage);
+            timeText.setText(message.getCreatedAt());
+            Picasso.with(mContext).load(message.getAvatar()).transform(new CropCircleTransformation()).into(profileImage);
 
             // Insert the profile image from the URL into the ImageView.
 

@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorFavoriteListAdapter;
-import com.yd.yourdoctorandroid.adapters.DoctorRankingSpecialistAdapter;
 import com.yd.yourdoctorandroid.managers.PaginationScrollListener;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.FavoriteDoctor;
@@ -28,9 +27,6 @@ import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListDoctorFavo
 import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectFavoriteList;
 import com.yd.yourdoctorandroid.networks.models.Doctor;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.DoctorRanking;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.MainObjectRanking;
 import com.yd.yourdoctorandroid.networks.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
@@ -83,7 +79,7 @@ public class DoctorFavoriteListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_doctor_favorite_list, container, false);
-        butterKnife = ButterKnife.bind(this, view);
+        ButterKnife.bind(this, view);
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
         doctorFavoriteListAdapter = new DoctorFavoriteListAdapter(getContext());
 
@@ -136,6 +132,7 @@ public class DoctorFavoriteListFragment extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        pb_favorite.setVisibility(View.VISIBLE);
                         loadNextPage();
                     }
                 }, 1000);
@@ -200,28 +197,6 @@ public class DoctorFavoriteListFragment extends Fragment {
             }
         });
 
-//Fortest
-
-//        List<Doctor> doctorList = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            Doctor doctor = new Doctor();
-//            doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-//            doctor.setFirstName("Lê");
-//            doctor.setLastName("Anh");
-//            doctor.setMiddleName("Thế");
-//            doctor.setCurrentRating((float) 3.5);
-//            doctorList.add(doctor);
-//        }
-//
-//
-//        doctorFavoriteListAdapter.addAll(doctorList);
-//
-//
-//        if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();
-//        else isLastPage = true;
-//
-//        //progressBar.setVisibility(View.GONE);
-//        pb_favorite.setVisibility(View.GONE);
     }
 
     private void loadNextPage() {
@@ -252,70 +227,21 @@ public class DoctorFavoriteListFragment extends Fragment {
                     if (doctorList.size()==5) doctorFavoriteListAdapter.addLoadingFooter();  // 5
                     else isLastPage = true;
                 }
-                //pb_favorite.setVisibility(View.GONE);
+                pb_favorite.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<MainObjectFavoriteList> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                //pb_favorite.setVisibility(View.GONE);
+                pb_favorite.setVisibility(View.GONE);
             }
         });
 
 
-//        GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
-//        getDoctorRankingSpecialist.getMainObjectRanking(specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
-//            @Override
-//            public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
-//                MainObjectRanking mainObject = response.body();
-//                List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
-//                List<Doctor> doctorList = new ArrayList<>();
-//                for (DoctorRanking doctorRanking : doctorRankingList) {
-//                    Doctor doctor = new Doctor();
-//                    doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-//                    doctor.setFirst_name(doctorRanking.getDoctorId().getFirstName());
-//                    doctor.setLast_name(doctorRanking.getDoctorId().getLastName());
-//                    doctor.setCurrent_rating((float) doctorRanking.getCurrentRating());
-//                    doctorList.add(doctor);
-//                }
-//                doctorRankingAdapter.removeLoadingFooter();  // 2
-//                isLoading = false;   // 3
-//
-//                doctorRankingAdapter.addAll(doctorList);   // 4
-//
-//                if (doctorList.size()==5) doctorRankingAdapter.addLoadingFooter();  // 5
-//                else isLastPage = true;
-//            }
-//
-//            @Override
-//            public void onFailure(Call<MainObjectRanking> call, Throwable t) {
-//                Log.d("Anhle", "Fail: " + t.getMessage());
-//            }
-//        });
-
-//        List<Doctor> doctorList = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            Doctor doctor = new Doctor();
-//            doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-//            doctor.setFirstName("Lê");
-//            doctor.setLastName("Anh");
-//            doctor.setMiddleName("Thế");
-//            doctor.setCurrentRating((float) 3.5);
-//            doctorList.add(doctor);
-//        }
-//
-//        doctorFavoriteListAdapter.removeLoadingFooter();  // 2
-//        isLoading = false;   // 3
-//
-//        doctorFavoriteListAdapter.addAll(doctorList);   // 4
-//
-//        if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();  // 5
-//        else isLastPage = true;
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        butterKnife.unbind();
     }
 }

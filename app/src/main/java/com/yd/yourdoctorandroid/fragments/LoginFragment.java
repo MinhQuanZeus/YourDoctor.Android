@@ -1,10 +1,14 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
@@ -24,7 +29,14 @@ import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Login;
+import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.networks.postChatHistory.ChatHistoryResponse;
+import com.yd.yourdoctorandroid.networks.postChatHistory.PostChatHistoryService;
+import com.yd.yourdoctorandroid.networks.saveTokenNotification.SaveTokenNotificationService;
+import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenNotification;
+import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenResponse;
 import com.yd.yourdoctorandroid.networks.services.LoginService;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 
@@ -58,6 +70,9 @@ public class LoginFragment extends Fragment {
     @BindView(R.id.btn_sign_in)
     CircularProgressButton btnLogin;
     private Unbinder unbinder;
+
+    int countSuccessInitialization;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -67,7 +82,7 @@ public class LoginFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         setUp(view);
         return view;
     }
@@ -75,6 +90,8 @@ public class LoginFragment extends Fragment {
     private void setUp(View view) {
         unbinder = ButterKnife.bind(this, view);
         tvSignUp = (TextView) view.findViewById(R.id.tv_signup);
+        LoadDefaultModel.getInstance();
+        countSuccessInitialization = 0;
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -104,10 +121,10 @@ public class LoginFragment extends Fragment {
             tilPhone.setError(null);
         }
 
-        if(password.isEmpty()){
+        if (password.isEmpty()) {
             isValidate = false;
             tilPassword.setError(getResources().getString(R.string.empty_password));
-        }else {
+        } else {
             isValidate = true;
             tilPassword.setError(null);
         }
@@ -116,7 +133,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void onLogin() {
-        if (!onValidate()){
+        if (!onValidate()) {
             return;
         }
         btnLogin.startAnimation();
@@ -128,17 +145,15 @@ public class LoginFragment extends Fragment {
         LoginService loginService = RetrofitFactory.getInstance().createService(LoginService.class);
         loginService.register(login).enqueue(new Callback<AuthResponse>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-                btnLogin.revertAnimation();
+            public void onResponse(Call<AuthResponse> call, final Response<AuthResponse> response) {
+
                 if (response.code() == 200 || response.code() == 201) {
                     SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
                     SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
-                    //fot test chat
-                    Intent intent = new Intent(getActivity(), ChatActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    getActivity().startActivity(intent);
-                }else {
+                    FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                    LoadDefaultModel.getInstance().loadFavoriteDoctor(response.body().getPatient(), getActivity(), btnLogin);
+
+                } else {
                     enableAll();
                     CommonErrorResponse commonErrorResponse = parseToCommonError(response);
                     if (commonErrorResponse.getError() != null) {
@@ -146,6 +161,7 @@ public class LoginFragment extends Fragment {
                         Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
                         Log.d("RESPONSE", error);
                     }
+                    btnLogin.revertAnimation();
                 }
             }
 
@@ -159,6 +175,7 @@ public class LoginFragment extends Fragment {
             }
         });
     }
+
 
     private void enableAll() {
         this.edPassword.setEnabled(true);

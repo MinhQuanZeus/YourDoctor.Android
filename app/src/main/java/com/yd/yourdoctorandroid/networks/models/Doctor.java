@@ -2,9 +2,8 @@ package com.yd.yourdoctorandroid.networks.models;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 public class Doctor {
-    private String doctorId;
+    private String id;
     private String phoneNumber;
     private String password;
     private String firstName;
@@ -26,7 +25,7 @@ public class Doctor {
     }
 
     public Doctor(String doctorId, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, long remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking) {
-        this.doctorId = doctorId;
+        this.id = doctorId;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.firstName = firstName;
@@ -46,11 +45,11 @@ public class Doctor {
     }
 
     public String getDoctorId() {
-        return doctorId;
+        return id;
     }
 
     public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
+        this.id = doctorId;
     }
 
     public String getPhoneNumber() {

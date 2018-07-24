@@ -13,7 +13,7 @@
         android:id="@+id/tb_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradientbackground"
+        android:background="@color/colorPrimary"
         app:titleTextColor="@color/white" />
 
 
@@ -163,42 +163,42 @@
             android:lines="5"
             android:textAlignment="textStart" />
 
-        <TextView
-            android:id="@+id/tv_approcha"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/et_question"
-            android:layout_marginTop="10dp"
-            android:text="@string/dateline_reply"
-            android:textAlignment="center"
-            android:textColor="@color/colorPrimaryDark"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv_approcha"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/et_question"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:text="@string/dateline_reply"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textColor="@color/colorPrimaryDark"-->
+            <!--android:textStyle="bold" />-->
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/tv_approcha"
-            android:layout_marginTop="10dp"
-            android:gravity="center">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_below="@+id/tv_approcha"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:gravity="center">-->
 
-            <Button
-                android:id="@+id/btn_time"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/buttonborder"
-                android:text="@string/btn_time"
-                android:textColor="@color/colorPrimaryDark" />
+            <!--<Button-->
+                <!--android:id="@+id/btn_time"-->
+                <!--android:layout_width="130dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/buttonborder"-->
+                <!--android:text="@string/btn_time"-->
+                <!--android:textColor="@color/colorPrimaryDark" />-->
 
-            <Button
-                android:id="@+id/btn_date"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_toEndOf="@id/btn_time"
-                android:background="@drawable/buttonborder"
-                android:text="@string/btn_Date"
-                android:textColor="@color/colorPrimaryDark" />
-        </RelativeLayout>
+            <!--<Button-->
+                <!--android:id="@+id/btn_date"-->
+                <!--android:layout_width="130dp"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="20dp"-->
+                <!--android:layout_toEndOf="@id/btn_time"-->
+                <!--android:background="@drawable/buttonborder"-->
+                <!--android:text="@string/btn_Date"-->
+                <!--android:textColor="@color/colorPrimaryDark" />-->
+        <!--</RelativeLayout>-->
 
     </RelativeLayout>
 

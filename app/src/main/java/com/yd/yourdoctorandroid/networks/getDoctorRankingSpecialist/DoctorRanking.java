@@ -2,22 +2,58 @@ package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 
 public class DoctorRanking {
 
-    double currentRating;
-    DoctorID doctorId;
+    private String doctorId;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private float currentRating;
+    private String avatar;
 
-    public double getCurrentRating() {
-        return currentRating;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setCurrentRating(double currentRating) {
-        this.currentRating = currentRating;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
-    public DoctorID getDoctorId() {
+    public String getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(DoctorID doctorId) {
+    public void setDoctorId(String doctorId) {
         this.doctorId = doctorId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public float getCurrentRating() {
+        return currentRating;
+    }
+
+    public void setCurrentRating(float currentRating) {
+        this.currentRating = currentRating;
     }
 }

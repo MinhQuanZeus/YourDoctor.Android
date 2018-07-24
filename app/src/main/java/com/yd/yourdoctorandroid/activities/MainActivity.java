@@ -92,12 +92,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupUI() {
         ButterKnife.bind(this);
 
-        setSupportActionBar(tb_main);
+
         View headerView = navigationView_main.inflateHeaderView(R.layout.nav_header_main);
         iv_ava_user = headerView.findViewById(R.id.iv_ava_user);
         tv_name_user = headerView.findViewById(R.id.tv_name_user);
         tv_money_user = headerView.findViewById(R.id.tv_money_user);
 
+        setSupportActionBar(tb_main);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
@@ -161,30 +162,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-        loadData();
+        pb_main.setVisibility(View.GONE);
     }
 
-    private void loadData() {
-        LoadDefaultModel.getInstance();
-        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
-        getListIDFavoriteDoctor.getMainObjectIDFavorite(currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
-            @Override
-            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
-                MainObjectIDFavorite mainObject = response.body();
-                if(mainObject != null){
-                    currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
-                    SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                }
-                pb_main.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
-                pb_main.setVisibility(View.GONE);
-            }
-        });
-    }
 
     @Override
     public void onBackPressed() {

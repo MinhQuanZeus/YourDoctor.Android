@@ -36,6 +36,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.BuildConfig;
@@ -47,6 +48,7 @@ import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Patient;
 import com.yd.yourdoctorandroid.networks.services.RegisterPatientService;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 
@@ -304,7 +306,7 @@ public class RegisterFragment extends Fragment {
                 .enqueue(new Callback<AuthResponse>() {
                     @Override
                     public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-                        btnSignUp.revertAnimation();
+
                         if (finalFile != null) {
                             try {
                                 finalFile.delete();
@@ -314,10 +316,9 @@ public class RegisterFragment extends Fragment {
                         if (response.code() == 200 || response.code() == 201) {
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            getActivity().startActivity(intent);
+                            FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                            LoadDefaultModel.getInstance().loadFavoriteDoctor( response.body().getPatient(), getActivity(), btnSignUp);
+
                         } else {
                             CommonErrorResponse commonErrorResponse = parseToCommonError(response);
                             if (commonErrorResponse.getError() != null) {
@@ -325,6 +326,7 @@ public class RegisterFragment extends Fragment {
                                 Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
                                 Log.d("RESPONSE", error);
                             }
+                            btnSignUp.revertAnimation();
                         }
                     }
 
