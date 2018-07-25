@@ -1,5 +1,6 @@
 package com.yd.yourdoctorandroid.activities;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -86,7 +87,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private AlertDialog alertDialog;
 
-    private final String URL_SERVER = "http://192.168.124.103:3000";
+    private final String URL_SERVER = "http://192.168.124.100:3000";
 
     private Socket mSocket;
     private ChatAdpater chatApapter;
@@ -119,7 +120,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Log.e("chat activity ", chatHistoryID);
         Log.e("Doctor Choice ", doctorChoiceId);
         //doctorChoice = (Doctor) intent.getSerializableExtra("doctorChoice");
-
+//
         recordsChat = new ArrayList<>();
         chatApapter = new ChatAdpater(getApplicationContext(), recordsChat, currentPaitent.getId());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -140,6 +141,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             mSocket = IO.socket(URL_SERVER);
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(),"Không kết nối được server chat", Toast.LENGTH_LONG).show();
         }
 
         mSocket.connect();
@@ -153,6 +155,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         mSocket.on("errorUpdate", onErrorUpdate);
 
         mSocket.on("finishConversation", onFinishMessage);
+
+        mSocket.on("conversationDone", onConversationDone);
 
         loadDoctorChoice(doctorChoiceId);
 
@@ -235,6 +239,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private Emitter.Listener onConversationDone = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String message = (String) args[0];
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }
+    };
+
     private Emitter.Listener onErrorUpdate = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -242,12 +260,29 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     String message = (String) args[0];
-                    Toast.makeText(getApplicationContext(), "Cuộc trò chuyện đã kết thúc vì vượt quá số tin nhắn lựa chọn của bệnh nhân", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
                 }
             });
         }
     };
+
+//    private void testDialoag(){
+//        new AlertDialog.Builder(getApplicationContext())
+//                .setIcon(android.R.drawable.ic_dialog_alert)
+//                .setTitle("Xác nhận việc kết th")
+//                .setMessage("Are you sure you want to close this activity?")
+//                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener()
+//                {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        //mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+//                        dialog.dismiss();
+//                    }
+//
+//                })
+//                .show();
+//    }
 
     private Emitter.Listener onFinishMessage = new Emitter.Listener() {
         @Override
@@ -257,36 +292,22 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     String message = (String) args[0];
                     Log.e("emitt anh le", message);
-                    progressBar.setVisibility(View.GONE);
+                    //progressBar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                    alertDialog.setTitle("Xác nhận việc kết thúc cuộc trò chuyện");
-                    //mainObject.getObjConversation().getContentTopic();
-                    alertDialog.setMessage("Bạn có chắc muốn kết thúc cuộc trò chuyện không ?");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Hủy",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    progressBar.setVisibility(View.VISIBLE);
-                                    mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
-                                }
-                            });
-                    alertDialog.show();
-//                    AlertDialog alertDialog = new AlertDialog.Builder(ChatActivity.this).create();
-//                    alertDialog.setTitle("Xác nhận kết thúc cuộc tư vấn thành công");
-//                    //mainObject.getObjConversation().getContentTopic();
-//                    alertDialog.setMessage(message);
-//                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-//                            new DialogInterface.OnClickListener() {
+//                    new AlertDialog.Builder(getApplicationContext())
+//                            .setIcon(android.R.drawable.ic_dialog_alert)
+//                            .setTitle("Xác nhận việc kết th")
+//                            .setMessage("Are you sure you want to close this activity?")
+//                            .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener()
+//                            {
+//                                @Override
 //                                public void onClick(DialogInterface dialog, int which) {
-//                                    backToMainActivity();
+//                                    //mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+//                                    dialog.dismiss();
 //                                }
-//                            });
-//                    alertDialog.show();
+//
+//                            })
+//                            .show();
 
                 }
             });
@@ -343,21 +364,45 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.iv_done: {
-                alertDialog.dismiss();
-                alertDialog.setTitle("Xác nhận việc kết thúc cuộc trò chuyện");
-                //mainObject.getObjConversation().getContentTopic();
-                alertDialog.setMessage("Bạn có chắc muốn kết thúc cuộc trò chuyện không ?");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Hủy",
-                        new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Xác nhận việc kết thúc cuộc tư vấn")
+                        .setMessage("Bạn có chắc chắn muốn kết thúc cuộc tư vấn không?")
+                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener()
+                        {
+                            @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
+                               mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+
                             }
-                        });
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                progressBar.setVisibility(View.VISIBLE);
-                                mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+
+                        })
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
+
+                break;
+
+            }
+//                alertDialog.dismiss();
+//                alertDialog.setTitle("Xác nhận việc kết thúc cuộc trò chuyện");
+//                //mainObject.getObjConversation().getContentTopic();
+//                alertDialog.setMessage("Bạn có chắc muốn kết thúc cuộc trò chuyện không ?");
+//                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Hủy",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                progressBar.setVisibility(View.VISIBLE);
+//                                mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
 
 
                                 //For test
@@ -380,11 +425,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 //                                        });
 //                                alertDialog.show();
 
-                            }
-                        });
-                alertDialog.show();
-                break;
-            }
+
+
             case R.id.iv_info: {
                 alertDialog.dismiss();
                 alertDialog = new AlertDialog.Builder(ChatActivity.this).create();
