@@ -84,18 +84,29 @@ public class DoctorFavoriteListFragment extends Fragment {
         doctorFavoriteListAdapter = new DoctorFavoriteListAdapter(getContext());
 
         setDoctorFavoriteList(rv_list_doctor_favorite);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(tb_favorite);
-        final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
-        actionbar.setTitle(R.string.ranking_doctor);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(tb_favorite);
+//        final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        actionbar.setDisplayHomeAsUpEnabled(true);
+//        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+//        actionbar.setTitle(R.string.ranking_doctor);
+//
+//        tb_favorite.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                ScreenManager.backFragment(getFragmentManager());
+//
+//            }
+//        });
 
+        tb_favorite.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        tb_favorite.setTitle(getResources().getString(R.string.favorite_doctor));
+        tb_favorite.setTitleTextColor(getResources().getColor(R.color.primary_text));
         tb_favorite.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 ScreenManager.backFragment(getFragmentManager());
-
             }
         });
 
@@ -110,7 +121,6 @@ public class DoctorFavoriteListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
     private void setDoctorFavoriteList(RecyclerView rv_list_doctor_ranking) {
@@ -171,9 +181,9 @@ public class DoctorFavoriteListFragment extends Fragment {
                 if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
                     for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
                         Doctor doctor = new Doctor();
-                        doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
+                        doctor.setAvatar(favoriteDoctor.getAvatar());
                         doctor.setFirstName(favoriteDoctor.getFirstName());
-                        doctor.setMiddleName(favoriteDoctor.getLastName());
+                        doctor.setMiddleName(favoriteDoctor.getMiddleName());
                         doctor.setLastName( favoriteDoctor.getLastName());
                         doctor.setCurrentRating((float) 3.5);
                         doctor.setDoctorId(favoriteDoctor.get_id());
@@ -181,7 +191,6 @@ public class DoctorFavoriteListFragment extends Fragment {
                     }
 
                     doctorFavoriteListAdapter.addAll(doctorList);
-
 
                     if (doctorList.size()==5) doctorFavoriteListAdapter.addLoadingFooter();
                     else isLastPage = true;

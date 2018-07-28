@@ -1,7 +1,11 @@
 package com.yd.yourdoctorandroid.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PorterDuff;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -37,6 +41,7 @@ import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectFavorit
 import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
 import com.yd.yourdoctorandroid.networks.models.Doctor;
 import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
@@ -87,6 +92,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("MainActivity", "USER_INFO");
         Log.d("MainActivity", SharedPrefs.getInstance().get("USER_INFO", Patient.class).toString());
         Log.d("MainActivity", SharedPrefs.getInstance().get("JWT_TOKEN", String.class));
+
+
+//        TimeOutChatService receiver = new TimeOutChatService();
+//        final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+//        registerReceiver(receiver, filter);
+
+
+
     }
 
     private void setupUI() {
@@ -121,8 +134,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Fortest
+                Intent intentTimeOut = new Intent(getApplicationContext(), TimeOutChatService.class);
+                intentTimeOut.putExtra("idChat", "abc");
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 234324243, intentTimeOut, 0);
+                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                        + (5 * 1000), pendingIntent);
 
-                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+               // ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
             }
         });
 
@@ -163,6 +183,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
         pb_main.setVisibility(View.GONE);
+    }
+
+    private void serviceCheckNetword(){
+//        ReactiveNetwork
+//                .observeNetworkConnectivity(getApplicationContext())
+//                .flatMap(connectivity -> {
+//                    if (connectivity.state() == NetworkInfo.State.CONNECTED) {
+//                        return getResponse("https://your-doctor-test2.herokuapp.com");
+//                    }
+//                    return Observable.error(() -> new RuntimeException("not connected"));
+//                })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        response  -> onBackPressed(),
+//                        throwable -> /* handle error here */)
+//   );
     }
 
 

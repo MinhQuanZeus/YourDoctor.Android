@@ -67,18 +67,30 @@ public class DoctorRankFragment extends Fragment {
         setupViewPager(vp_doctorRanking);
         vp_doctorRanking.setCurrentItem(0);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(tb_logo_specialist);
-        final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
-        actionbar.setTitle(R.string.ranking_doctor);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(tb_logo_specialist);
+//        final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        actionbar.setDisplayHomeAsUpEnabled(true);
+//        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
+//        actionbar.setTitle(R.string.ranking_doctor);
+//
+//        tb_logo_specialist.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
+        tb_logo_specialist.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        tb_logo_specialist.setTitle(getResources().getString(R.string.ranking_doctor));
+        tb_logo_specialist.setTitleTextColor(getResources().getColor(R.color.primary_text));
         tb_logo_specialist.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ScreenManager.backFragment(getFragmentManager());
             }
         });
+
 
         tab_specialists.setupWithViewPager(vp_doctorRanking);
         tab_specialists.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

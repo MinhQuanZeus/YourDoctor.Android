@@ -5,6 +5,11 @@ import android.content.SharedPreferences;
 
 import com.yd.yourdoctorandroid.Application;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class SharedPrefs {
     private static final String PREFS_NAME = "share_prefs";
     private static SharedPrefs mInstance;
@@ -59,6 +64,40 @@ public class SharedPrefs {
         }
     }
 
+//    public <T> void getListString(String key, Class<T> anonymousClass){
+//        Set<String> set = anonymousClass.getStringSet("key", null);
+//
+//        mSharedPreferences.getStringSet(String key, )
+//
+//        SharedPreferences settings = this.getSharedPreferences("YourActivityPreferences", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = settings.edit();
+//        Set<String> myStrings = settings.getStringSet("myStrings", new HashSet<String>());
+//
+//    }
+//
+//    public <T> void putStringSet(String key, T data){
+//        SharedPreferences.Editor editor = mSharedPreferences.edit();
+//
+//        editor.putStringSet(key, (Set<String>) data);
+//        editor.apply();
+//
+////        Set<String> set = new HashSet<String>();
+////        set.addAll((Collection<? extends String>) data);
+////        editor.putStringSet(key, set);
+////        editor.apply();
+//
+//        // Get the current list.
+//        SharedPreferences settings = this.getSharedPreferences("YourActivityPreferences", Context.MODE_PRIVATE);
+//        SharedPreferences.Editor editor = settings.edit();
+//        Set<String> myStrings = settings.getStringSet("myStrings", new HashSet<String>());
+//
+//// Add the new value.
+//        myStrings.add("Another string");
+//
+//// Save the list.
+//
+//    }
+
     public <T> void put(String key, T data) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         if (data instanceof String) {
@@ -71,9 +110,16 @@ public class SharedPrefs {
             editor.putInt(key, (Integer) data);
         } else if (data instanceof Long) {
             editor.putLong(key, (Long) data);
-        } else {
+        }
+        else {
             editor.putString(key, Application.self().getGSon().toJson(data));
         }
+        editor.apply();
+    }
+
+    public void remove(String key){
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.remove(key);
         editor.apply();
     }
 

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -37,6 +38,7 @@
 
         <activity android:name=".activities.MainActivity">
 
+
         </activity>
         <activity android:name=".activities.ChatActivity">
 
@@ -49,7 +51,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <receiver android:name=".services.TimeOutChatService"></receiver>
+        <receiver android:name=".services.CheckNetWordChangeService">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
         <service
             android:name=".services.YDFirebaseMessagingService"
             android:exported="false">

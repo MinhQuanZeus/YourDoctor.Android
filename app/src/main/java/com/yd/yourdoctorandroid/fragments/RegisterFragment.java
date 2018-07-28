@@ -548,13 +548,7 @@ public class RegisterFragment extends Fragment {
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSE_PHOTO);
     }
 
-    private void deleteCurrentPhoto() {
-        if (mImageToBeAttached != null) {
-            mImageToBeAttached.recycle();
-            mImageToBeAttached = null;
-            ivAvatar.setImageResource(R.drawable.patient_avatar);
-        }
-    }
+
 
     private void displayAttachImageDialog() {
         CharSequence[] items;
@@ -578,6 +572,14 @@ public class RegisterFragment extends Fragment {
             }
         });
         builder.show();
+    }
+
+    private void deleteCurrentPhoto() {
+        if (mImageToBeAttached != null) {
+            mImageToBeAttached.recycle();
+            mImageToBeAttached = null;
+            // ivAvatar.setImageResource(R.drawable.patient_avatar);
+        }
     }
 
     @Override

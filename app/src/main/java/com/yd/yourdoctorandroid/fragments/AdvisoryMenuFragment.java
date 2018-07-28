@@ -1,7 +1,9 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -51,6 +53,7 @@ import com.yd.yourdoctorandroid.networks.postChatHistory.PostChatHistoryService;
 import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentHistory;
 import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentResponse;
 import com.yd.yourdoctorandroid.networks.postPaymentHistory.PostPaymentHistoryService;
+import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
@@ -497,6 +500,14 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     ChatHistoryResponse chatHistoryResponse = (ChatHistoryResponse) response.body();
 
                     progressBar.setVisibility(View.GONE);
+
+                    Intent intentTimeOut = new Intent(getContext(), TimeOutChatService.class);
+                    intentTimeOut.putExtra("idChat", chatHistoryResponse.getChatHistory().get_id());
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 234324243, intentTimeOut, 0);
+                    AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                            + (30 * 1000), pendingIntent);
+
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
                     // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -506,6 +517,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     intent.putExtra("chatHistoryId",chatHistoryResponse.getChatHistory().get_id());
                     intent.putExtra("doctorChoiceId",doctorChoice.getDoctorId());
                     getActivity().startActivity(intent);
+
                 } else {
                     Toast.makeText(getContext(), "Đã có lỗi xảy ra 2", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);

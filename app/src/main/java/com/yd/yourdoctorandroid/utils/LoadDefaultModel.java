@@ -1,5 +1,8 @@
 package com.yd.yourdoctorandroid.utils;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
@@ -26,8 +29,10 @@ import com.yd.yourdoctorandroid.networks.models.TypeAdvisory;
 import com.yd.yourdoctorandroid.networks.saveTokenNotification.SaveTokenNotificationService;
 import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenNotification;
 import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenResponse;
+import com.yd.yourdoctorandroid.services.TimeOutChatService;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,7 +191,7 @@ public class LoadDefaultModel {
 
             @Override
             public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
-                Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                //Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -223,6 +228,7 @@ public class LoadDefaultModel {
                 MainObjectIDFavorite mainObject = response.body();
                 if (mainObject != null) {
                     currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                    SharedPrefs.getInstance().put("USER_INFO", currentPatient);
                     Intent intent = new Intent(fragmentActivity, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -239,6 +245,33 @@ public class LoadDefaultModel {
         });
 
     }
+
+    public void startServiceTimeOut(Context context , String idChat){
+        Intent intent = new Intent(context, TimeOutChatService.class);
+        intent.putExtra("idChat","theanh");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 234324243, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                + (360 * 1000), pendingIntent);
+    }
+
+    public void addIdChatToListTimeOut(String idChat){
+        List<String> listChatTimeOut =SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
+        if(listChatTimeOut == null){
+            listChatTimeOut = new ArrayList<>();
+            listChatTimeOut.add(idChat);
+            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
+        }else {
+            listChatTimeOut.add(idChat);
+            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
+            Log.e("HelloA", "put success");
+        }
+    }
+
+    public void getListPendingChat(){
+        //TODO
+    }
+
 
 
 }
