@@ -19,6 +19,8 @@
 
     <LinearLayout
         android:id="@+id/linear"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_logo"
@@ -35,8 +37,6 @@
                 android:id="@+id/ed_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="46dp"
-                android:layout_marginRight="46dp"
                 android:drawableLeft="@drawable/ic_phone_black_24dp"
                 android:drawablePadding="12dp"
                 android:gravity="left"
@@ -61,8 +61,6 @@
                 android:id="@+id/ed_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="46dp"
-                android:layout_marginRight="46dp"
                 android:drawableLeft="@drawable/ic_lock_outline_black_24dp"
                 android:drawablePadding="12dp"
                 android:hint="@string/password"
@@ -127,7 +125,7 @@
             android:layout_below="@id/til_address"
             android:layout_gravity="center"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/buttonshape"
             android:gravity="center"
             android:shadowColor="#A8A8A8"
@@ -142,6 +140,7 @@
             app:spinning_bar_width="4dp" />
 
         <LinearLayout
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">

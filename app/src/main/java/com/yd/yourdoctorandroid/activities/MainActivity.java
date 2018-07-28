@@ -20,6 +20,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -51,25 +53,31 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    @BindView(R.id.tabLayout)
+    @BindView(R.id.tab_layout)
     TabLayout tabLayout;
 
-    @BindView(R.id.viewPager)
+    @BindView(R.id.view_pager)
     ViewPager viewPager;
 
-    @BindView(R.id.fabQuestion)
+    @BindView(R.id.fab_question)
     FloatingActionButton fabQuestion;
 
-    @BindView(R.id.drawLayoutMain)
+    @BindView(R.id.fab_chat)
+    FloatingActionButton fabChat;
+
+    @BindView(R.id.fab_video_call)
+    FloatingActionButton fabVideoCall;
+
+    @BindView(R.id.draw_layout_main)
     DrawerLayout drawerViewMenu;
 
-    @BindView(R.id.navViewMenu)
+    @BindView(R.id.nav_view_menu)
     NavigationView navigationViewMain;
 
     @BindView(R.id.toolbar)
     Toolbar tbMain;
 
-    @BindView(R.id.pbMain)
+    @BindView(R.id.pb_main)
     ProgressBar pbMain;
 
     Patient currentPatient;
@@ -77,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView ivAvaUser;
     TextView tvNameUser;
     TextView tvMoneyUser;
+
+    private Boolean isFabOpen = false;
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +104,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
 
         View headerView = navigationViewMain.inflateHeaderView(R.layout.nav_header_main);
-        ivAvaUser = headerView.findViewById(R.id.ivAvaUser);
-        tvNameUser = headerView.findViewById(R.id.tvNameUser);
-        tvMoneyUser = headerView.findViewById(R.id.tvMoneyUser);
+        ivAvaUser = headerView.findViewById(R.id.iv_ava_user);
+        tvNameUser = headerView.findViewById(R.id.tv_name_user);
+        tvMoneyUser = headerView.findViewById(R.id.tv_money_user);
+        // Animation
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
 
         setSupportActionBar(tbMain);
         ActionBar actionbar = getSupportActionBar();
@@ -120,7 +136,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fabQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rlContainer, true, true);
+                animateFAB();
+            }
+        });
+        fabChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+            }
+        });
+        fabVideoCall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -170,6 +199,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         pbMain.setVisibility(View.GONE);
     }
 
+    public void animateFAB(){
+
+        if(isFabOpen){
+
+            fabQuestion.startAnimation(rotate_backward);
+            fabVideoCall.startAnimation(fab_close);
+            fabChat.startAnimation(fab_close);
+            fabVideoCall.setClickable(false);
+            fabChat.setClickable(false);
+            isFabOpen = false;
+        } else {
+
+            fabQuestion.startAnimation(rotate_forward);
+            fabVideoCall.startAnimation(fab_open);
+            fabChat.startAnimation(fab_open);
+            fabVideoCall.setClickable(true);
+            fabChat.setClickable(true);
+            isFabOpen = true;
+        }
+    }
+
     @Override
     public void onBackPressed() {
 
@@ -202,35 +252,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         if (item == null) return false;
         switch (item.getItemId()) {
-            case R.id.navCreateAdvisoryMain: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rlContainer, true, true);
+            case R.id.nav_create_advisory_main: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
                 break;
             }
-            case R.id.navFavoriteDoctorMain: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rlContainer, true, true);
+            case R.id.nav_favorite_doctor_main: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
                 break;
             }
-            case R.id.navExchangeMoneyMain: {
+            case R.id.nav_exchange_money_main: {
                 break;
             }
-            case R.id.navProfileMain: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new UserProfileFragment(), R.id.rlContainer, true, true);
+            case R.id.nav_profile_main: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new UserProfileFragment(), R.id.rl_container, true, true);
                 break;
             }
-            case R.id.navRankingDoctoMain: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rlContainer, true, true);
+            case R.id.nav_ranking_docto_main: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rl_container, true, true);
                 break;
             }
-            case R.id.navAboutUs:{
-                ScreenManager.openFragment(getSupportFragmentManager(), new AboutUsFragment(), R.id.rlContainer, true, true);
-
-                break;
-            }
-
-            case R.id.navLogoutMain: {
+            case R.id.nav_logout_main: {
                 //Test
-                handleLogOut();
-                //ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rlContainer, true, true);
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rl_container, true, true);
                 break;
 
             }

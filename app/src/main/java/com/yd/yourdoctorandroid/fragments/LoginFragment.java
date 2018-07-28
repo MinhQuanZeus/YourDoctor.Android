@@ -1,10 +1,13 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
@@ -41,6 +45,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -48,6 +54,7 @@ public class LoginFragment extends Fragment {
 
     public static final String JWT_TOKEN = "JWT_TOKEN";
     public static final String USER_INFO = "USER_INFO";
+    private final String prefname = "my_data";
     @BindView(R.id.tv_signup)
     TextView tvSignUp;
     @BindView(R.id.ed_phone)
@@ -60,11 +67,9 @@ public class LoginFragment extends Fragment {
     TextInputLayout tilPassword;
     @BindView(R.id.btn_sign_in)
     CircularProgressButton btnLogin;
+    @BindView(R.id.remember)
+    CheckBox cbRememder;
     private Unbinder unbinder;
-
-    //Check box remember username, password
-    @BindView(R.id.checkBoxRemember)
-    CheckBox checkBoxRemember;
 
     int countSuccessInitialization;
 
@@ -84,14 +89,7 @@ public class LoginFragment extends Fragment {
 
     private void setUp(View view) {
         unbinder = ButterKnife.bind(this, view);
-        String phone = SharedPrefs.getInstance().get("phone",String.class);
-        String password = SharedPrefs.getInstance().get("password",String.class);
-        if(phone != null && phone!= "" && password != null && password != null){
-            checkBoxRemember.setChecked(true);
-            edPhone.setText(phone);
-            edPassword.setText(password);
-        }
-
+        tvSignUp = (TextView) view.findViewById(R.id.tv_signup);
         LoadDefaultModel.getInstance();
         countSuccessInitialization = 0;
         tvSignUp.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +106,6 @@ public class LoginFragment extends Fragment {
             }
         });
     }
-
 
     private boolean onValidate() {
         boolean isValidate = true;
@@ -161,18 +158,6 @@ public class LoginFragment extends Fragment {
                     Log.e("idPatient", response.body().getPatient().getId());
                     FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
                     SocketUtils.getInstance().reConnect();
-
-                    if(checkBoxRemember.isChecked()){
-                        SharedPrefs.getInstance().put("phone",edPhone.getText().toString());
-                        SharedPrefs.getInstance().put("password",edPassword.getText().toString());
-                    }else {
-                        SharedPrefs.getInstance().put("phone","");
-                        SharedPrefs.getInstance().put("password","");
-                    }
-
-
-
-
                     LoadDefaultModel.getInstance().loadFavoriteDoctor(response.body().getPatient(), getActivity(), btnLogin);
 
                 } else {
@@ -226,4 +211,43 @@ public class LoginFragment extends Fragment {
         unbinder.unbind();
     }
 
+    public void savingPreferences() {
+        SharedPreferences pre = this.getActivity().getSharedPreferences(prefname, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+        String user = edPhone.getText().toString();
+        String pwd = edPassword.getText().toString();
+        boolean bchk = cbRememder.isChecked();
+        if (!bchk) {
+            editor.clear();
+        } else {
+            editor.putString("user", user);
+            editor.putString("pwd", pwd);
+            editor.putBoolean("checked", bchk);
+        }
+        editor.commit();
+    }
+
+    public void restoringPreferences() {
+        SharedPreferences pre = this.getActivity().getSharedPreferences(prefname, MODE_PRIVATE);
+        boolean bchk = pre.getBoolean("checked", false);
+        if (bchk) {
+            String user = pre.getString("user", "");
+            String pwd = pre.getString("pwd", "");
+            edPhone.setText(user);
+            edPassword.setText(pwd);
+        }
+        cbRememder.setChecked(bchk);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        restoringPreferences();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        savingPreferences();
+    }
 }
