@@ -16,7 +16,7 @@ import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
-import com.yd.yourdoctorandroid.networks.models.Certification;
+import com.yd.yourdoctorandroid.models.Certification;
 
 import java.util.List;
 

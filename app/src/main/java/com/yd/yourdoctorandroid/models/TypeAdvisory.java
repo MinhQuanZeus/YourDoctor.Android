@@ -1,18 +1,24 @@
-package com.yd.yourdoctorandroid.networks.models;
+package com.yd.yourdoctorandroid.models;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class TypeAdvisory {
-    String _id;
+
+    @SerializedName("_id")
+    @Expose
+    String id;
     String name;
     long price;
     int limitNumberRecords;
     String description;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

@@ -3,13 +3,12 @@ package com.yd.yourdoctorandroid.activities;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.fragments.LoginFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
 public class AuthActivity extends AppCompatActivity {
@@ -27,9 +26,7 @@ public class AuthActivity extends AppCompatActivity {
             Patient patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
             FirebaseMessaging.getInstance().subscribeToTopic(patient.getId());
             startActivity(intent);
-
         } else {
-
             ScreenManager.openFragment(getSupportFragmentManager(), new LoginFragment(), R.id.fl_auth, false, false);
 
         }

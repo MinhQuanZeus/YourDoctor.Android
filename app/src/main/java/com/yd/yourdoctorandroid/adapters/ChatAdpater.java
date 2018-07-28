@@ -1,11 +1,7 @@
 package com.yd.yourdoctorandroid.adapters;
 
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +10,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.networks.models.Record;
+import com.yd.yourdoctorandroid.models.Record;
 
 import java.util.Date;
 import java.util.List;

@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
-import com.yd.yourdoctorandroid.networks.models.Doctor;
+import com.yd.yourdoctorandroid.models.Doctor;
 
 import java.util.List;
 

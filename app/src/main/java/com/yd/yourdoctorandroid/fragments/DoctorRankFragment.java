@@ -7,21 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.networks.RetrofitFactory;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.networks.models.Specialist;
+import com.yd.yourdoctorandroid.models.Specialist;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 
 import java.util.ArrayList;
@@ -30,9 +23,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -145,7 +135,7 @@ public class DoctorRankFragment extends Fragment {
 
         @Override
         public Fragment getItem(int position) {
-            return new ListDoctorRankingSpecialistFragment().setSpecialistId(((Specialist) specialists.get(position)).get_id(), getContext());
+            return new ListDoctorRankingSpecialistFragment().setSpecialistId(((Specialist) specialists.get(position)).getId(), getContext());
 
         }
 

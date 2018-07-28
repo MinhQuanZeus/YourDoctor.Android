@@ -1,7 +1,6 @@
 package com.yd.yourdoctorandroid.networks.getDoctorDetailProfile;
 
-import com.yd.yourdoctorandroid.networks.models.Certification;
-import com.yd.yourdoctorandroid.networks.models.Specialist;
+import com.yd.yourdoctorandroid.models.Certification;
 
 import java.util.List;
 

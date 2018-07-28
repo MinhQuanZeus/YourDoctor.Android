@@ -1,4 +1,4 @@
-package com.yd.yourdoctorandroid.networks.models;
+package com.yd.yourdoctorandroid.models;
 
 public class Record {
     private String recorderID;

@@ -19,7 +19,7 @@ import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorRankingSpecialistAdapter;
 import com.yd.yourdoctorandroid.managers.PaginationScrollListener;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.DoctorRanking;
-import com.yd.yourdoctorandroid.networks.models.Doctor;
+import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.MainObjectRanking;

@@ -31,9 +31,9 @@ import com.yd.yourdoctorandroid.networks.favoriteDoctor.RemoveFavoriteDoctorServ
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.GetDoctorDetailService;
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.MainObjectDetailDoctor;
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.SpecialistDetail;
-import com.yd.yourdoctorandroid.networks.models.Certification;
-import com.yd.yourdoctorandroid.networks.models.Doctor;
-import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.models.Certification;
+import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
 import java.util.ArrayList;

@@ -1,15 +1,9 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,19 +16,11 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.activities.ChatActivity;
-import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Login;
-import com.yd.yourdoctorandroid.networks.models.Patient;
-import com.yd.yourdoctorandroid.networks.postChatHistory.ChatHistoryResponse;
-import com.yd.yourdoctorandroid.networks.postChatHistory.PostChatHistoryService;
-import com.yd.yourdoctorandroid.networks.saveTokenNotification.SaveTokenNotificationService;
-import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenNotification;
-import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenResponse;
 import com.yd.yourdoctorandroid.networks.services.LoginService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;

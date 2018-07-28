@@ -1,4 +1,4 @@
-package com.yd.yourdoctorandroid.networks.models;
+package com.yd.yourdoctorandroid.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

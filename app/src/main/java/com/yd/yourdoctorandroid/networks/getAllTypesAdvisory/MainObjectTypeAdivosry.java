@@ -1,6 +1,6 @@
 package com.yd.yourdoctorandroid.networks.getAllTypesAdvisory;
 
-import com.yd.yourdoctorandroid.networks.models.TypeAdvisory;
+import com.yd.yourdoctorandroid.models.TypeAdvisory;
 
 import java.util.List;
 

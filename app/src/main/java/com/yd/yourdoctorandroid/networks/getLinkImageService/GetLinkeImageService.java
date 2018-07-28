@@ -1,8 +1,5 @@
 package com.yd.yourdoctorandroid.networks.getLinkImageService;
 
-import com.yd.yourdoctorandroid.networks.models.AuthResponse;
-import com.yd.yourdoctorandroid.networks.models.Patient;
-
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Multipart;

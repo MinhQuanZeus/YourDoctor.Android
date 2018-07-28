@@ -38,15 +38,15 @@ import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.DoctorRecommend;
 import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.GetListRecommentDoctorService;
 import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.MainObjectRecommend;
-import com.yd.yourdoctorandroid.networks.models.Doctor;
+import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisoryService;
 import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.MainObjectTypeAdivosry;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.networks.models.Patient;
-import com.yd.yourdoctorandroid.networks.models.Specialist;
-import com.yd.yourdoctorandroid.networks.models.TypeAdvisory;
+import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.models.TypeAdvisory;
 import com.yd.yourdoctorandroid.networks.postChatHistory.ChatHistory;
 import com.yd.yourdoctorandroid.networks.postChatHistory.ChatHistoryResponse;
 import com.yd.yourdoctorandroid.networks.postChatHistory.PostChatHistoryService;
@@ -57,7 +57,6 @@ import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -456,7 +455,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     new PaymentHistory(currentPatient.getId(),
                             typeAdvisoryChoice.getPrice(),
                             currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice(),
-                            typeAdvisoryChoice.get_id(),
+                            typeAdvisoryChoice.getId(),
                             1);
             Log.e("Payment Patient ", paymentHistoryPatient.toString());
             PostPaymentHistoryService postPaymentHistoryService = RetrofitFactory.getInstance().createService(PostPaymentHistoryService.class);
@@ -471,7 +470,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                         chatHistory.setPatientId(currentPatient.getId());
                         chatHistory.setDoctorId(doctorChoice.getDoctorId());
                         chatHistory.setStatus(1);
-                        chatHistory.setTypeAdvisoryID(typeAdvisoryChoice.get_id());
+                        chatHistory.setTypeAdvisoryID(typeAdvisoryChoice.getId());
                         chatHistory.setPaymentPatientID(paymentResponse.paymentsHistory);
                         postHistoryChat(chatHistory);
                         //progressBar.setVisibility(View.GONE);
@@ -622,7 +621,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
 
         GetListRecommentDoctorService getListRecommentDoctorService = RetrofitFactory.getInstance().createService(GetListRecommentDoctorService.class);
-        getListRecommentDoctorService.getListRecommentDoctor(specialistChoice.get_id(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
+        getListRecommentDoctorService.getListRecommentDoctor(specialistChoice.getId(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
             @Override
             public void onResponse(Call<MainObjectRecommend> call, Response<MainObjectRecommend> response) {
                 MainObjectRecommend mainObject = response.body();

@@ -4,17 +4,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.yd.yourdoctorandroid.activities.AuthActivity;
-import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisoryService;
@@ -23,16 +15,11 @@ import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavorite
 import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.networks.models.Patient;
-import com.yd.yourdoctorandroid.networks.models.Specialist;
-import com.yd.yourdoctorandroid.networks.models.TypeAdvisory;
-import com.yd.yourdoctorandroid.networks.saveTokenNotification.SaveTokenNotificationService;
-import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenNotification;
-import com.yd.yourdoctorandroid.networks.saveTokenNotification.TokenResponse;
+import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.models.TypeAdvisory;
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
 
-import java.io.IOException;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 

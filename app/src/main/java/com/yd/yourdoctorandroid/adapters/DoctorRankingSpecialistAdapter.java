@@ -15,13 +15,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
-import com.yd.yourdoctorandroid.events.OnClickDoctorChosen;
-import com.yd.yourdoctorandroid.fragments.DoctorFavoriteListFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.networks.models.Doctor;
-
-import org.greenrobot.eventbus.EventBus;
+import com.yd.yourdoctorandroid.models.Doctor;
 
 import java.util.ArrayList;
 import java.util.List;

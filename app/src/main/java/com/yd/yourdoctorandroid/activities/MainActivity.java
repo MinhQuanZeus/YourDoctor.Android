@@ -3,9 +3,7 @@ package com.yd.yourdoctorandroid.activities;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.PorterDuff;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -33,27 +31,13 @@ import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
 import com.yd.yourdoctorandroid.fragments.UserProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.networks.RetrofitFactory;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.FavoriteDoctor;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListDoctorFavoriteService;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectFavoriteList;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
-import com.yd.yourdoctorandroid.networks.models.Doctor;
-import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
-import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

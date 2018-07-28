@@ -1,7 +1,7 @@
-package com.yd.yourdoctorandroid.networks.models;
+package com.yd.yourdoctorandroid.models;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 public class Doctor {
     private String id;
     private String phoneNumber;

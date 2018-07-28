@@ -1,26 +1,15 @@
 package com.yd.yourdoctorandroid.services;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.net.ConnectivityManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.checkStatusChatService.CheckStatusChatService;
 import com.yd.yourdoctorandroid.networks.checkStatusChatService.StatusResponse;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.networks.models.Specialist;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.NetworkUtils;
-import com.yd.yourdoctorandroid.utils.SharedPrefs;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
