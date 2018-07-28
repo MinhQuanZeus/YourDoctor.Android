@@ -23,8 +23,11 @@ public class RetrofitFactory {
                 .writeTimeout(2000, TimeUnit.SECONDS)
                 .readTimeout(3000, TimeUnit.SECONDS)
                 .build();
+        //https://your-doctor-test2.herokuapp.com/api/
+        //your-doctor.herokuapp.com
+        //192.168.124.106
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://your-doctor.herokuapp.com/api/")
+                .baseUrl("https://your-doctor-test2.herokuapp.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();

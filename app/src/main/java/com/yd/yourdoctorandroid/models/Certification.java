@@ -1,22 +1,21 @@
 package com.yd.yourdoctorandroid.models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 public class Certification {
-    private String _id;
+    @SerializedName("_id")
+    @Expose
+    private String id;
     private String name;
-    private String path_image;
+    private String pathImage;
 
-    public Certification(String _id, String name, String path_image) {
-        this._id = _id;
-        this.name = name;
-        this.path_image = path_image;
+    public String getId() {
+        return id;
     }
 
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -27,11 +26,11 @@ public class Certification {
         this.name = name;
     }
 
-    public String getPath_image() {
-        return path_image;
+    public String getPathImage() {
+        return pathImage;
     }
 
-    public void setPath_image(String path_image) {
-        this.path_image = path_image;
+    public void setPathImage(String pathImage) {
+        this.pathImage = pathImage;
     }
 }

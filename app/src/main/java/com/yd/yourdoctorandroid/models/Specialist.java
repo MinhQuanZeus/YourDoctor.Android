@@ -1,15 +1,21 @@
-package com.yd.yourdoctorandroid.networks.getSpecialistService;
+package com.yd.yourdoctorandroid.models;
+
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 public class Specialist {
-    String _id;
+
+    @SerializedName("_id")
+    @Expose
+    String id;
     String name;
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -23,7 +29,7 @@ public class Specialist {
     @Override
     public String toString() {
         return "Specialist{" +
-                "_id='" + _id + '\'' +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }

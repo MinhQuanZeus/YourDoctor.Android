@@ -1,5 +1,7 @@
 package com.yd.yourdoctorandroid.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -17,17 +19,20 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
+import com.yd.yourdoctorandroid.fragments.DoctorFavoriteListFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
 import com.yd.yourdoctorandroid.fragments.UserProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
 import butterknife.BindView;
@@ -54,6 +59,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @BindView(R.id.toolbar)
     Toolbar tb_main;
 
+    @BindView(R.id.pb_main)
+    ProgressBar pb_main;
+
+    Patient currentPatient;
+
     ImageView iv_ava_user;
     TextView tv_name_user;
     TextView tv_money_user;
@@ -66,22 +76,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.d("MainActivity", "USER_INFO");
         Log.d("MainActivity", SharedPrefs.getInstance().get("USER_INFO", Patient.class).toString());
         Log.d("MainActivity", SharedPrefs.getInstance().get("JWT_TOKEN", String.class));
+
+
+//        TimeOutChatService receiver = new TimeOutChatService();
+//        final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+//        registerReceiver(receiver, filter);
+
+
+
     }
 
     private void setupUI() {
         ButterKnife.bind(this);
 
-        setSupportActionBar(tb_main);
+
         View headerView = navigationView_main.inflateHeaderView(R.layout.nav_header_main);
         iv_ava_user = headerView.findViewById(R.id.iv_ava_user);
         tv_name_user = headerView.findViewById(R.id.tv_name_user);
         tv_money_user = headerView.findViewById(R.id.tv_money_user);
 
+        setSupportActionBar(tb_main);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
-        Picasso.with(this).load("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg").transform(new CropCircleTransformation()).into(iv_ava_user);
+        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+        if(currentPatient != null){
+            tv_name_user.setText(currentPatient.getfName() + " " + currentPatient.getmName() == null? "" : currentPatient.getmName() + " " + currentPatient.getlName());
+            Picasso.with(this).load(currentPatient.getAvatar().toString()).transform(new CropCircleTransformation()).into(iv_ava_user);
+            tv_money_user.setText(currentPatient.getRemainMoney() + "" );
+        }
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, draw_layout_main, tb_main, R.string.app_name, R.string.app_name);
@@ -93,8 +118,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab_question.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //Fortest
+                Intent intentTimeOut = new Intent(getApplicationContext(), TimeOutChatService.class);
+                intentTimeOut.putExtra("idChat", "abc");
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 234324243, intentTimeOut, 0);
+                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                        + (5 * 1000), pendingIntent);
 
-                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+               // ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
             }
         });
 
@@ -134,8 +166,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
+        pb_main.setVisibility(View.GONE);
     }
+
+    private void serviceCheckNetword(){
+//        ReactiveNetwork
+//                .observeNetworkConnectivity(getApplicationContext())
+//                .flatMap(connectivity -> {
+//                    if (connectivity.state() == NetworkInfo.State.CONNECTED) {
+//                        return getResponse("https://your-doctor-test2.herokuapp.com");
+//                    }
+//                    return Observable.error(() -> new RuntimeException("not connected"));
+//                })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        response  -> onBackPressed(),
+//                        throwable -> /* handle error here */)
+//   );
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -174,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_favorite_doctor_main: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
                 break;
             }
             case R.id.nav_exchange_money_main: {

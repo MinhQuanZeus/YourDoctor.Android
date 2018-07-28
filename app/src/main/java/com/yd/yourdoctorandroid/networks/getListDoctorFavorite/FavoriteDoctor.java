@@ -1,11 +1,11 @@
-package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
+package com.yd.yourdoctorandroid.networks.getListDoctorFavorite;
 
-public class DoctorID {
-    
+public class FavoriteDoctor {
     String _id;
     String firstName;
     String middleName;
     String lastName;
+    String avatar;
 
     public String get_id() {
         return _id;
@@ -37,5 +37,13 @@ public class DoctorID {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 }

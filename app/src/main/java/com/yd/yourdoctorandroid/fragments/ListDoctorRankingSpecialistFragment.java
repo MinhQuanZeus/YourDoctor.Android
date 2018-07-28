@@ -18,9 +18,9 @@ import android.widget.ProgressBar;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorRankingSpecialistAdapter;
 import com.yd.yourdoctorandroid.managers.PaginationScrollListener;
+import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.DoctorRanking;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
-import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.DoctorRanking;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.MainObjectRanking;
 
@@ -145,10 +145,12 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                 if (doctorRankingList != null && doctorRankingList.size() > 0) {
                     for (DoctorRanking doctorRanking : doctorRankingList) {
                         Doctor doctor = new Doctor();
-                        doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-                        doctor.setFirst_name(doctorRanking.getDoctorId().getFirstName());
-                        doctor.setLast_name(doctorRanking.getDoctorId().getLastName());
-                        doctor.setCurrent_rating((float) doctorRanking.getCurrentRating());
+                        doctor.setAvatar(doctorRanking.getAvatar());
+                        doctor.setFirstName(doctorRanking.getFirstName());
+                        doctor.setLastName(doctorRanking.getLastName());
+                        doctor.setMiddleName(doctorRanking.getMiddleName());
+                        doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
+                        doctor.setDoctorId(doctorRanking.getDoctorId());
                         doctorList.add(doctor);
                     }
 
@@ -160,15 +162,16 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                     else isLastPage = true;
                 }
                 //progressBar.setVisibility(View.GONE);
-
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<MainObjectRanking> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
+                progressBar.setVisibility(View.GONE);
             }
         });
-        progressBar.setVisibility(View.GONE);
+
 
     }
 
@@ -183,10 +186,12 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                 List<Doctor> doctorList = new ArrayList<>();
                 for (DoctorRanking doctorRanking : doctorRankingList) {
                     Doctor doctor = new Doctor();
-                    doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
-                    doctor.setFirst_name(doctorRanking.getDoctorId().getFirstName());
-                    doctor.setLast_name(doctorRanking.getDoctorId().getLastName());
-                    doctor.setCurrent_rating((float) doctorRanking.getCurrentRating());
+                    doctor.setAvatar(doctorRanking.getAvatar());
+                    doctor.setFirstName(doctorRanking.getFirstName());
+                    doctor.setLastName(doctorRanking.getLastName());
+                    doctor.setMiddleName(doctorRanking.getMiddleName());
+                    doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
+                    doctor.setDoctorId(doctorRanking.getDoctorId());
                     doctorList.add(doctor);
                 }
                 doctorRankingAdapter.removeLoadingFooter();  // 2

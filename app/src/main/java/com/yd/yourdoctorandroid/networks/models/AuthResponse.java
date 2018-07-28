@@ -2,6 +2,7 @@ package com.yd.yourdoctorandroid.networks.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.yd.yourdoctorandroid.models.Patient;
 
 public class AuthResponse {
     private String message;

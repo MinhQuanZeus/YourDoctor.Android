@@ -1,7 +1,7 @@
 package com.yd.yourdoctorandroid.networks.services;
 
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
-import com.yd.yourdoctorandroid.networks.models.Patient;
+import com.yd.yourdoctorandroid.models.Patient;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;

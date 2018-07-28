@@ -1,62 +1,63 @@
 package com.yd.yourdoctorandroid.models;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Doctor {
     private String id;
-    private String user_name;
+    private String phoneNumber;
     private String password;
-    private String last_name;
-    private String first_name;
-    private Date birth_day;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String avatar;
+    private String birthday;
     private String address;
     private int status;
-    private String avatar;
-    private long remain_money;
-    private float current_rating;
+    private long remainMoney;
+    private float currentRating;
     private ArrayList<Certification> certificates;
-    private ArrayList<String> id_specialist;
-    private String university_graduate;
-    private int year_graduate;
-    private String place_working;
-
-    public Doctor(String id, String user_name, String password, String last_name, String first_name, Date birth_day, String address, int status, String avatar, long remain_money, float current_rating, ArrayList<Certification> certificates, ArrayList<String> id_specialist, String university_graduate, int year_graduate, String place_working) {
-        this.id = id;
-        this.user_name = user_name;
-        this.password = password;
-        this.last_name = last_name;
-        this.first_name = first_name;
-        this.birth_day = birth_day;
-        this.address = address;
-        this.status = status;
-        this.avatar = avatar;
-        this.remain_money = remain_money;
-        this.current_rating = current_rating;
-        this.certificates = certificates;
-        this.id_specialist = id_specialist;
-        this.university_graduate = university_graduate;
-        this.year_graduate = year_graduate;
-        this.place_working = place_working;
-    }
+    private ArrayList<String> idSpecialist;
+    private String universityGraduate;
+    private String yearGraduate;
+    private String placeWorking;
 
     public Doctor() {
     }
 
-    public String getId() {
+    public Doctor(String doctorId, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, long remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking) {
+        this.id = doctorId;
+        this.phoneNumber = phoneNumber;
+        this.password = password;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.avatar = avatar;
+        this.birthday = birthday;
+        this.address = address;
+        this.status = status;
+        this.remainMoney = remainMoney;
+        this.currentRating = currentRating;
+        this.certificates = certificates;
+        this.idSpecialist = idSpecialist;
+        this.universityGraduate = universityGraduate;
+        this.yearGraduate = yearGraduate;
+        this.placeWorking = placeWorking;
+    }
+
+    public String getDoctorId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setDoctorId(String doctorId) {
+        this.id = doctorId;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPassword() {
@@ -67,28 +68,44 @@ public class Doctor {
         this.password = password;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getFirst_name() {
-        return first_name;
+    public String getMiddleName() {
+        return middleName;
     }
 
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
-    public Date getBirth_day() {
-        return birth_day;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setBirth_day(Date birth_day) {
-        this.birth_day = birth_day;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     public String getAddress() {
@@ -107,28 +124,20 @@ public class Doctor {
         this.status = status;
     }
 
-    public String getAvatar() {
-        return avatar;
+    public long getRemainMoney() {
+        return remainMoney;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    public void setRemainMoney(long remainMoney) {
+        this.remainMoney = remainMoney;
     }
 
-    public long getRemain_money() {
-        return remain_money;
+    public float getCurrentRating() {
+        return currentRating;
     }
 
-    public void setRemain_money(long remain_money) {
-        this.remain_money = remain_money;
-    }
-
-    public float getCurrent_rating() {
-        return current_rating;
-    }
-
-    public void setCurrent_rating(float current_rating) {
-        this.current_rating = current_rating;
+    public void setCurrentRating(float currentRating) {
+        this.currentRating = currentRating;
     }
 
     public ArrayList<Certification> getCertificates() {
@@ -139,35 +148,35 @@ public class Doctor {
         this.certificates = certificates;
     }
 
-    public ArrayList<String> getId_specialist() {
-        return id_specialist;
+    public ArrayList<String> getIdSpecialist() {
+        return idSpecialist;
     }
 
-    public void setId_specialist(ArrayList<String> id_specialist) {
-        this.id_specialist = id_specialist;
+    public void setIdSpecialist(ArrayList<String> idSpecialist) {
+        this.idSpecialist = idSpecialist;
     }
 
-    public String getUniversity_graduate() {
-        return university_graduate;
+    public String getUniversityGraduate() {
+        return universityGraduate;
     }
 
-    public void setUniversity_graduate(String university_graduate) {
-        this.university_graduate = university_graduate;
+    public void setUniversityGraduate(String universityGraduate) {
+        this.universityGraduate = universityGraduate;
     }
 
-    public int getYear_graduate() {
-        return year_graduate;
+    public String getYearGraduate() {
+        return yearGraduate;
     }
 
-    public void setYear_graduate(int year_graduate) {
-        this.year_graduate = year_graduate;
+    public void setYearGraduate(String yearGraduate) {
+        this.yearGraduate = yearGraduate;
     }
 
-    public String getPlace_working() {
-        return place_working;
+    public String getPlaceWorking() {
+        return placeWorking;
     }
 
-    public void setPlace_working(String place_working) {
-        this.place_working = place_working;
+    public void setPlaceWorking(String placeWorking) {
+        this.placeWorking = placeWorking;
     }
 }

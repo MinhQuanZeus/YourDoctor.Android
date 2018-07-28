@@ -17,7 +17,6 @@ import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
 import com.yd.yourdoctorandroid.models.Doctor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
@@ -105,8 +104,8 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
             this.doctorModel = doctorModel;
             if (doctorModel != null) {
                 Picasso.with(context).load(doctorModel.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
-                tv_name_doctor_chosen.setText(doctorModel.getFirst_name() + " " + doctorModel.getLast_name());
-                rb_doctorChosen.setRating(doctorModel.getCurrent_rating());
+                tv_name_doctor_chosen.setText(doctorModel.getFirstName() + " "+ doctorModel.getMiddleName() + " " + doctorModel.getLastName());
+                rb_doctorChosen.setRating(doctorModel.getCurrentRating());
                 // view.setTag(musicTypeModel);
             }
         }
