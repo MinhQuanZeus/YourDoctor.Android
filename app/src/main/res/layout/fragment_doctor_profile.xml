@@ -18,7 +18,7 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/gradientbackground"
+            android:background="@color/gray200"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
@@ -28,24 +28,25 @@
                 android:layout_height="match_parent">
 
                 <android.support.v7.widget.Toolbar
-                    android:id="@+id/tb_back_from_profile_doctor"
+                    android:id="@+id/tbBackFromProfileDoctor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:titleTextColor="@color/white"
-                    android:background="@drawable/gradientbackground"
+                    android:background="@color/colorPrimary"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:titleTextColor="@color/white" />
 
                 <ImageView
-                    android:id="@+id/iv_ava_doctor"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/ivAvaDoctor"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_below="@id/tb_back_from_profile_doctor"
+                    android:layout_below="@id/tbBackFromProfileDoctor"
                     android:layout_centerHorizontal="true" />
 
 
                 <TextView
-                    android:id="@+id/tv_name_doctor"
+                    android:id="@+id/tvNameDoctor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -56,7 +57,7 @@
                     android:textStyle="bold" />
 
                 <RatingBar
-                    android:id="@+id/rb_doctorranking"
+                    android:id="@+id/rbDoctorRanking"
                     style="@style/customRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -101,7 +102,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/iv_chat_with_doctor"
+                        android:id="@+id/ivChatWithDoctor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_chat_black_24dp" />
@@ -120,7 +121,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/iv_videocall_with_doctor"
+                        android:id="@+id/ivVideoCallWithDoctor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_video_call_black_24dp" />
@@ -139,7 +140,7 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/iv_report_with_doctor"
+                        android:id="@+id/ivReportWithDoctor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_report_black_24dp" />
@@ -168,7 +169,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tv_introduce_doctor"
+                    android:id="@+id/tvIntroduceDoctor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_info_logo"
@@ -179,10 +180,10 @@
                     android:textSize="15dp" />
 
                 <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rl_certification_doctor"
+                    android:id="@+id/rlCertificationDoctor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tv_introduce_doctor"
+                    android:layout_below="@id/tvIntroduceDoctor"
                     android:layout_margin="10dp" />
             </RelativeLayout>
 
@@ -190,7 +191,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_favorite"
+        android:id="@+id/fabFavorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -199,8 +200,9 @@
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
         app:srcCompat="@drawable/ic_favorite_border_black_24dp" />
+
     <ProgressBar
-        android:id="@+id/pb_profile_doctor"
+        android:id="@+id/pbProfileDoctor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />

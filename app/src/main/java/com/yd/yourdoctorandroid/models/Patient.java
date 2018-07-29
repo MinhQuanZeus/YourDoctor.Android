@@ -45,6 +45,10 @@ public class Patient {
         this.favoriteDoctors = favoriteDoctors;
     }
 
+    public String  getFullName(){
+        return fName + " "+ mName + " " + lName;
+    }
+
     public String getId() {
         return id;
     }

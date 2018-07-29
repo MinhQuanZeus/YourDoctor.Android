@@ -2,24 +2,24 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/draw_layout_main"
+    android:id="@+id/drawLayoutMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:fitsSystemWindows="true"
     tools:context=".activities.MainActivity">
 
-
     <FrameLayout
-        android:id="@+id/rl_container"
+        android:id="@+id/rlContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:background="@color/colorPrimary">
+            android:background="@color/white">
 
 
             <android.support.v7.widget.Toolbar
@@ -27,34 +27,34 @@
                 app:titleTextColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/gradientbackground"
+                android:background="@color/colorPrimary"
                 app:title="Your Doctor" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_question"
+                android:id="@+id/fabQuestion"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/toolbar"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
-                app:backgroundTint="@color/primary_text"
+                app:backgroundTint="@color/colorPrimary"
                 app:srcCompat="@drawable/ic_question_answer_black_24dp" />
 
             <android.support.v4.view.ViewPager
-                android:id="@+id/view_pager"
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/tab_layout"
+                android:layout_above="@id/tabLayout"
                 android:layout_below="@id/toolbar" />
 
             <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
+                android:id="@+id/tabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true" />
             <ProgressBar
-                android:id="@+id/pb_main"
+                android:id="@+id/pbMain"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -64,7 +64,7 @@
 
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view_menu"
+        android:id="@+id/navViewMenu"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

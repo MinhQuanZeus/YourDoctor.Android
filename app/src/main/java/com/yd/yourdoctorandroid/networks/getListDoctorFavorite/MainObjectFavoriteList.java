@@ -1,7 +1,7 @@
 package com.yd.yourdoctorandroid.networks.getListDoctorFavorite;
 
 public class MainObjectFavoriteList {
-    ListFavoriteDoctor listFavoriteDoctor;
+    private ListFavoriteDoctor listFavoriteDoctor;
 
     public ListFavoriteDoctor getListFavoriteDoctor() {
         return listFavoriteDoctor;

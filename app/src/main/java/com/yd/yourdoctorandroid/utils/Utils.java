@@ -8,6 +8,9 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Utils {
     public static String getStringResourceByString(Context context, String name) {
@@ -33,5 +36,12 @@ public class Utils {
             Log.e(context.getClass().getSimpleName(), "Error writing bitmap", e);
         }
         return imageFile;
+    }
+
+    public static String convertTime(long time){
+        Date date = new Date(time);
+        //yyyy MM dd HH:mm:ss
+        Format format = new SimpleDateFormat("HH:mm, dd/MM ");
+        return format.format(date);
     }
 }

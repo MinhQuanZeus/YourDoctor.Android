@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -41,99 +42,83 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    @BindView(R.id.tab_layout)
+    @BindView(R.id.tabLayout)
     TabLayout tabLayout;
 
-    @BindView(R.id.view_pager)
+    @BindView(R.id.viewPager)
     ViewPager viewPager;
 
-    @BindView(R.id.fab_question)
-    FloatingActionButton fab_question;
+    @BindView(R.id.fabQuestion)
+    FloatingActionButton fabQuestion;
 
-    @BindView(R.id.draw_layout_main)
-    DrawerLayout draw_layout_main;
+    @BindView(R.id.drawLayoutMain)
+    DrawerLayout drawerViewMenu;
 
-    @BindView(R.id.nav_view_menu)
-    NavigationView navigationView_main;
+    @BindView(R.id.navViewMenu)
+    NavigationView navigationViewMain;
 
     @BindView(R.id.toolbar)
-    Toolbar tb_main;
+    Toolbar tbMain;
 
-    @BindView(R.id.pb_main)
-    ProgressBar pb_main;
+    @BindView(R.id.pbMain)
+    ProgressBar pbMain;
 
     Patient currentPatient;
 
-    ImageView iv_ava_user;
-    TextView tv_name_user;
-    TextView tv_money_user;
+    ImageView ivAvaUser;
+    TextView tvNameUser;
+    TextView tvMoneyUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupUI();
+
         Log.d("MainActivity", "USER_INFO");
         Log.d("MainActivity", SharedPrefs.getInstance().get("USER_INFO", Patient.class).toString());
         Log.d("MainActivity", SharedPrefs.getInstance().get("JWT_TOKEN", String.class));
-
-
-//        TimeOutChatService receiver = new TimeOutChatService();
-//        final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-//        registerReceiver(receiver, filter);
-
-
-
     }
 
     private void setupUI() {
         ButterKnife.bind(this);
 
+        View headerView = navigationViewMain.inflateHeaderView(R.layout.nav_header_main);
+        ivAvaUser = headerView.findViewById(R.id.ivAvaUser);
+        tvNameUser = headerView.findViewById(R.id.tvNameUser);
+        tvMoneyUser = headerView.findViewById(R.id.tvMoneyUser);
 
-        View headerView = navigationView_main.inflateHeaderView(R.layout.nav_header_main);
-        iv_ava_user = headerView.findViewById(R.id.iv_ava_user);
-        tv_name_user = headerView.findViewById(R.id.tv_name_user);
-        tv_money_user = headerView.findViewById(R.id.tv_money_user);
-
-        setSupportActionBar(tb_main);
+        setSupportActionBar(tbMain);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
 
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
         if(currentPatient != null){
-            tv_name_user.setText(currentPatient.getfName() + " " + currentPatient.getmName() == null? "" : currentPatient.getmName() + " " + currentPatient.getlName());
-            Picasso.with(this).load(currentPatient.getAvatar().toString()).transform(new CropCircleTransformation()).into(iv_ava_user);
-            tv_money_user.setText(currentPatient.getRemainMoney() + "" );
+            tvNameUser.setText(currentPatient.getFullName());
+            Picasso.with(this).load(currentPatient.getAvatar().toString()).into(ivAvaUser);
+            tvMoneyUser.setText(currentPatient.getRemainMoney() + "" );
         }
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, draw_layout_main, tb_main, R.string.app_name, R.string.app_name);
-        draw_layout_main.setDrawerListener(toggle);
+                this, drawerViewMenu, tbMain, R.string.app_name, R.string.app_name);
+        drawerViewMenu.setDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView_main.setNavigationItemSelectedListener(this);
+        navigationViewMain.setNavigationItemSelectedListener(this);
 
-        fab_question.setOnClickListener(new View.OnClickListener() {
+        fabQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Fortest
-                Intent intentTimeOut = new Intent(getApplicationContext(), TimeOutChatService.class);
-                intentTimeOut.putExtra("idChat", "abc");
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 234324243, intentTimeOut, 0);
-                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(getApplicationContext().ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                        + (5 * 1000), pendingIntent);
-
-               // ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rlContainer, true, true);
             }
         });
 
-        tb_main.setNavigationOnClickListener(new View.OnClickListener() {
+        tbMain.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                draw_layout_main.openDrawer(GravityCompat.START);
+                drawerViewMenu.openDrawer(GravityCompat.START);
             }
         });
 
@@ -166,32 +151,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-        pb_main.setVisibility(View.GONE);
+        pbMain.setVisibility(View.GONE);
     }
-
-    private void serviceCheckNetword(){
-//        ReactiveNetwork
-//                .observeNetworkConnectivity(getApplicationContext())
-//                .flatMap(connectivity -> {
-//                    if (connectivity.state() == NetworkInfo.State.CONNECTED) {
-//                        return getResponse("https://your-doctor-test2.herokuapp.com");
-//                    }
-//                    return Observable.error(() -> new RuntimeException("not connected"));
-//                })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(
-//                        response  -> onBackPressed(),
-//                        throwable -> /* handle error here */)
-//   );
-    }
-
 
     @Override
     public void onBackPressed() {
 
-        if (draw_layout_main.isDrawerOpen(GravityCompat.START)) {
-            draw_layout_main.closeDrawer(GravityCompat.START);
+        if (drawerViewMenu.isDrawerOpen(GravityCompat.START)) {
+            drawerViewMenu.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -205,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                draw_layout_main.openDrawer(GravityCompat.START);
+                drawerViewMenu.openDrawer(GravityCompat.START);
                 return true;
 
         }
@@ -219,47 +186,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         if (item == null) return false;
         switch (item.getItemId()) {
-            case R.id.nav_create_advisory_main: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+            case R.id.navCreateAdvisoryMain: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rlContainer, true, true);
                 break;
             }
-            case R.id.nav_favorite_doctor_main: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
+            case R.id.navFavoriteDoctorMain: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rlContainer, true, true);
                 break;
             }
-            case R.id.nav_exchange_money_main: {
+            case R.id.navExchangeMoneyMain: {
                 break;
             }
-            case R.id.nav_profile_main: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new UserProfileFragment(), R.id.rl_container, true, true);
+            case R.id.navProfileMain: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new UserProfileFragment(), R.id.rlContainer, true, true);
                 break;
             }
-            case R.id.nav_ranking_docto_main: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rl_container, true, true);
+            case R.id.navRankingDoctoMain: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rlContainer, true, true);
                 break;
             }
-            case R.id.nav_logout_main: {
+            case R.id.navLogoutMain: {
                 //Test
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rl_container, true, true);
+                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rlContainer, true, true);
                 break;
 
             }
         }
 
-        draw_layout_main.closeDrawer(GravityCompat.START);
+        drawerViewMenu.closeDrawer(GravityCompat.START);
         return true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        fab_question.setVisibility(View.VISIBLE);
+        fabQuestion.setVisibility(View.VISIBLE);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        fab_question.setVisibility(View.INVISIBLE);
+        fabQuestion.setVisibility(View.INVISIBLE);
     }
 }
 

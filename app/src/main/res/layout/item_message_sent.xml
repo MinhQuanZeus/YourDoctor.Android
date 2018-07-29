@@ -8,7 +8,7 @@
     android:paddingTop="8dp">
 
     <TextView
-        android:id="@+id/text_message_body"
+        android:id="@+id/textMessageBody"
         android:text="hello, hello!"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,15 +19,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/rounded_rectangle_green"/>
-    <!--android:background="@drawable/rounded_rectangle_green"-->
-
     <TextView
-        android:id="@+id/text_message_time"
+        android:id="@+id/textMessageTime"
         android:text="11:40"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10sp"
         android:layout_marginRight="8dp"
-        android:layout_below="@id/text_message_body"
+        android:layout_below="@id/textMessageBody"
         android:layout_alignParentRight="true" />
 </RelativeLayout>

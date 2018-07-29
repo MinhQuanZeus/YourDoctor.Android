@@ -43,10 +43,10 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
     private Context context;
     Unbinder butterKnife;
 
-    @BindView(R.id.rv_list_doctor_ranking)
-    RecyclerView rv_list_doctor_ranking;
+    @BindView(R.id.rvListDoctorRanking)
+    RecyclerView rvListDoctorRanking;
 
-    @BindView(R.id.pb_ranking)
+    @BindView(R.id.pbRanking)
     ProgressBar progressBar;
 
     private DoctorRankingSpecialistAdapter doctorRankingAdapter;
@@ -71,7 +71,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_doctor_ranking_specialist, container, false);
         butterKnife = ButterKnife.bind(this, view);
         doctorRankingAdapter = new DoctorRankingSpecialistAdapter(getContext());
-        setDoctorRankList(specialistId, rv_list_doctor_ranking);
+        setDoctorRankList(specialistId, rvListDoctorRanking);
 
         return view;
     }

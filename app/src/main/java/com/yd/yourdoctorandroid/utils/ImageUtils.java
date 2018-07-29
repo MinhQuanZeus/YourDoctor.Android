@@ -17,12 +17,13 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import com.yd.yourdoctorandroid.BuildConfig;
-import com.yd.yourdoctorandroid.R;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
+
 import okhttp3.MultipartBody;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -35,17 +36,15 @@ public class ImageUtils {
     private static final int REQUEST_CHOOSE_PHOTO = 2;
     private static final int REQUEST_PERMISSION_CODE = 1;
 
-
-
     private String mImagePathToBeAttached;
     private Bitmap mImageToBeAttached;
     private String filename;
     MultipartBody.Part imageUpload;
-
+    File file;
     FragmentActivity fragmentActivity;
 
 
-    public ImageUtils(final FragmentActivity fragmentActivity){
+    public ImageUtils(final FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
     }
 
@@ -73,7 +72,6 @@ public class ImageUtils {
         });
         builder.show();
     }
-
 
 
     private void dispatchTakePhotoIntent() {
@@ -114,12 +112,8 @@ public class ImageUtils {
         if (mImageToBeAttached != null) {
             mImageToBeAttached.recycle();
             mImageToBeAttached = null;
-            // ivAvatar.setImageResource(R.drawable.patient_avatar);
         }
     }
-
-
-
 
     public File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -140,7 +134,6 @@ public class ImageUtils {
     }
 
     public int getOrientation(Context context, Uri photoUri) {
-        /* it's on the external media. */
         Cursor cursor = context.getContentResolver().query(photoUri,
                 new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
@@ -165,7 +158,8 @@ public class ImageUtils {
     }
 
     public MultipartBody.Part getImageUpload() {
-        File file = null;
+
+        filename = UUID.randomUUID().toString();
         if (mImageToBeAttached != null) {
             file = Utils.persistImage(mImageToBeAttached, filename, fragmentActivity.getApplicationContext());
             RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
@@ -186,9 +180,11 @@ public class ImageUtils {
         this.filename = filename;
     }
 
-    public void clearAll(){
+    public void clearAll() {
         mImagePathToBeAttached = null;
         mImagePathToBeAttached = null;
+        filename = null;
+        file = null;
         imageUpload = null;
     }
 }

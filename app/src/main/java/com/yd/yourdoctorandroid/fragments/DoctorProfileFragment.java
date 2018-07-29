@@ -35,6 +35,7 @@ import com.yd.yourdoctorandroid.models.Certification;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,38 +53,38 @@ import retrofit2.Response;
  */
 public class DoctorProfileFragment extends Fragment implements View.OnClickListener{
 
-    @BindView(R.id.iv_ava_doctor)
-    ImageView iv_ava_doctor;
+    @BindView(R.id.ivAvaDoctor)
+    ImageView ivAvaDoctor;
 
-    @BindView(R.id.tv_name_doctor)
-    TextView tv_name_doctor;
+    @BindView(R.id.tvNameDoctor)
+    TextView tvNameDoctor;
 
-    @BindView(R.id.rb_doctorranking)
-    RatingBar rb_doctorranking;
+    @BindView(R.id.rbDoctorRanking)
+    RatingBar rbDoctorRanking;
 
-    @BindView(R.id.tb_back_from_profile_doctor)
-    Toolbar tb_back_from_profile_doctor;
+    @BindView(R.id.tbBackFromProfileDoctor)
+    Toolbar tbBackFromProfileDoctor;
 
-    @BindView(R.id.iv_chat_with_doctor)
-    ImageView iv_chat_with_doctor;
+    @BindView(R.id.ivChatWithDoctor)
+    ImageView ivChatWithDoctor;
 
-    @BindView(R.id.iv_videocall_with_doctor)
-    ImageView iv_videocall_with_doctor;
+    @BindView(R.id.ivVideoCallWithDoctor)
+    ImageView ivVideoCallWithDoctor;
 
-    @BindView(R.id.iv_report_with_doctor)
-    ImageView iv_report_with_doctor;
+    @BindView(R.id.ivReportWithDoctor)
+    ImageView ivReportWithDoctor;
 
-    @BindView(R.id.rl_certification_doctor)
-    RecyclerView rl_certification_doctor;
+    @BindView(R.id.rlCertificationDoctor)
+    RecyclerView rlCertificationDoctor;
 
-    @BindView(R.id.tv_introduce_doctor)
-    TextView tv_introduce_doctor;
+    @BindView(R.id.tvIntroduceDoctor)
+    TextView tvIntroduceDoctor;
 
-    @BindView(R.id.pb_profile_doctor)
-    ProgressBar pb_profile_doctor;
+    @BindView(R.id.pbProfileDoctor)
+    ProgressBar pbProfileDoctor;
 
-    @BindView(R.id.fab_favorite)
-    FloatingActionButton fab_favorite;
+    @BindView(R.id.fabFavorite)
+    FloatingActionButton fabFavorite;
 
     private boolean isFavorite;
 
@@ -116,21 +117,21 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         butterKnife = ButterKnife.bind(DoctorProfileFragment.this, view);
 
         isFavorite = false;
-        ((AppCompatActivity)getActivity()).setSupportActionBar(tb_back_from_profile_doctor);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(tbBackFromProfileDoctor);
         final ActionBar actionbar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
         actionbar.setTitle("Trang cá nhân bác sĩ");
 
-        iv_chat_with_doctor.setOnClickListener(this);
-        iv_report_with_doctor.setOnClickListener(this);
-        iv_videocall_with_doctor.setOnClickListener(this);
-        fab_favorite.setOnClickListener(this);
-        rb_doctorranking.setOnClickListener(this);
+        ivChatWithDoctor.setOnClickListener(this);
+        ivReportWithDoctor.setOnClickListener(this);
+        ivVideoCallWithDoctor.setOnClickListener(this);
+        fabFavorite.setOnClickListener(this);
+        rbDoctorRanking.setOnClickListener(this);
 
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
 
-        tb_back_from_profile_doctor.setNavigationOnClickListener(new View.OnClickListener() {
+        tbBackFromProfileDoctor.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ScreenManager.backFragment(getFragmentManager());
@@ -154,7 +155,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 currentDoctor.setMiddleName(mainObject.getInformationDoctor().get(0).getDoctorId().getMiddleName());
                 currentDoctor.setLastName(mainObject.getInformationDoctor().get(0).getDoctorId().getLastName());
                 currentDoctor.setAddress(mainObject.getInformationDoctor().get(0).getDoctorId().getAddress());
-                currentDoctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
+                currentDoctor.setAvatar(mainObject.getInformationDoctor().get(0).getDoctorId().getAvatar());
                 currentDoctor.setBirthday(mainObject.getInformationDoctor().get(0).getDoctorId().getBirthday());
                 currentDoctor.setPhoneNumber(mainObject.getInformationDoctor().get(0).getDoctorId().getPhoneNumber());
                 currentDoctor.setPlaceWorking(mainObject.getInformationDoctor().get(0).getPlaceWorking());
@@ -163,10 +164,10 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 currentDoctor.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
                 currentDoctor.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
 
-                tv_name_doctor.setText(currentDoctor.getFirstName() + " " +currentDoctor.getMiddleName() + " " +currentDoctor.getLastName());
+                tvNameDoctor.setText(currentDoctor.getFirstName() + " " +currentDoctor.getMiddleName() + " " +currentDoctor.getLastName());
                 //rb_doctorranking.setMax(5);
                 Log.e("rating ", currentDoctor.getCurrentRating() + " ");
-                rb_doctorranking.setRating(currentDoctor.getCurrentRating());
+                rbDoctorRanking.setRating(currentDoctor.getCurrentRating());
 
 
                 String specialist = " " ;
@@ -177,28 +178,27 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
 
                 specialist = specialist.substring(0,specialist.length() -2);
 
-
-                Picasso.with(getContext()).load("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg").transform(new CropCircleTransformation()).into(iv_ava_doctor);
+                ZoomImageViewUtils.loadCircleImage(getContext(),currentDoctor.getAvatar(),ivAvaDoctor);
                 Resources res = getResources();
                 String text = String.format(res.getString(R.string.introduce_doctor_text), currentDoctor.getBirthday(), currentDoctor.getAddress(), specialist, currentDoctor.getUniversityGraduate()
                         ,currentDoctor.getYearGraduate(), currentDoctor.getPlaceWorking());
-                tv_introduce_doctor.setText(text);
+                tvIntroduceDoctor.setText(text);
 
 
                 if(currentPatient.getFavoriteDoctors() == null || currentPatient.getFavoriteDoctors().size() == 0){
-                    fab_favorite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    fabFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                     isFavorite = false;
                 }else {
                     for(String idDoctor: currentPatient.getFavoriteDoctors()){
                         if(idDoctor.compareToIgnoreCase(currentDoctor.getDoctorId())==0){
-                            fab_favorite.setImageResource(R.drawable.ic_favorite_black_24dp);
+                            fabFavorite.setImageResource(R.drawable.ic_favorite_black_24dp);
                             isFavorite = true;
                         }
                     }
                 }
 
-                rl_certification_doctor.setLayoutManager(new GridLayoutManager(getContext(), 2));
-                rl_certification_doctor.setFocusable(false);
+                rlCertificationDoctor.setLayoutManager(new GridLayoutManager(getContext(), 2));
+                rlCertificationDoctor.setFocusable(false);
                 List<Certification> certificationList = currentDoctor.getCertificates();
 
                 //Test
@@ -208,14 +208,14 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 //Test
 
                 DoctorCertificationAdapter doctorCertificationAdapter = new DoctorCertificationAdapter(certificationList,getContext());
-                rl_certification_doctor.setAdapter(doctorCertificationAdapter);
-                pb_profile_doctor.setVisibility(View.GONE);
+                rlCertificationDoctor.setAdapter(doctorCertificationAdapter);
+                pbProfileDoctor.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<MainObjectDetailDoctor> call, Throwable t) {
                 Log.e("Anhle P error ", t.toString());
-                pb_profile_doctor.setVisibility(View.GONE);
+                pbProfileDoctor.setVisibility(View.GONE);
             }
         });
 
@@ -231,32 +231,32 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch  (view.getId()){
-            case R.id.iv_chat_with_doctor:{
+            case R.id.ivChatWithDoctor:{
 
                 break;
             }
-            case R.id.iv_report_with_doctor:{
+            case R.id.ivReportWithDoctor:{
                 break;
             }
-            case R.id.iv_videocall_with_doctor:{
+            case R.id.ivVideoCallWithDoctor:{
                 break;
             }
-            case R.id.fab_favorite:{
+            case R.id.fabFavorite:{
                 handleFabFavorite();
                 break;
             }
-            case R.id.rb_doctorranking:{
+            case R.id.rbDoctorRanking:{
                 break;
             }
         }
     }
 
     private void handleFabFavorite(){
-        pb_profile_doctor.setVisibility(View.VISIBLE);
+        pbProfileDoctor.setVisibility(View.VISIBLE);
         if(isFavorite){
             FavoriteRequest favoriteRequest = new FavoriteRequest();
-            favoriteRequest.doctorId = currentDoctor.getDoctorId();
-            favoriteRequest.patientId = currentPatient.getId();
+            favoriteRequest.setDoctorId(currentDoctor.getDoctorId());
+            favoriteRequest.setPatientId(currentPatient.getId());
             RemoveFavoriteDoctorService removeFavoriteDoctorService = RetrofitFactory.getInstance().createService(RemoveFavoriteDoctorService.class);
             removeFavoriteDoctorService.addFavoriteDoctor(favoriteRequest).enqueue(new Callback<MainResponseFavorite>() {
                 @Override
@@ -267,9 +267,9 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                         currentPatient.setFavoriteDoctors(listFavorite);
                         SharedPrefs.getInstance().put("USER_INFO", currentPatient);
                         Log.e("Anh le doctor p ", "post submitted to API." + response.body().toString());
-                        fab_favorite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                        fabFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
                         isFavorite = false;
-                        pb_profile_doctor.setVisibility(View.GONE);
+                        pbProfileDoctor.setVisibility(View.GONE);
                     }
 
                 }
@@ -277,14 +277,14 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 @Override
                 public void onFailure(Call<MainResponseFavorite> call, Throwable t) {
                     Log.e("anh le error", " remove");
-                    pb_profile_doctor.setVisibility(View.GONE);
+                    pbProfileDoctor.setVisibility(View.GONE);
                 }
             });
 
         }else {
             FavoriteRequest favoriteRequest = new FavoriteRequest();
-            favoriteRequest.doctorId = currentDoctor.getDoctorId();
-            favoriteRequest.patientId = currentPatient.getId();
+            favoriteRequest.setDoctorId(currentDoctor.getDoctorId());
+            favoriteRequest.setPatientId(currentPatient.getId());
             AddFavoriteDoctorService addFavoriteDoctorService = RetrofitFactory.getInstance().createService(AddFavoriteDoctorService.class);
             addFavoriteDoctorService.addFavoriteDoctor(favoriteRequest).enqueue(new Callback<MainResponseFavorite>() {
                 @Override
@@ -295,17 +295,17 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                         listFavorite.add(currentDoctor.getDoctorId());
                         currentPatient.setFavoriteDoctors(listFavorite);
                         SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                        fab_favorite.setImageResource(R.drawable.ic_favorite_black_24dp);
+                        fabFavorite.setImageResource(R.drawable.ic_favorite_black_24dp);
                         isFavorite = true;
                         Log.e("Anh le doctor p ", "post submitted to API." + response.body().toString());
-                        pb_profile_doctor.setVisibility(View.GONE);
+                        pbProfileDoctor.setVisibility(View.GONE);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<MainResponseFavorite> call, Throwable t) {
                     Log.e("anh le error", " adding " +  t.toString());
-                    pb_profile_doctor.setVisibility(View.GONE);
+                    pbProfileDoctor.setVisibility(View.GONE);
                 }
             });
 

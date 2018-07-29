@@ -261,7 +261,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
-                    Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
                     checkInvisible();
                 }
             });
@@ -319,7 +319,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
                 @Override
                 public void onFailure(Call<MainObjectTypeAdivosry> call, Throwable t) {
-                    Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
                     checkInvisible();
                 }
             });
@@ -471,7 +471,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                         chatHistory.setDoctorId(doctorChoice.getDoctorId());
                         chatHistory.setStatus(1);
                         chatHistory.setTypeAdvisoryID(typeAdvisoryChoice.getId());
-                        chatHistory.setPaymentPatientID(paymentResponse.paymentsHistory);
+                        chatHistory.setPaymentPatientID(paymentResponse.getPaymentsHistory());
                         postHistoryChat(chatHistory);
                         //progressBar.setVisibility(View.GONE);
                     } else {

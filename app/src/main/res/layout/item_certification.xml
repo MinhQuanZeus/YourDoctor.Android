@@ -7,7 +7,7 @@
     android:padding="10dp"
     android:background="@color/white">
     <TextView
-        android:id="@+id/tv_certification_profile"
+        android:id="@+id/tvCertificationProfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
@@ -19,8 +19,8 @@
         android:textSize="10sp"
         />
     <ImageView
-        android:layout_below="@id/tv_certification_profile"
-        android:id="@+id/iv_certification_profile"
+        android:layout_below="@id/tvCertificationProfile"
+        android:id="@+id/ivCertificationProfile"
         android:layout_width="match_parent"
         android:scaleType="fitCenter"
         android:layout_height="150dp"

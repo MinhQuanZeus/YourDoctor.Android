@@ -1,14 +1,14 @@
 package com.yd.yourdoctorandroid.networks.getDoctorDetailProfile;
 
 public class DoctorID {
-    String _id;
-    String firstName;
-    String middleName;
-    String lastName;
-    String phoneNumber;
-    String avatar;
-    String birthday;
-    String address;
+    private String _id;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String phoneNumber;
+    private String avatar;
+    private String birthday;
+    private String address;
 
     public String get_id() {
         return _id;

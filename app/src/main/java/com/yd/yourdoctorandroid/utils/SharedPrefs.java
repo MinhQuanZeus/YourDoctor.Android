@@ -64,40 +64,6 @@ public class SharedPrefs {
         }
     }
 
-//    public <T> void getListString(String key, Class<T> anonymousClass){
-//        Set<String> set = anonymousClass.getStringSet("key", null);
-//
-//        mSharedPreferences.getStringSet(String key, )
-//
-//        SharedPreferences settings = this.getSharedPreferences("YourActivityPreferences", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = settings.edit();
-//        Set<String> myStrings = settings.getStringSet("myStrings", new HashSet<String>());
-//
-//    }
-//
-//    public <T> void putStringSet(String key, T data){
-//        SharedPreferences.Editor editor = mSharedPreferences.edit();
-//
-//        editor.putStringSet(key, (Set<String>) data);
-//        editor.apply();
-//
-////        Set<String> set = new HashSet<String>();
-////        set.addAll((Collection<? extends String>) data);
-////        editor.putStringSet(key, set);
-////        editor.apply();
-//
-//        // Get the current list.
-//        SharedPreferences settings = this.getSharedPreferences("YourActivityPreferences", Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = settings.edit();
-//        Set<String> myStrings = settings.getStringSet("myStrings", new HashSet<String>());
-//
-//// Add the new value.
-//        myStrings.add("Another string");
-//
-//// Save the list.
-//
-//    }
-
     public <T> void put(String key, T data) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         if (data instanceof String) {

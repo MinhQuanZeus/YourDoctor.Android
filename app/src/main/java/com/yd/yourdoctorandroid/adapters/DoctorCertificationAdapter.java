@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
 import com.yd.yourdoctorandroid.models.Certification;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import java.util.List;
 
@@ -60,25 +61,7 @@ public class DoctorCertificationAdapter extends RecyclerView.Adapter<DoctorCerti
 
                 certificationChoice = holder.getcertificationModel();
 
-                final Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.certification_dialog);
-
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-
-                PhotoView certification_photo_view = dialog.findViewById(R.id.certification_photo_view);
-                Button btn_cancel_from_photo_view = dialog.findViewById(R.id.btn_cancel_from_photo_view);
-
-                Picasso.with(context).load(certificationChoice.getPathImage()).into(certification_photo_view);
-
-                btn_cancel_from_photo_view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-
-                dialog.show();
+                ZoomImageViewUtils.zoomImage(context,certificationChoice.getPathImage());
 
             }
         });
@@ -90,15 +73,15 @@ public class DoctorCertificationAdapter extends RecyclerView.Adapter<DoctorCerti
     }
 
     public class DoctorCertificationViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        ImageView iv_certification_profile;
-        TextView tv_certification_profile;
+        ImageView ivCertificationProfile;
+        TextView tvCertificationProfile;
         private ItemClickListener itemClickListener;
         private Certification certificationModel;
 
         public DoctorCertificationViewHolder(View itemView) {
             super(itemView);
-            iv_certification_profile = itemView.findViewById(R.id.iv_certification_profile);
-            tv_certification_profile = itemView.findViewById(R.id.tv_certification_profile);
+            ivCertificationProfile = itemView.findViewById(R.id.ivCertificationProfile);
+            tvCertificationProfile = itemView.findViewById(R.id.tvCertificationProfile);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
@@ -108,8 +91,8 @@ public class DoctorCertificationAdapter extends RecyclerView.Adapter<DoctorCerti
 
             this.certificationModel = certificationModel;
             if (certificationModel != null) {
-                Picasso.with(context).load(certificationModel.getPathImage()).into(iv_certification_profile);
-                tv_certification_profile.setText(certificationModel.getName());
+                ZoomImageViewUtils.loadImageManual(context,certificationModel.getPathImage(),ivCertificationProfile);
+                tvCertificationProfile.setText(certificationModel.getName());
 
             }
         }

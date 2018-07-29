@@ -44,6 +44,10 @@ public class Doctor {
         this.placeWorking = placeWorking;
     }
 
+    public String  getFullName(){
+        return firstName + " "+ middleName + " " + lastName;
+    }
+
     public String getDoctorId() {
         return id;
     }

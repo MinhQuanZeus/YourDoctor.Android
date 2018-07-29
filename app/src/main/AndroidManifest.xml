@@ -38,10 +38,8 @@
 
         <activity android:name=".activities.MainActivity">
 
-
         </activity>
         <activity android:name=".activities.ChatActivity">
-
 
         </activity>
         <activity android:name=".activities.AuthActivity">
@@ -52,7 +50,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".services.TimeOutChatService"/>
+        <receiver android:name=".services.TimeOutChatService" />
 
         <receiver android:name=".services.CheckNetWordChangeService">
             <intent-filter>

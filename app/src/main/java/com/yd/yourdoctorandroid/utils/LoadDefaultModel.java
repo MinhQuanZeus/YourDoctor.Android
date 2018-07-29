@@ -40,6 +40,14 @@ public class LoadDefaultModel {
         loadTypeAdvisory();
     }
 
+    public void setSpecialists(List<Specialist> specialists) {
+        this.specialists = specialists;
+    }
+
+    public void setTypeAdvisories(List<TypeAdvisory> typeAdvisories) {
+        this.typeAdvisories = typeAdvisories;
+    }
+
     public List<Specialist> getSpecialists() {
 
         return specialists;
@@ -119,11 +127,11 @@ public class LoadDefaultModel {
 
     public void startServiceTimeOut(Context context , String idChat){
         Intent intent = new Intent(context, TimeOutChatService.class);
-        intent.putExtra("idChat","theanh");
+        intent.putExtra("idChat",idChat);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 234324243, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (360 * 1000), pendingIntent);
+                + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
     }
 
     public void addIdChatToListTimeOut(String idChat){

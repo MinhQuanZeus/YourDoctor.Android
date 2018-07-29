@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
 import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import java.util.List;
 
@@ -34,7 +35,6 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
 
     public DoctorChoiceAdapter(List<Doctor> chosenDoctorList, Context context, Dialog dialog) {
 
-        //this.chosenDoctorList = chosenDoctorList;
         this.context = context;
         this.chosenDoctorList = chosenDoctorList;
         this.dialog = dialog;
@@ -82,17 +82,17 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
     }
 
     public class DoctorChoiceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        ImageView iv_item_doctor_chosen;
-        TextView tv_name_doctor_chosen;
-        RatingBar rb_doctorChosen;
+        ImageView ivItemDoctorChosen;
+        TextView tvNameDoctorChosen;
+        RatingBar rbDoctorChosen;
         private ItemClickListener itemClickListener;
         private Doctor doctorModel;
 
         public DoctorChoiceViewHolder(View itemView) {
             super(itemView);
-            iv_item_doctor_chosen = itemView.findViewById(R.id.iv_item_doctor_chosen);
-            tv_name_doctor_chosen = itemView.findViewById(R.id.tv_name_doctor_chosen);
-            rb_doctorChosen = itemView.findViewById(R.id.rb_doctorChosen);
+            ivItemDoctorChosen = itemView.findViewById(R.id.ivItemDoctorChosen);
+            tvNameDoctorChosen = itemView.findViewById(R.id.tvNameDoctorChosen);
+            rbDoctorChosen = itemView.findViewById(R.id.rbDoctorChosen);
 
 
             itemView.setOnClickListener(this);
@@ -100,13 +100,11 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
         }
 
         public void setData(Doctor doctorModel) {
-            //  imageView.setBackgroundResource(musicTypeModel.getIdImage());
             this.doctorModel = doctorModel;
             if (doctorModel != null) {
-                Picasso.with(context).load(doctorModel.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
-                tv_name_doctor_chosen.setText(doctorModel.getFirstName() + " "+ doctorModel.getMiddleName() + " " + doctorModel.getLastName());
-                rb_doctorChosen.setRating(doctorModel.getCurrentRating());
-                // view.setTag(musicTypeModel);
+                ZoomImageViewUtils.loadCircleImage(context,doctorModel.getAvatar(),ivItemDoctorChosen);
+                tvNameDoctorChosen.setText(doctorModel.getFirstName() + " "+ doctorModel.getMiddleName() + " " + doctorModel.getLastName());
+                rbDoctorChosen.setRating(doctorModel.getCurrentRating());
             }
         }
 

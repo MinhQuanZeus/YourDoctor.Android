@@ -5,7 +5,7 @@ import com.yd.yourdoctorandroid.models.TypeAdvisory;
 import java.util.List;
 
 public class MainObjectTypeAdivosry {
-    public List<TypeAdvisory> typeAdvisories;
+    private List<TypeAdvisory> typeAdvisories;
 
     public List<TypeAdvisory> getTypeAdvisories() {
         return typeAdvisories;

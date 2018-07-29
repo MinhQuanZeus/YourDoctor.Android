@@ -18,6 +18,9 @@ import com.yd.yourdoctorandroid.events.ItemClickListener;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +99,7 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
                     public void onClick(View view, int position, boolean isLongClick) {
                         DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
                         doctorProfileFragment.setDoctorID(holder.getdoctorModel().getDoctorId());
-                        ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), doctorProfileFragment, R.id.rl_container, true, true);
+                        ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), doctorProfileFragment, R.id.rlContainer, true, true);
                     }
                 });
                 break;
@@ -168,21 +171,21 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
     }
 
     public class DoctorFavoriteListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView tv_number_rank;
-        TextView tv_name_doctor_favorite;
-        ImageView iv_item_doctor_favorite;
-        RatingBar rb_doctor_favorite;
-        TextView tv_name_doctor_specialist;
+        TextView tvNumberRank;
+        TextView tvNameDoctorFavorite;
+        ImageView ivItemDoctorFavorite;
+        RatingBar rbDoctorFavorite;
+        TextView tvNameDoctorSpecialist;
         private ItemClickListener itemClickListener;
         private Doctor doctorModel;
 
         public DoctorFavoriteListViewHolder(View itemView) {
             super(itemView);
-            tv_number_rank = itemView.findViewById(R.id.tv_number_rank);
-            tv_name_doctor_favorite = itemView.findViewById(R.id.tv_name_doctor_favorite);
-            iv_item_doctor_favorite = itemView.findViewById(R.id.iv_item_doctor_favorite);
-            rb_doctor_favorite = itemView.findViewById(R.id.rb_doctor_favorite);
-            tv_name_doctor_specialist = itemView.findViewById(R.id.tv_name_doctor_specialist);
+            tvNumberRank = itemView.findViewById(R.id.tvNumberRank);
+            tvNameDoctorFavorite = itemView.findViewById(R.id.tvNameDoctorFavorite);
+            ivItemDoctorFavorite = itemView.findViewById(R.id.ivItemDoctorFavorite);
+            rbDoctorFavorite = itemView.findViewById(R.id.rbDoctorFavorite);
+            tvNameDoctorSpecialist = itemView.findViewById(R.id.tvNameDoctorSpecialist);
 
 
             itemView.setOnClickListener(this);
@@ -195,13 +198,21 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
 
             if (doctorModel != null) {
                 if (context == null) Log.d("Anhle", "context bi null");
-
-                Picasso.with(context).load(doctorModel.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_favorite);
-                tv_name_doctor_favorite.setText(doctorModel.getFirstName() + " " + doctorModel.getMiddleName() + " " + doctorModel.getLastName());
-                rb_doctor_favorite.setRating(doctorModel.getCurrentRating());
-                tv_number_rank.setText((positon + 1) + "");
-                tv_name_doctor_specialist.setText("Khoa răng hàm mặt");
-
+                ZoomImageViewUtils.loadCircleImage(context,doctorModel.getAvatar(),ivItemDoctorFavorite);
+                tvNameDoctorFavorite.setText(doctorModel.getFullName());
+                rbDoctorFavorite.setRating(doctorModel.getCurrentRating());
+                tvNumberRank.setText((positon + 1) + "");
+                String specialistText = "";
+                //TODO
+//                ArrayList<Specialist> specialists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
+//                for(String idSpecialist : doctorModel.getIdSpecialist()){
+//                    for(Specialist specialist : specialists){
+//                        if(specialist.getId().equals(idSpecialist)){
+//                            specialistText = specialistText + specialist.getName() + ", ";
+//                        }
+//                    }
+//                }
+                tvNameDoctorSpecialist.setText(specialistText);
             }
         }
 

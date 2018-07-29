@@ -20,13 +20,10 @@ public class TimeOutChatService extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         String idChat = intent.getStringExtra("idChat");
         if (NetworkUtils.isOnline(context)) {
-            //Toast.makeText(context, intent.getStringExtra("idChat") + "hello", Toast.LENGTH_LONG).show();
             checking(idChat);
         } else {
-
             LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
         }
-
         this.clearAbortBroadcast();
     }
 

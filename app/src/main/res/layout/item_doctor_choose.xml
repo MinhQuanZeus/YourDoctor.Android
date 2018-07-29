@@ -7,27 +7,27 @@
     android:padding="5dp">
 
     <ImageView
-        android:id="@+id/iv_item_doctor_chosen"
+        android:id="@+id/ivItemDoctorChosen"
         android:layout_width="40dp"
         android:layout_height="40dp" />
 
     <TextView
-        android:id="@+id/tv_name_doctor_chosen"
+        android:id="@+id/tvNameDoctorChosen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:layout_toEndOf="@id/iv_item_doctor_chosen"
+        android:layout_toEndOf="@id/ivItemDoctorChosen"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <RatingBar
-        android:id="@+id/rb_doctorChosen"
+        android:id="@+id/rbDoctorChosen"
         style="@style/customRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tv_name_doctor_chosen"
+        android:layout_below="@id/tvNameDoctorChosen"
         android:layout_marginStart="5dp"
-        android:layout_toEndOf="@id/iv_item_doctor_chosen"
+        android:layout_toEndOf="@id/ivItemDoctorChosen"
         android:paddingTop="5dp"
         android:isIndicator="true"
         android:progressTint="@color/duskYellow" />

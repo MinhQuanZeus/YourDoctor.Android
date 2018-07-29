@@ -7,7 +7,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface GetLinkeImageService {
-    @POST("http://192.168.124.100:3000/api/uploadImageChat")
+    @POST("uploadImageChat")
     @Multipart
     Call<MainGetLink> uploadImageToGetLink(@Part MultipartBody.Part imageFile);
 }

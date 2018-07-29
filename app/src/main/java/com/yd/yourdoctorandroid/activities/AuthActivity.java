@@ -28,7 +28,6 @@ public class AuthActivity extends AppCompatActivity {
             startActivity(intent);
         } else {
             ScreenManager.openFragment(getSupportFragmentManager(), new LoginFragment(), R.id.fl_auth, false, false);
-
         }
 
     }

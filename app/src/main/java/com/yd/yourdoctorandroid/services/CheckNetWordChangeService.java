@@ -21,10 +21,6 @@ public class CheckNetWordChangeService extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (NetworkUtils.isOnline(context)) {
             handleCheckingListTimeOutChat();
-
-//            String a = SharedPrefs.getInstance().get("anhle", String.class);
-//            Toast.makeText(context,a , Toast.LENGTH_LONG).show();
-
         } else {
 
         }

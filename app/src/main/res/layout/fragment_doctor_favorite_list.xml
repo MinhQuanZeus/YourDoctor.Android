@@ -8,7 +8,7 @@
     tools:context=".fragments.DoctorFavoriteListFragment">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/tb_favorite"
+        android:id="@+id/tbFavorite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:titleTextColor="@color/white"
@@ -16,14 +16,14 @@
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_list_doctor_favorite"
+        android:id="@+id/rvListDoctorFavorite"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tb_favorite"
+        android:layout_below="@id/tbFavorite"
         android:layout_margin="10dp" />
 
     <ProgressBar
-        android:id="@+id/pb_favorite"
+        android:id="@+id/pbFavorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

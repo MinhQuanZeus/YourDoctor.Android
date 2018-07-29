@@ -5,7 +5,7 @@ import com.yd.yourdoctorandroid.models.Specialist;
 import java.util.List;
 
 public class MainObjectSpecialist {
-    List<Specialist> specialist;
+    private List<Specialist> specialist;
 
     public List<Specialist> getSpecialist() {
         return specialist;
