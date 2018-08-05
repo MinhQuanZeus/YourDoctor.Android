@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -46,9 +47,10 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage == null) {
-            Log.e(TAG, "Noti is null");
+            Log.e(TAG, "Notify is null");
             return;
         } else {
+            Log.e(TAG,"Notify is here");
             senderId = remoteMessage.getData().get("senderId");
             nameSender = remoteMessage.getData().get("nameSender");
             receiveId = remoteMessage.getData().get("receiveId");
@@ -93,8 +95,33 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 case 3: {
-                    title="Thông báo thanh toán";
-                    description = "";
+                    title = "Thông báo Thanh Toán";
+
+                    Log.e("senderid",senderId );
+                    Log.e("storageId",storageId);
+//                    Intent resultIntent = new Intent(getApplicationContext(), ChatActivity.class);
+//                    resultIntent.putExtra("chatHistoryId",storageId);
+//                    resultIntent.putExtra("doctorChoiceId",senderId);
+//                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//                    stackBuilder.addNextIntent(resultIntent);
+//                    PendingIntent resultPendingIntent =
+//                            stackBuilder.getPendingIntent(
+//                                    0,
+//                                    PendingIntent.FLAG_UPDATE_CURRENT
+//                            );
+                    //.addAction(R.drawable.ic_done_black_24dp, "Đồng ý", resultPendingIntent)
+
+                    NotificationCompat.Builder mBuilder =
+                            (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                                    .setSmallIcon(R.drawable.your_doctor_logo)
+                                    .setContentTitle(title)
+                                    .setContentText(message)
+                                    ;
+
+                    //mBuilder.setContentIntent(resultPendingIntent);
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    mNotificationManager.notify(i, mBuilder.build());
                     break;
                 }
                 case 4: {

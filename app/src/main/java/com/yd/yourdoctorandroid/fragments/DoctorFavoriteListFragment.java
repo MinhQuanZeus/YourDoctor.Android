@@ -32,6 +32,7 @@ import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistServi
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,31 +185,36 @@ public class DoctorFavoriteListFragment extends Fragment {
     private void loadFirstPage() {
         Log.e("haha", currentPatient.getId());
         GetListDoctorFavoriteService getListDoctorFavoriteService = RetrofitFactory.getInstance().createService(GetListDoctorFavoriteService.class);
-        getListDoctorFavoriteService.getMainObjectFavoriteList(currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
+        getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
             @Override
             public void onResponse(Call<MainObjectFavoriteList> call, Response<MainObjectFavoriteList> response) {
-                MainObjectFavoriteList mainObject = response.body();
-                Log.e("haha", response.body().toString());
-                List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
-                List<Doctor> doctorList = new ArrayList<>();
-                if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
-                    for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
-                        Doctor doctor = new Doctor();
-                        doctor.setAvatar(favoriteDoctor.getAvatar());
-                        doctor.setFirstName(favoriteDoctor.getFirstName());
-                        doctor.setMiddleName(favoriteDoctor.getMiddleName());
-                        doctor.setLastName(favoriteDoctor.getLastName());
-                        doctor.setCurrentRating((float) 3.5);
-                        doctor.setDoctorId(favoriteDoctor.get_id());
-                        doctorList.add(doctor);
+                if(response.code() == 200){
+                    MainObjectFavoriteList mainObject = response.body();
+                    Log.e("haha", response.body().toString());
+                    List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
+                    List<Doctor> doctorList = new ArrayList<>();
+                    if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
+                        for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
+                            Doctor doctor = new Doctor();
+                            doctor.setAvatar(favoriteDoctor.getAvatar());
+                            doctor.setFirstName(favoriteDoctor.getFirstName());
+                            doctor.setMiddleName(favoriteDoctor.getMiddleName());
+                            doctor.setLastName(favoriteDoctor.getLastName());
+                            doctor.setCurrentRating((float) 3.5);
+                            doctor.setDoctorId(favoriteDoctor.get_id());
+                            doctorList.add(doctor);
+                        }
+
+                        doctorFavoriteListAdapter.addAll(doctorList);
+
+                        if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();
+                        else isLastPage = true;
                     }
-
-                    doctorFavoriteListAdapter.addAll(doctorList);
-
-                    if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();
-                    else isLastPage = true;
+                    pbFavorite.setVisibility(View.GONE);
+                }else if(response.code() == 401){
+                    Utils.backToLogin(getContext());
                 }
-                pbFavorite.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -222,33 +228,38 @@ public class DoctorFavoriteListFragment extends Fragment {
 
     private void loadNextPage() {
         GetListDoctorFavoriteService getListDoctorFavoriteService = RetrofitFactory.getInstance().createService(GetListDoctorFavoriteService.class);
-        getListDoctorFavoriteService.getMainObjectFavoriteList(currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
+        getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
             @Override
             public void onResponse(Call<MainObjectFavoriteList> call, Response<MainObjectFavoriteList> response) {
-                MainObjectFavoriteList mainObject = response.body();
-                // Log.e("haha" , response.body().toString());
-                List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
-                List<Doctor> doctorList = new ArrayList<>();
-                if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
-                    for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
-                        Doctor doctor = new Doctor();
-                        doctor.setAvatar(favoriteDoctor.getAvatar());
-                        doctor.setFirstName(favoriteDoctor.getFirstName());
-                        doctor.setMiddleName(favoriteDoctor.getLastName());
-                        doctor.setLastName(favoriteDoctor.getLastName());
-                        doctor.setCurrentRating((float) 3.5);
-                        doctorList.add(doctor);
+                if(response.code() == 200){
+                    MainObjectFavoriteList mainObject = response.body();
+                    // Log.e("haha" , response.body().toString());
+                    List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
+                    List<Doctor> doctorList = new ArrayList<>();
+                    if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
+                        for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
+                            Doctor doctor = new Doctor();
+                            doctor.setAvatar(favoriteDoctor.getAvatar());
+                            doctor.setFirstName(favoriteDoctor.getFirstName());
+                            doctor.setMiddleName(favoriteDoctor.getLastName());
+                            doctor.setLastName(favoriteDoctor.getLastName());
+                            doctor.setCurrentRating((float) 3.5);
+                            doctorList.add(doctor);
+                        }
+
+                        doctorFavoriteListAdapter.removeLoadingFooter();  // 2
+                        isLoading = false;   // 3
+
+                        doctorFavoriteListAdapter.addAll(doctorList);   // 4
+
+                        if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();  // 5
+                        else isLastPage = true;
                     }
-
-                    doctorFavoriteListAdapter.removeLoadingFooter();  // 2
-                    isLoading = false;   // 3
-
-                    doctorFavoriteListAdapter.addAll(doctorList);   // 4
-
-                    if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();  // 5
-                    else isLastPage = true;
+                    pbFavorite.setVisibility(View.GONE);
+                }else if(response.code() == 401){
+                    Utils.backToLogin(getContext());
                 }
-                pbFavorite.setVisibility(View.GONE);
+
             }
 
             @Override

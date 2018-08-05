@@ -48,6 +48,7 @@ import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.services.RegisterPatientService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.ByteArrayInputStream;
@@ -315,6 +316,7 @@ public class RegisterFragment extends Fragment {
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                            SocketUtils.getInstance().reConnect();
                             LoadDefaultModel.getInstance().loadFavoriteDoctor( response.body().getPatient(), getActivity(), btnSignUp);
 
                         } else {

@@ -2,6 +2,7 @@ package com.yd.yourdoctorandroid.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,7 +24,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.github.nkzawa.socketio.client.IO;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
@@ -35,6 +39,10 @@ import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
+
+import java.net.URISyntaxException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -207,7 +215,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.navLogoutMain: {
                 //Test
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rlContainer, true, true);
+                handleLogOut();
+                //ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rlContainer, true, true);
                 break;
 
             }
@@ -217,9 +226,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    private void handleLogOut(){
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Đăng Xuất")
+                .setMessage("Bạn có chắc muốn thoát khỏi hệ thống không?")
+                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Utils.backToLogin(getApplicationContext());
+                    }
+
+                })
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e("MainActivityRe","backTo resume");
+        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+        if(currentPatient != null){
+            tvNameUser.setText(currentPatient.getFullName());
+            ZoomImageViewUtils.loadImageManual(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser );
+            //Picasso.with(this).load(currentPatient.getAvatar().toString()).into(ivAvaUser);
+            tvMoneyUser.setText(currentPatient.getRemainMoney() + "" );
+        }
+        //setupUI();
         fabQuestion.setVisibility(View.VISIBLE);
     }
 

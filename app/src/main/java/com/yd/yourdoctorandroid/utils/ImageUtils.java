@@ -44,7 +44,7 @@ public class ImageUtils {
     FragmentActivity fragmentActivity;
 
 
-    public ImageUtils(final FragmentActivity fragmentActivity) {
+    public ImageUtils(FragmentActivity fragmentActivity) {
         this.fragmentActivity = fragmentActivity;
     }
 
@@ -57,7 +57,6 @@ public class ImageUtils {
             items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(fragmentActivity);
-        builder.setTitle("Ảnh đại diện");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {

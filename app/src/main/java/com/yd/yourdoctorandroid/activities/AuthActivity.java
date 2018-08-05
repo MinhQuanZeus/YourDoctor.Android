@@ -10,6 +10,7 @@ import com.yd.yourdoctorandroid.fragments.LoginFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.SocketUtils;
 
 public class AuthActivity extends AppCompatActivity {
 
@@ -26,6 +27,7 @@ public class AuthActivity extends AppCompatActivity {
             Patient patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
             FirebaseMessaging.getInstance().subscribeToTopic(patient.getId());
             startActivity(intent);
+            SocketUtils.getInstance().reConnect();
         } else {
             ScreenManager.openFragment(getSupportFragmentManager(), new LoginFragment(), R.id.fl_auth, false, false);
         }

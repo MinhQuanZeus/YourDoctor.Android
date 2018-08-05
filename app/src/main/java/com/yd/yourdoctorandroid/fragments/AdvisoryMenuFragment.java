@@ -56,6 +56,7 @@ import com.yd.yourdoctorandroid.networks.postPaymentHistory.PostPaymentHistorySe
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -96,12 +97,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     @BindView(R.id.et_question)
     EditText et_question;
 
-//    @BindView(R.id.btn_date)
-//    Button btndate;
-//
-//    @BindView(R.id.btn_time)
-//    Button btntime;
-
     @BindView(R.id.btn_choose_Doctor)
     Button btn_choose_Doctor;
 
@@ -122,9 +117,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
     Unbinder butterKnife;
 
-    Calendar cal;
-    Date dateFinish;
-    Date hourFinish;
     DoctorChoiceAdapter doctorChoiceAdapter;
     Doctor doctorChoice;
     Specialist specialistChoice;
@@ -144,8 +136,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
     int countProcess;
 
-    Button btn_cancel_choose ;
-    Button btn_ok_choose ;
+    Button btn_cancel_choose;
+    Button btn_ok_choose;
     RecyclerView rv_list_doctor;
 
     public AdvisoryMenuFragment() {
@@ -166,8 +158,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         butterKnife = ButterKnife.bind(AdvisoryMenuFragment.this, view);
         rb_choose_chat.setOnClickListener(this);
         rb_choose_video_call.setOnClickListener(this);
-//        btndate.setOnClickListener(this);
-//        btntime.setOnClickListener(this);
         btn_post.setOnClickListener(this);
         btn_choose_Doctor.setOnClickListener(this);
 
@@ -240,23 +230,30 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     private void setUpSpecialists() {
         spectlists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
 
-        if(spectlists == null){
+        if (spectlists == null) {
             GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
             getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
                 @Override
-                public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
-                    Log.e("AnhLe", "success: " + response.body());
-                    MainObjectSpecialist mainObjectSpecialist = response.body();
-                    spectlists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
-                    arrayspecialists = new String[spectlists.size()];
+                public void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
 
-                    for (int i = 0; i < arrayspecialists.length; i++) {
-                        arrayspecialists[i] = spectlists.get(i).getName();
+                    if (response.code() == 200) {
+                        Log.e("AnhLe", "success: " + response.body());
+                        MainObjectSpecialist mainObjectSpecialist = response.body();
+                        spectlists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                        arrayspecialists = new String[spectlists.size()];
+
+                        for (int i = 0; i < arrayspecialists.length; i++) {
+                            arrayspecialists[i] = spectlists.get(i).getName();
+                        }
+
+                        setSpinerSpecialist(arrayspecialists);
+                        specialistChoice = spectlists.get(0);
+                        checkInvisible();
+
+                    } else if (response.code() == 401) {
+                        Utils.backToLogin(getContext());
                     }
 
-                    setSpinerSpecialist(arrayspecialists);
-                    specialistChoice = spectlists.get(0);
-                    checkInvisible();
                 }
 
                 @Override
@@ -266,7 +263,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                 }
             });
 
-        }else {
+        } else {
             arrayspecialists = new String[spectlists.size()];
 
             for (int i = 0; i < arrayspecialists.length; i++) {
@@ -284,36 +281,42 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
         typeAdvisories = (ArrayList<TypeAdvisory>) LoadDefaultModel.getInstance().getTypeAdvisories();
 
-        if(typeAdvisories == null){
+        if (typeAdvisories == null) {
             GetAllTypesAdvisoryService getAllTypesAdvisoryService = RetrofitFactory.getInstance().createService(GetAllTypesAdvisoryService.class);
-            getAllTypesAdvisoryService.getMainObjectTypeAdvisories().enqueue(new Callback<MainObjectTypeAdivosry>() {
+            getAllTypesAdvisoryService.getMainObjectTypeAdvisories(SharedPrefs.getInstance().get("JWT_TOKEN", String.class)).enqueue(new Callback<MainObjectTypeAdivosry>() {
                 @Override
                 public void onResponse(Call<MainObjectTypeAdivosry> call, Response<MainObjectTypeAdivosry> response) {
-                    Log.e("AnhLe", "success: " + response.body());
-                    MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
-                    typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
-                    ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
-                    ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
-                    for (TypeAdvisory typeAdvisory : typeAdvisories) {
-                        if (typeAdvisory.getName().contains("Video")) {
-                            arrlistVideoCall.add(typeAdvisory);
-                        } else {
-                            arrlistChatType.add(typeAdvisory);
+                    if (response.code() == 200) {
+                        Log.e("AnhLe", "success: " + response.body());
+                        MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
+                        typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
+                        ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
+                        ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
+                        for (TypeAdvisory typeAdvisory : typeAdvisories) {
+                            if (typeAdvisory.getName().contains("Video")) {
+                                arrlistVideoCall.add(typeAdvisory);
+                            } else {
+                                arrlistChatType.add(typeAdvisory);
+                            }
                         }
+
+                        arrTypeChatAdvisories = new String[arrlistChatType.size()];
+                        for (int i = 0; i < arrTypeChatAdvisories.length; i++) {
+                            arrTypeChatAdvisories[i] = arrlistChatType.get(i).getName();
+                        }
+
+                        arrTypeVideoCallAdvisories = new String[arrlistVideoCall.size()];
+                        for (int i = 0; i < arrTypeVideoCallAdvisories.length; i++) {
+                            arrTypeVideoCallAdvisories[i] = arrlistVideoCall.get(i).getName();
+                        }
+                        setSpinerTypeAdvisory(arrTypeChatAdvisories);
+                        typeAdvisoryChoice = typeAdvisories.get(0);
+                        checkInvisible();
+
+                    } else if (response.code() == 401) {
+                        Utils.backToLogin(getContext());
                     }
 
-                    arrTypeChatAdvisories = new String[arrlistChatType.size()];
-                    for (int i = 0; i < arrTypeChatAdvisories.length; i++) {
-                        arrTypeChatAdvisories[i] = arrlistChatType.get(i).getName();
-                    }
-
-                    arrTypeVideoCallAdvisories = new String[arrlistVideoCall.size()];
-                    for (int i = 0; i < arrTypeVideoCallAdvisories.length; i++) {
-                        arrTypeVideoCallAdvisories[i] = arrlistVideoCall.get(i).getName();
-                    }
-                    setSpinerTypeAdvisory(arrTypeChatAdvisories);
-                    typeAdvisoryChoice = typeAdvisories.get(0);
-                    checkInvisible();
 
                 }
 
@@ -323,7 +326,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     checkInvisible();
                 }
             });
-        }else {
+        } else {
             ArrayList<TypeAdvisory> arrlistChatType = new ArrayList<>();
             ArrayList<TypeAdvisory> arrlistVideoCall = new ArrayList<>();
             for (TypeAdvisory typeAdvisory : typeAdvisories) {
@@ -351,9 +354,9 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
     }
 
-    private void checkInvisible(){
+    private void checkInvisible() {
         countProcess++;
-        if(countProcess == 2){
+        if (countProcess == 2) {
             progressBar.setVisibility(View.GONE);
         }
     }
@@ -450,16 +453,17 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         progressBar.setVisibility(View.VISIBLE);
 
         if (isChat) {
-            //currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice()
             PaymentHistory paymentHistoryPatient =
                     new PaymentHistory(currentPatient.getId(),
                             typeAdvisoryChoice.getPrice(),
                             currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice(),
                             typeAdvisoryChoice.getId(),
                             1);
+
+
             Log.e("Payment Patient ", paymentHistoryPatient.toString());
             PostPaymentHistoryService postPaymentHistoryService = RetrofitFactory.getInstance().createService(PostPaymentHistoryService.class);
-            postPaymentHistoryService.addPaymentHistory(paymentHistoryPatient).enqueue(new Callback<PaymentResponse>() {
+            postPaymentHistoryService.addPaymentHistory(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), paymentHistoryPatient).enqueue(new Callback<PaymentResponse>() {
                 @Override
                 public void onResponse(Call<PaymentResponse> call, Response<PaymentResponse> response) {
                     Toast.makeText(getContext(), "code la" + response.code(), Toast.LENGTH_LONG).show();
@@ -474,6 +478,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                         chatHistory.setPaymentPatientID(paymentResponse.getPaymentsHistory());
                         postHistoryChat(chatHistory);
                         //progressBar.setVisibility(View.GONE);
+                    } else if (response.code() == 401) {
+                        Utils.backToLogin(getContext());
                     } else {
                         Toast.makeText(getContext(), "Đã có lỗi xảy ra 1", Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
@@ -492,14 +498,15 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
     private void postHistoryChat(ChatHistory chatHistory) {
         PostChatHistoryService postChatHistoryService = RetrofitFactory.getInstance().createService(PostChatHistoryService.class);
-        postChatHistoryService.addChatHistory(chatHistory).enqueue(new Callback<ChatHistoryResponse>() {
+        postChatHistoryService.addChatHistory(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), chatHistory).enqueue(new Callback<ChatHistoryResponse>() {
             @Override
             public void onResponse(Call<ChatHistoryResponse> call, Response<ChatHistoryResponse> response) {
                 if (response.code() == 200) {
                     ChatHistoryResponse chatHistoryResponse = (ChatHistoryResponse) response.body();
 
+                    currentPatient.setRemainMoney(currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice());
+                    SharedPrefs.getInstance().put("USER_INFO", currentPatient);
                     progressBar.setVisibility(View.GONE);
-
                     Intent intentTimeOut = new Intent(getContext(), TimeOutChatService.class);
                     intentTimeOut.putExtra("idChat", chatHistoryResponse.getChatHistory().get_id());
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 234324243, intentTimeOut, 0);
@@ -508,15 +515,13 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             + (30 * 1000), pendingIntent);
 
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
-                    // intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    Bundle bundle=new Bundle();
-//                    bundle.putString("chatHistoryId", chatHistoryResponse.getChatHistory().get_id());
-//                    bundle.putSerializable("doctorChoice", doctorChoice);
-                    intent.putExtra("chatHistoryId",chatHistoryResponse.getChatHistory().get_id());
-                    intent.putExtra("doctorChoiceId",doctorChoice.getDoctorId());
+                    intent.putExtra("chatHistoryId", chatHistoryResponse.getChatHistory().get_id());
+                    intent.putExtra("doctorChoiceId", doctorChoice.getDoctorId());
                     getActivity().startActivity(intent);
 
+                } else if (response.code() == 401) {
+                    Utils.backToLogin(getContext());
                 } else {
                     Toast.makeText(getContext(), "Đã có lỗi xảy ra 2", Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
@@ -531,82 +536,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         });
     }
 
-//    public void showDatePickerDialog() {
-//        DatePickerDialog.OnDateSetListener callback = new DatePickerDialog.OnDateSetListener() {
-//            public void onDateSet(DatePicker view, int year,
-//                                  int monthOfYear,
-//                                  int dayOfMonth) {
-//                btndate.setText(
-//                        (dayOfMonth) + "/" + (monthOfYear + 1) + "/" + year);
-//
-//                cal.set(year, monthOfYear, dayOfMonth);
-//                dateFinish = cal.getTime();
-//            }
-//        };
-//
-//        if (btndate.getText().toString().compareToIgnoreCase("Ngày") != 0) {
-//
-//        }
-//        String s = btndate.getText().toString() + "";
-//        String strArrtmp[] = s.split("/");
-//        int ngay = Integer.parseInt(strArrtmp[0]);
-//        int thang = Integer.parseInt(strArrtmp[1]) - 1;
-//        int nam = Integer.parseInt(strArrtmp[2]);
-//        DatePickerDialog pic = new DatePickerDialog(
-//                getContext(),
-//                callback, nam, thang, ngay);
-//        pic.setTitle("Chọn ngày hoàn thành");
-//        pic.show();
-//    }
-
-
-//    public void showTimePickerDialog() {
-//        TimePickerDialog.OnTimeSetListener callback = new TimePickerDialog.OnTimeSetListener() {
-//            public void onTimeSet(TimePicker view,
-//                                  int hourOfDay, int minute) {
-//                String s = hourOfDay + ":" + minute;
-//                int hourTam = hourOfDay;
-//                if (hourTam > 12)
-//                    hourTam = hourTam - 12;
-//                btntime.setText
-//                        (hourTam + ":" + minute + (hourOfDay > 12 ? " PM" : " AM"));
-//                btntime.setTag(s);
-//                cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-//                cal.set(Calendar.MINUTE, minute);
-//                hourFinish = cal.getTime();
-//            }
-//        };
-//
-//        String s = btntime.getTag().toString() + "";
-//        String strArr[] = s.split(":");
-//        Log.d("Anhle", s);
-//        int gio = Integer.parseInt(strArr[0]);
-//        int phut = Integer.parseInt(strArr[1]);
-//        TimePickerDialog time = new TimePickerDialog(
-//                getContext(),
-//                callback, gio, phut, true);
-//        time.setTitle("Chọn giờ hoàn thành");
-//        time.show();
-//    }
-
-//    public void getDefaultInfor() {
-//        cal = Calendar.getInstance();
-//        SimpleDateFormat dft = null;
-//        dft = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-//
-//        String strDate = dft.format(cal.getTime());
-//        //hiển thị lên giao diện
-//        btndate.setText(strDate);
-//        //Định dạng giờ phút am/pm
-//        dft = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-//        String strTime = dft.format(cal.getTime());
-//        //đưa lên giao diện
-//        btntime.setText(strTime);
-//        //lấy giờ theo 24 để lập trình theo Tag
-//        dft = new SimpleDateFormat("HH:mm", Locale.getDefault());
-//        btntime.setTag(dft.format(cal.getTime()));
-//
-//    }
 
     public void showDialogChooseDoctor() {
         progressBar.setVisibility(View.VISIBLE);
@@ -615,18 +544,18 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         dialog.setTitle("Lựa Chọn Bác Sĩ của bạn");
 
         // set the custom dialog components - text, image and button
-         btn_cancel_choose = dialog.findViewById(R.id.btn_cancel_choose_doctor);
-         btn_ok_choose = dialog.findViewById(R.id.btn_ok_choose_doctor);
-         rv_list_doctor = dialog.findViewById(R.id.rv_list_doctor);
+        btn_cancel_choose = dialog.findViewById(R.id.btn_cancel_choose_doctor);
+        btn_ok_choose = dialog.findViewById(R.id.btn_ok_choose_doctor);
+        rv_list_doctor = dialog.findViewById(R.id.rv_list_doctor);
 
 
         GetListRecommentDoctorService getListRecommentDoctorService = RetrofitFactory.getInstance().createService(GetListRecommentDoctorService.class);
-        getListRecommentDoctorService.getListRecommentDoctor(specialistChoice.getId(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
+        getListRecommentDoctorService.getListRecommentDoctor(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), specialistChoice.getId(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
             @Override
             public void onResponse(Call<MainObjectRecommend> call, Response<MainObjectRecommend> response) {
                 MainObjectRecommend mainObject = response.body();
                 List<Doctor> doctorList = new ArrayList<>();
-                if(response.code() == 200 && mainObject != null){
+                if (response.code() == 200 && mainObject != null) {
                     List<DoctorRecommend> doctorRecomments = mainObject.getListDoctor();
                     if (doctorRecomments != null && doctorRecomments.size() > 0) {
                         for (DoctorRecommend doctorRecomment : doctorRecomments) {
@@ -647,9 +576,11 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
 
                     }
+                } else if (response.code() == 401) {
+                    Utils.backToLogin(getContext());
                 }
 
-                //progressBar.setVisibility(View.GONE);
+
                 progressBar.setVisibility(View.GONE);
                 dialog.show();
             }
@@ -661,7 +592,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                 dialog.show();
             }
         });
-
 
 
         // if button is clicked, close the custom dialog

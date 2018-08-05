@@ -16,5 +16,5 @@ public class Config {
     // Key cho SharedPreferences.
     public static final String SHARED_PREF = "pref_firebase";
 
-    public static final int TIME_OUT_CHAT_CONVERSATION = 300;
+    public static final int TIME_OUT_CHAT_CONVERSATION = 30;
 }

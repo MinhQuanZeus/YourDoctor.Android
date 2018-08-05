@@ -29,6 +29,9 @@ public class Patient {
     private long remainMoney;
     private List<String> favoriteDoctors;
 
+    public Patient() {
+    }
+
     public Patient(String id, String fName, String mName, String lName, String phoneNumber, String password, String avatar, int gender, String birthday, String address, int role, long remainMoney, List<String> favoriteDoctors) {
         this.id = id;
         this.fName = fName;

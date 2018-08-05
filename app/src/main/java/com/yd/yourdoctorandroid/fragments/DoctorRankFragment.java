@@ -22,6 +22,7 @@ import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,13 +112,19 @@ public class DoctorRankFragment extends Fragment {
             getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
                 @Override
                 public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
-                    Log.e("AnhLe", "success: " + response.body());
-                    MainObjectSpecialist mainObjectSpecialist = response.body();
-                    specialists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
-                    LoadDefaultModel.getInstance().setSpecialists(specialists);
-                    setupViewPager(vpDoctorRanking);
-                    vpDoctorRanking.setCurrentItem(0);
-                    progessBar.setVisibility(View.GONE);
+
+                    if(response.code() == 200){
+                        Log.e("AnhLe", "success: " + response.body());
+                        MainObjectSpecialist mainObjectSpecialist = response.body();
+                        specialists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                        LoadDefaultModel.getInstance().setSpecialists(specialists);
+                        setupViewPager(vpDoctorRanking);
+                        vpDoctorRanking.setCurrentItem(0);
+                        progessBar.setVisibility(View.GONE);
+                    }else if(response.code() == 401){
+                        Utils.backToLogin(getContext());
+                    }
+
                 }
 
                 @Override

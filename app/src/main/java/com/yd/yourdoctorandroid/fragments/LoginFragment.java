@@ -1,6 +1,7 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -24,6 +25,7 @@ import com.yd.yourdoctorandroid.networks.models.Login;
 import com.yd.yourdoctorandroid.networks.services.LoginService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.IOException;
@@ -134,9 +136,12 @@ public class LoginFragment extends Fragment {
             public void onResponse(Call<AuthResponse> call, final Response<AuthResponse> response) {
 
                 if (response.code() == 200 || response.code() == 201) {
+                    Log.e("Login ", response.body().getJwtToken() );
                     SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
                     SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
+                    Log.e("idPatient", response.body().getPatient().getId());
                     FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                    SocketUtils.getInstance().reConnect();
                     LoadDefaultModel.getInstance().loadFavoriteDoctor(response.body().getPatient(), getActivity(), btnLogin);
 
                 } else {

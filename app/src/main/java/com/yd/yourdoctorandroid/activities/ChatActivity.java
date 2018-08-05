@@ -45,6 +45,7 @@ import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.models.Record;
 import com.yd.yourdoctorandroid.utils.ImageUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import org.json.JSONException;
@@ -54,6 +55,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -161,47 +163,48 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-        try {
-            mSocket = IO.socket(URL_SERVER);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Lỗi kết nối server")
-                    .setMessage("Không thể kết nối server, Bạn muốn thử kết nối lại không?")
-                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            try {
-                                mSocket = IO.socket(URL_SERVER);
-                            } catch (URISyntaxException e1) {
-                                Toast.makeText(getApplicationContext(), "Không kết nối được server chat", Toast.LENGTH_LONG).show();
-                            }
-                        }
+//        try {
+//            mSocket = IO.socket(URL_SERVER);
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//            new AlertDialog.Builder(this)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setTitle("Lỗi kết nối server")
+//                    .setMessage("Không thể kết nối server, Bạn muốn thử kết nối lại không?")
+//                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.dismiss();
+//                            try {
+//                                mSocket = IO.socket(URL_SERVER);
+//                            } catch (URISyntaxException e1) {
+//                                Toast.makeText(getApplicationContext(), "Không kết nối được server chat", Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//
+//                    })
+//                    .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialogInterface, int i) {
+//                            dialogInterface.dismiss();
+//                        }
+//                    }).show();
+//        }
 
-                    })
-                    .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).show();
-        }
+        //SocketUtils.getInstance().getSocket().connect();
 
-        mSocket.connect();
+        //SocketUtils.getInstance().getSocket().emit("createRoom", chatHistoryID);
 
-        mSocket.emit("createRoom", chatHistoryID);
 
-        mSocket.emit("addUser", currentPaitent.getId());
+        SocketUtils.getInstance().getSocket().emit("joinRoom", chatHistoryID);
 
-        mSocket.on("newMessage", onNewMessage);
+        SocketUtils.getInstance().getSocket().on("newMessage", onNewMessage);
 
-        mSocket.on("errorUpdate", onErrorUpdate);
+        SocketUtils.getInstance().getSocket().on("errorUpdate", onErrorUpdate);
 
-        mSocket.on("finishConversation", onFinishMessage);
+        SocketUtils.getInstance().getSocket().on("finishConversation", onFinishMessage);
 
-        mSocket.on("conversationDone", onConversationDone);
+        SocketUtils.getInstance().getSocket().on("conversationDone", onConversationDone);
 
         loadDoctorChoice(doctorChoiceId);
 
@@ -214,7 +217,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadChatDisplay() {
         GetChatHistoryService getChatHistoryService = RetrofitFactory.getInstance().createService(GetChatHistoryService.class);
-        getChatHistoryService.getChatHistory(chatHistoryID).enqueue(new Callback<MainObjectChatHistory>() {
+        getChatHistoryService.getChatHistory(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), chatHistoryID).enqueue(new Callback<MainObjectChatHistory>() {
             @Override
             public void onResponse(Call<MainObjectChatHistory> call, Response<MainObjectChatHistory> response) {
                 mainObject = response.body();
@@ -226,7 +229,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         record.setRecorderID(mainRecord.getRecorderID());
                         record.setType(mainRecord.getType());
                         record.setValue(mainRecord.getValue());
-                        record.setCreatedAt(Utils.convertTime(Long.parseLong(mainRecord.getCreated())));
+                        try{
+                            record.setCreatedAt(Utils.convertTime(Long.parseLong(mainRecord.getCreated())));
+                        }catch (Exception e){
+                            record.setCreatedAt(new Date().toString());
+                        }
+
 
                         if (record.getRecorderID().equals(doctorChoice.getDoctorId())) {
                             record.setName(doctorChoice.getFirstName() + " " + doctorChoice.getMiddleName() + " " + doctorChoice.getLastName());
@@ -235,6 +243,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         recordsChat.add(record);
                     }
                     chatApapter.notifyDataSetChanged();
+                } else if (response.code() == 401) {
+                    Utils.backToLogin(getApplicationContext());
                 }
 
                 progressBar.setVisibility(View.GONE);
@@ -250,29 +260,35 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void loadDoctorChoice(String doctorChoiceId) {
         GetDoctorDetailService getDoctorDetailService = RetrofitFactory.getInstance().createService(GetDoctorDetailService.class);
-        getDoctorDetailService.getMainObjectDoctorDetail(doctorChoiceId).enqueue(new Callback<MainObjectDetailDoctor>() {
+        getDoctorDetailService.getMainObjectDoctorDetail(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), doctorChoiceId).enqueue(new Callback<MainObjectDetailDoctor>() {
             @Override
             public void onResponse(Call<MainObjectDetailDoctor> call, Response<MainObjectDetailDoctor> response) {
-                MainObjectDetailDoctor mainObject = response.body();
 
-                doctorChoice = new Doctor();
+                if (response.code() == 200) {
+                    MainObjectDetailDoctor mainObject = response.body();
 
-                doctorChoice.setDoctorId(mainObject.getInformationDoctor().get(0).getDoctorId().get_id());
-                doctorChoice.setFirstName(mainObject.getInformationDoctor().get(0).getDoctorId().getFirstName());
-                doctorChoice.setMiddleName(mainObject.getInformationDoctor().get(0).getDoctorId().getMiddleName());
-                doctorChoice.setLastName(mainObject.getInformationDoctor().get(0).getDoctorId().getLastName());
-                doctorChoice.setAddress(mainObject.getInformationDoctor().get(0).getDoctorId().getAddress());
-                doctorChoice.setAvatar(mainObject.getInformationDoctor().get(0).getDoctorId().getAvatar());
-                doctorChoice.setBirthday(mainObject.getInformationDoctor().get(0).getDoctorId().getBirthday());
-                doctorChoice.setPhoneNumber(mainObject.getInformationDoctor().get(0).getDoctorId().getPhoneNumber());
-                doctorChoice.setPlaceWorking(mainObject.getInformationDoctor().get(0).getPlaceWorking());
-                doctorChoice.setUniversityGraduate(mainObject.getInformationDoctor().get(0).getUniversityGraduate());
-                doctorChoice.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
-                doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
-                doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
+                    doctorChoice = new Doctor();
 
-                loadChatDisplay();
+                    doctorChoice.setDoctorId(mainObject.getInformationDoctor().get(0).getDoctorId().get_id());
+                    doctorChoice.setFirstName(mainObject.getInformationDoctor().get(0).getDoctorId().getFirstName());
+                    doctorChoice.setMiddleName(mainObject.getInformationDoctor().get(0).getDoctorId().getMiddleName());
+                    doctorChoice.setLastName(mainObject.getInformationDoctor().get(0).getDoctorId().getLastName());
+                    doctorChoice.setAddress(mainObject.getInformationDoctor().get(0).getDoctorId().getAddress());
+                    doctorChoice.setAvatar(mainObject.getInformationDoctor().get(0).getDoctorId().getAvatar());
+                    doctorChoice.setBirthday(mainObject.getInformationDoctor().get(0).getDoctorId().getBirthday());
+                    doctorChoice.setPhoneNumber(mainObject.getInformationDoctor().get(0).getDoctorId().getPhoneNumber());
+                    doctorChoice.setPlaceWorking(mainObject.getInformationDoctor().get(0).getPlaceWorking());
+                    doctorChoice.setUniversityGraduate(mainObject.getInformationDoctor().get(0).getUniversityGraduate());
+                    doctorChoice.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
+                    doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
+                    doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
 
+                    loadChatDisplay();
+
+
+                } else if (response.code() == 401) {
+                    Utils.backToLogin(getApplicationContext());
+                }
 
             }
 
@@ -292,6 +308,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     String message = (String) args[0];
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
 
                 }
             });
@@ -306,6 +323,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     String message = (String) args[0];
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
 
                 }
             });
@@ -368,7 +386,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private void backToMainActivity() {
         // mSocket.emit("disconnect");
-        mSocket.disconnect();
+        //mSocket.disconnect();
+        SocketUtils.getInstance().getSocket().emit("leaveRoom", chatHistoryID);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -387,7 +406,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                mSocket.emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+                                SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
                                 progressBar.setVisibility(View.VISIBLE);
 
                             }
@@ -440,7 +459,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Bạn nên nhập tin nhắn trước", Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.GONE);
             } else {
-                mSocket.emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 1, mEditText.getText().toString());
+                SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 1, mEditText.getText().toString());
                 mEditText.setText("");
             }
 
@@ -451,7 +470,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             GetLinkeImageService getLinkeImageService = RetrofitFactory.getInstance().createService(GetLinkeImageService.class);
-            getLinkeImageService.uploadImageToGetLink(imageUtils.getImageUpload()).enqueue(new Callback<MainGetLink>() {
+            getLinkeImageService.uploadImageToGetLink(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), imageUtils.getImageUpload()).enqueue(new Callback<MainGetLink>() {
                 @Override
                 public void onResponse(Call<MainGetLink> call, Response<MainGetLink> response) {
                     Log.e("linkImage", response.body().getFilePath());
@@ -459,8 +478,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     if (response.code() == 200) {
                         Log.e("linkSuccess", response.body().getFilePath());
                         MainGetLink mainObject = response.body();
-                        mSocket.emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 2, mainObject.getFilePath());
+                        SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 2, mainObject.getFilePath());
                         setTypeChat(1);
+                    }else if (response.code() == 401) {
+                        Utils.backToLogin(getApplicationContext());
                     } else {
                         Log.e("not200", "anhle");
                         progressBar.setVisibility(View.GONE);
