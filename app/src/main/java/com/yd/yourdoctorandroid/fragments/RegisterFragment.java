@@ -314,6 +314,11 @@ public class RegisterFragment extends Fragment {
                         }
                         if (response.code() == 200 || response.code() == 201) {
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+
+                            if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                            }
+
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
                             SocketUtils.getInstance().reConnect();

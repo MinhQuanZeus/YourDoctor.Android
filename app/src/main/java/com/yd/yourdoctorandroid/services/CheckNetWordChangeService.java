@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.checkStatusChatService.CheckStatusChatService;
 import com.yd.yourdoctorandroid.networks.checkStatusChatService.ListNotDoneResponse;
@@ -26,8 +27,10 @@ public class CheckNetWordChangeService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (NetworkUtils.isOnline(context)) {
-            SocketUtils.getInstance().reConnect();
-            checking(SharedPrefs.getInstance().get("listChatTimeOutNot", List.class));
+            if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                SocketUtils.getInstance().reConnect();
+                checking(SharedPrefs.getInstance().get("listChatTimeOutNot", List.class));
+            }
         }else {
             SocketUtils.getInstance().disconnectConnect();
         }

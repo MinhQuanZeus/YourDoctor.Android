@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
@@ -138,6 +139,10 @@ public class LoginFragment extends Fragment {
                 if (response.code() == 200 || response.code() == 201) {
                     Log.e("Login ", response.body().getJwtToken() );
                     SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+
+                    if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                    }
                     SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                     Log.e("idPatient", response.body().getPatient().getId());
                     FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());

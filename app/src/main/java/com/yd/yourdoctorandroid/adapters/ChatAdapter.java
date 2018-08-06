@@ -19,7 +19,7 @@ import java.util.List;
 
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
-public class ChatAdpater extends RecyclerView.Adapter {
+public class ChatAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private static final int VIEW_TYPE_MESSAGE_SENT_IMAGE = 3;
@@ -31,7 +31,7 @@ public class ChatAdpater extends RecyclerView.Adapter {
     private Context mContext;
     private List<Record> mMessageList;
 
-    public ChatAdpater(Context context, List<Record> messageList, String currentUserID) {
+    public ChatAdapter(Context context, List<Record> messageList, String currentUserID) {
         this.mContext = context;
         this.mMessageList = messageList;
         this.currentUserID = currentUserID;

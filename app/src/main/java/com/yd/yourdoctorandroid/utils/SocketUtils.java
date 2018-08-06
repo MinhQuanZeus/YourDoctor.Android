@@ -2,6 +2,7 @@ package com.yd.yourdoctorandroid.utils;
 
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Patient;
 
 import java.net.URISyntaxException;
@@ -9,7 +10,7 @@ import java.net.URISyntaxException;
 public class SocketUtils {
     //http://192.168.124.109:3000
     //https://your-doctor-test2.herokuapp.com
-    private final static String URL_SERVER = "http://192.168.124.103:3000";
+    private final static String URL_SERVER = "http://192.168.124.104:3000";
     private Socket mSocket;
     private static SocketUtils socketUtils;
 
@@ -34,12 +35,17 @@ public class SocketUtils {
     }
 
     public void reConnect(){
-        getInstance().getSocket().connect();
-        if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null)
-        SocketUtils.getInstance().getSocket().emit("addUser",SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
+        if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+            getInstance().getSocket().connect();
+            SocketUtils.getInstance().getSocket().emit("addUser",SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
+        }
+
     }
 
     public void disconnectConnect(){
-        getInstance().getSocket().disconnect();
+        if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+            getInstance().getSocket().disconnect();
+        }
+
     }
 }

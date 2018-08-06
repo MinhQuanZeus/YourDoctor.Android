@@ -7,15 +7,7 @@ public class DoctorRecommend {
     private String lastName;
     private String avatar;
     private float currentRating;
-
-    public DoctorRecommend(String doctorId, String firstName, String middleName, String lastName, String avatar, float currentRating) {
-        this.doctorId = doctorId;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.avatar = avatar;
-        this.currentRating = currentRating;
-    }
+    private boolean isFavorited;
 
     public String getDoctorId() {
         return doctorId;
@@ -63,5 +55,13 @@ public class DoctorRecommend {
 
     public void setCurrentRating(float currentRating) {
         this.currentRating = currentRating;
+    }
+
+    public boolean isFavorited() {
+        return isFavorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        isFavorited = favorited;
     }
 }

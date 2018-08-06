@@ -556,11 +556,11 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                 MainObjectRecommend mainObject = response.body();
                 List<Doctor> doctorList = new ArrayList<>();
                 if (response.code() == 200 && mainObject != null) {
-                    List<DoctorRecommend> doctorRecomments = mainObject.getListDoctor();
+                    List<DoctorRecommend> doctorRecomments = mainObject.getDoctorList();
                     if (doctorRecomments != null && doctorRecomments.size() > 0) {
                         for (DoctorRecommend doctorRecomment : doctorRecomments) {
                             Doctor doctor = new Doctor();
-                            doctor.setAvatar("https://kenh14cdn.com/2016/160722-star-tzuyu-1469163381381-1473652430446.jpg");
+                            doctor.setAvatar(doctorRecomment.getAvatar());
                             doctor.setFirstName(doctorRecomment.getFirstName());
                             doctor.setLastName(doctorRecomment.getLastName());
                             doctor.setMiddleName(doctorRecomment.getMiddleName());

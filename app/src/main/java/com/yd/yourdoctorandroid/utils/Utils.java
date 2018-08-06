@@ -11,6 +11,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.yd.yourdoctorandroid.activities.AuthActivity;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.checkStatusChatService.CheckStatusChatService;
+import com.yd.yourdoctorandroid.services.CheckNetWordChangeService;
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.services.YDFirebaseInstanceIDService;
 import com.yd.yourdoctorandroid.services.YDFirebaseMessagingService;
@@ -76,7 +77,7 @@ public class Utils {
         FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
         context.stopService(new Intent(context, YDFirebaseMessagingService.class));
         //context.stopService(new Intent(context, YDFirebaseInstanceIDService.class));
-        context.stopService(new Intent(context, CheckStatusChatService.class));
+        context.stopService(new Intent(context, CheckNetWordChangeService.class));
         context.stopService(new Intent(context, TimeOutChatService.class));
         SharedPrefs.getInstance().clear();
         Intent intent = new Intent(context, AuthActivity.class);

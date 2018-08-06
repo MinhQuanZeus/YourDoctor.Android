@@ -27,17 +27,16 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.adapters.ChatAdpater;
+import com.yd.yourdoctorandroid.adapters.ChatAdapter;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getChatHistory.GetChatHistoryService;
 import com.yd.yourdoctorandroid.networks.getChatHistory.MainObjectChatHistory;
 import com.yd.yourdoctorandroid.networks.getChatHistory.MainRecord;
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.GetDoctorDetailService;
 import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.MainObjectDetailDoctor;
-import com.yd.yourdoctorandroid.networks.getLinkImageService.GetLinkeImageService;
+import com.yd.yourdoctorandroid.networks.getLinkImageService.GetLinkImageService;
 import com.yd.yourdoctorandroid.networks.getLinkImageService.MainGetLink;
 import com.yd.yourdoctorandroid.models.Certification;
 import com.yd.yourdoctorandroid.models.Doctor;
@@ -53,7 +52,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -100,16 +98,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     ImageView ivCancel;
 
     private List<Record> recordsChat;
-    private final String URL_SERVER = "https://your-doctor-test2.herokuapp.com";
     public static final int REQUEST_PERMISSION_CODE = 1;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_CHOOSE_PHOTO = 2;
     private AlertDialog alertDialog;
 
-    //private final String URL_SERVER = "http://192.168.124.109:3000";
-
-    private Socket mSocket;
-    private ChatAdpater chatApapter;
+    private ChatAdapter chatApapter;
     private MainObjectChatHistory mainObject;
 
     ImageUtils imageUtils;
@@ -146,7 +140,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Log.e("Doctor Choice ", doctorChoiceId);
 
         recordsChat = new ArrayList<>();
-        chatApapter = new ChatAdpater(this, recordsChat, currentPaitent.getId());
+        chatApapter = new ChatAdapter(this, recordsChat, currentPaitent.getId());
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -161,39 +155,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 backToMainActivity();
             }
         });
-
-
-//        try {
-//            mSocket = IO.socket(URL_SERVER);
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//            new AlertDialog.Builder(this)
-//                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                    .setTitle("Lỗi kết nối server")
-//                    .setMessage("Không thể kết nối server, Bạn muốn thử kết nối lại không?")
-//                    .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.dismiss();
-//                            try {
-//                                mSocket = IO.socket(URL_SERVER);
-//                            } catch (URISyntaxException e1) {
-//                                Toast.makeText(getApplicationContext(), "Không kết nối được server chat", Toast.LENGTH_LONG).show();
-//                            }
-//                        }
-//
-//                    })
-//                    .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialogInterface, int i) {
-//                            dialogInterface.dismiss();
-//                        }
-//                    }).show();
-//        }
-
-        //SocketUtils.getInstance().getSocket().connect();
-
-        //SocketUtils.getInstance().getSocket().emit("createRoom", chatHistoryID);
 
 
         SocketUtils.getInstance().getSocket().emit("joinRoom", chatHistoryID);
@@ -230,7 +191,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         record.setType(mainRecord.getType());
                         record.setValue(mainRecord.getValue());
                         try{
-                            record.setCreatedAt(Utils.convertTime(Long.parseLong(mainRecord.getCreated())));
+                            record.setCreatedAt(Utils.convertTimeFromMonggo(mainRecord.getCreated()));
                         }catch (Exception e){
                             record.setCreatedAt(new Date().toString());
                         }
@@ -469,7 +430,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
 
-            GetLinkeImageService getLinkeImageService = RetrofitFactory.getInstance().createService(GetLinkeImageService.class);
+            GetLinkImageService getLinkeImageService = RetrofitFactory.getInstance().createService(GetLinkImageService.class);
             getLinkeImageService.uploadImageToGetLink(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), imageUtils.getImageUpload()).enqueue(new Callback<MainGetLink>() {
                 @Override
                 public void onResponse(Call<MainGetLink> call, Response<MainGetLink> response) {

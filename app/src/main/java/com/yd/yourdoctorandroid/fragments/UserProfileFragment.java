@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -42,8 +41,6 @@ import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.BuildConfig;
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.activities.AuthActivity;
-import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.changePassword.ChangePasswordService;
@@ -52,10 +49,9 @@ import com.yd.yourdoctorandroid.networks.changePassword.PasswordResponse;
 import com.yd.yourdoctorandroid.networks.changeProfile.ChangeProfilePaitentService;
 import com.yd.yourdoctorandroid.networks.changeProfile.PatientRequest;
 import com.yd.yourdoctorandroid.networks.changeProfile.PatientResponse;
-import com.yd.yourdoctorandroid.networks.getLinkImageService.GetLinkeImageService;
+import com.yd.yourdoctorandroid.networks.getLinkImageService.GetLinkImageService;
 import com.yd.yourdoctorandroid.networks.getLinkImageService.MainGetLink;
 import com.yd.yourdoctorandroid.models.Patient;
-import com.yd.yourdoctorandroid.utils.ImageUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
@@ -67,7 +63,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
@@ -76,7 +71,6 @@ import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.Request;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -438,7 +432,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private void onUpdateUser(final Patient newPatient) {
         pbProfilePatient.setVisibility(View.VISIBLE);
         if (mImageToBeAttached != null) {
-            GetLinkeImageService getLinkeImageService = RetrofitFactory.getInstance().createService(GetLinkeImageService.class);
+            GetLinkImageService getLinkeImageService = RetrofitFactory.getInstance().createService(GetLinkImageService.class);
             getLinkeImageService.uploadImageToGetLink(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),getImageUpload()).enqueue(new Callback<MainGetLink>() {
                 @Override
                 public void onResponse(Call<MainGetLink> call, Response<MainGetLink> response) {
