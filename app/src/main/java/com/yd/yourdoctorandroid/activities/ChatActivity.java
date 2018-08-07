@@ -1,5 +1,6 @@
 package com.yd.yourdoctorandroid.activities;
 
+import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -17,6 +19,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -24,12 +27,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.ChatAdapter;
+import com.yd.yourdoctorandroid.events.EventSend;
+import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
+import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getChatHistory.GetChatHistoryService;
 import com.yd.yourdoctorandroid.networks.getChatHistory.MainObjectChatHistory;
@@ -46,7 +51,11 @@ import com.yd.yourdoctorandroid.utils.ImageUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -97,11 +106,24 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.ivCancel)
     ImageView ivCancel;
 
+    //Dialog Info
+    private ImageView ivDoctorChat;
+
+    private TextView tvNameDoctorChat;
+
+    private TextView tvBirthDayChat;
+
+    private TextView tvContentChat;
+
+    private Button btnRateChatDoctor;
+
+    private Button btnOkInfoDoctor;
+
     private List<Record> recordsChat;
+
     public static final int REQUEST_PERMISSION_CODE = 1;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_CHOOSE_PHOTO = 2;
-    private AlertDialog alertDialog;
 
     private ChatAdapter chatApapter;
     private MainObjectChatHistory mainObject;
@@ -112,6 +134,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     Patient currentPaitent;
     Doctor doctorChoice;
     String doctorChoiceId;
+    private RecyclerView.LayoutManager layoutManager;
 
     private int typeChatCurrent;
 
@@ -135,16 +158,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         chatHistoryID = intent.getStringExtra("chatHistoryId");
         doctorChoiceId = intent.getStringExtra("doctorChoiceId");
-        alertDialog = new AlertDialog.Builder(ChatActivity.this).create();
+        //alertDialog = new AlertDialog.Builder(ChatActivity.this).create();
         Log.e("chat activity ", chatHistoryID);
         Log.e("Doctor Choice ", doctorChoiceId);
 
-        recordsChat = new ArrayList<>();
-        chatApapter = new ChatAdapter(this, recordsChat, currentPaitent.getId());
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(chatApapter);
+
 
         tbMainChat.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         tbMainChat.setTitleTextColor(getResources().getColor(R.color.primary_text));
@@ -156,18 +176,52 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        try {
+            SocketUtils.getInstance().getSocket().emit("joinRoom", chatHistoryID);
 
-        SocketUtils.getInstance().getSocket().emit("joinRoom", chatHistoryID);
+            SocketUtils.getInstance().getSocket().on("newMessage", onNewMessage);
 
-        SocketUtils.getInstance().getSocket().on("newMessage", onNewMessage);
+            SocketUtils.getInstance().getSocket().on("errorUpdate", onErrorUpdate);
 
-        SocketUtils.getInstance().getSocket().on("errorUpdate", onErrorUpdate);
+            SocketUtils.getInstance().getSocket().on("finishConversation", onFinishMessage);
 
-        SocketUtils.getInstance().getSocket().on("finishConversation", onFinishMessage);
+            SocketUtils.getInstance().getSocket().on("conversationDone", onConversationDone);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Không thể kết nối với máy chủ", Toast.LENGTH_LONG).show();
+            progressBar.setVisibility(View.GONE);
+        }
 
-        SocketUtils.getInstance().getSocket().on("conversationDone", onConversationDone);
-
+        recordsChat = new ArrayList<>();
+        chatApapter = new ChatAdapter(this, recordsChat, currentPaitent.getId());
+        recyclerView.setAdapter(chatApapter);
         loadDoctorChoice(doctorChoiceId);
+
+        EventBus.getDefault().register(this);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EventSend eventSend) {
+        if(eventSend.getType() == 2){
+            Log.e("helloEvent" , "anhle");
+            progressBar.setVisibility(View.VISIBLE);
+            recordsChat = new ArrayList<>();
+            chatApapter = new ChatAdapter(this, recordsChat, currentPaitent.getId());
+            recyclerView.setAdapter(chatApapter);
+            loadDoctorChoice(doctorChoiceId);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e("ChatAc" , "Back from profile");
 
     }
 
@@ -184,26 +238,33 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 mainObject = response.body();
                 if (response.code() == 200 && mainObject != null) {
                     List<MainRecord> mainRecords = mainObject.getObjConversation().getRecords();
+                    if (mainRecords != null) {
+                        for (MainRecord mainRecord : mainRecords) {
+                            Record record = new Record();
+                            record.setRecorderID(mainRecord.getRecorderID());
+                            record.setType(mainRecord.getType());
+                            record.setValue(mainRecord.getValue());
+                            try {
+                                record.setCreatedAt(Utils.convertTimeFromMonggo(mainRecord.getCreated()));
+                            } catch (Exception e) {
+                                record.setCreatedAt(new Date().toString());
+                            }
 
-                    for (MainRecord mainRecord : mainRecords) {
-                        Record record = new Record();
-                        record.setRecorderID(mainRecord.getRecorderID());
-                        record.setType(mainRecord.getType());
-                        record.setValue(mainRecord.getValue());
-                        try{
-                            record.setCreatedAt(Utils.convertTimeFromMonggo(mainRecord.getCreated()));
-                        }catch (Exception e){
-                            record.setCreatedAt(new Date().toString());
+                            if (record.getRecorderID().equals(doctorChoice.getDoctorId())) {
+                                record.setName(doctorChoice.getFirstName() + " " + doctorChoice.getMiddleName() + " " + doctorChoice.getLastName());
+                                record.setAvatar(doctorChoice.getAvatar());
+                            }
+                            recordsChat.add(record);
                         }
-
-
-                        if (record.getRecorderID().equals(doctorChoice.getDoctorId())) {
-                            record.setName(doctorChoice.getFirstName() + " " + doctorChoice.getMiddleName() + " " + doctorChoice.getLastName());
-                            record.setAvatar(doctorChoice.getAvatar());
+                        if (recordsChat.size() > 0) {
+                            recyclerView.smoothScrollToPosition(recordsChat.size() - 1);
                         }
-                        recordsChat.add(record);
+                        chatApapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Không thể tải được cuộc chat", Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
                     }
-                    chatApapter.notifyDataSetChanged();
+
                 } else if (response.code() == 401) {
                     Utils.backToLogin(getApplicationContext());
                 }
@@ -244,6 +305,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
                     doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
 
+                    tbMainChat.setTitle("Bs." + doctorChoice.getFullName());
                     loadChatDisplay();
 
 
@@ -267,6 +329,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    // chi hien tin nhắn
                     String message = (String) args[0];
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
@@ -283,8 +346,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
                     String message = (String) args[0];
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
+                    showMessageConfirm(message);
 
                 }
             });
@@ -300,13 +364,34 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     String message = (String) args[0];
                     Log.e("emitt anh le", message);
                     progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-
+                    showMessageConfirm(message);
+                   // Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                 }
             });
         }
     };
 
+    private void showMessageConfirm(String message){
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Thông báo kết thúc")
+                .setMessage(message)
+                .setNegativeButton("Đánh giá bác sĩ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
+                        doctorProfileFragment.setDoctorID(doctorChoiceId);
+                        ScreenManager.openFragment(getSupportFragmentManager(), doctorProfileFragment, R.id.rl_chat, true, true);
+                    }
+
+                })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
+    }
 
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
@@ -333,6 +418,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                         recordsChat.add(record);
+                        if (recordsChat.size() > 0) {
+                            recyclerView.smoothScrollToPosition(recordsChat.size() - 1);
+                        }
                         chatApapter.notifyDataSetChanged();
                         progressBar.setVisibility(View.GONE);
                     } catch (JSONException e) {
@@ -355,46 +443,38 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
+    private void showDialogConfirmEnd(){
+        new AlertDialog.Builder(ChatActivity.this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Xác nhận việc kết thúc cuộc tư vấn")
+                .setMessage("Bạn có chắc chắn muốn kết thúc cuộc tư vấn không?")
+                .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+                        progressBar.setVisibility(View.VISIBLE);
+
+                    }
+
+                })
+                .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                }).show();
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ivDone: {
-                new AlertDialog.Builder(this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Xác nhận việc kết thúc cuộc tư vấn")
-                        .setMessage("Bạn có chắc chắn muốn kết thúc cuộc tư vấn không?")
-                        .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
-                                progressBar.setVisibility(View.VISIBLE);
-
-                            }
-
-                        })
-                        .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        }).show();
-
+                showDialogConfirmEnd();
                 break;
             }
             case R.id.ivInfo: {
-                alertDialog.dismiss();
-                alertDialog = new AlertDialog.Builder(ChatActivity.this).create();
-                alertDialog.setTitle("Chat với BS " + doctorChoice.getFirstName() + " " + doctorChoice.getMiddleName() + " " + doctorChoice.getLastName());
-                //mainObject.getObjConversation().getContentTopic();
-                alertDialog.setMessage("Nội dung : " + mainObject.getObjConversation().getContentTopic());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+                showDialogInfo();
                 break;
             }
             case R.id.btnImage: {
@@ -412,6 +492,54 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+
+
+    private void showDialogInfo() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.info_chat_dialog);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        // set the custom dialog components - text, image and button
+        ivDoctorChat = dialog.findViewById(R.id.ivDoctorChat);
+        tvNameDoctorChat = dialog.findViewById(R.id.tvNameDoctorChat);
+        tvBirthDayChat = dialog.findViewById(R.id.tvBirthDayChat);
+        tvContentChat = dialog.findViewById(R.id.tvContentChat);
+        btnRateChatDoctor = dialog.findViewById(R.id.btn_rate_chat_doctor);
+        btnOkInfoDoctor = dialog.findViewById(R.id.btn_ok_info_doctor);
+        tvContentChat.setMovementMethod(new ScrollingMovementMethod());
+        //set up data
+        if(doctorChoice != null){
+            ZoomImageViewUtils.loadCircleImage(getApplicationContext(), doctorChoice.getAvatar(),ivDoctorChat);
+            tvNameDoctorChat.setText("BS. " +doctorChoice.getFullName());
+            tvBirthDayChat.setText("NS: " + doctorChoice.getBirthday());
+        }
+        if(mainObject.getObjConversation() != null){
+            tvContentChat.setText("Nội dung câu hỏi là: " + mainObject.getObjConversation().getContentTopic());
+        }
+
+        // if button is clicked, close the custom dialog
+        btnOkInfoDoctor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnRateChatDoctor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
+                doctorProfileFragment.setDoctorID(doctorChoiceId);
+                ScreenManager.openFragment(getSupportFragmentManager(), doctorProfileFragment, R.id.rl_chat, true, true);
+                dialog.dismiss();
+
+            }
+        });
+        dialog.show();
+    }
+
+
 
     private void handleSendMessageChat() {
         progressBar.setVisibility(View.VISIBLE);
@@ -441,7 +569,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         MainGetLink mainObject = response.body();
                         SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 2, mainObject.getFilePath());
                         setTypeChat(1);
-                    }else if (response.code() == 401) {
+                    } else if (response.code() == 401) {
                         Utils.backToLogin(getApplicationContext());
                     } else {
                         Log.e("not200", "anhle");

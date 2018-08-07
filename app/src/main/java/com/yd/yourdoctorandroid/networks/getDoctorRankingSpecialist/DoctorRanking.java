@@ -1,52 +1,21 @@
 package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 
+import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.networks.changePassword.PasswordResponse;
+import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.DoctorID;
+
 public class DoctorRanking {
 
-    private String doctorId;
-    private String firstName;
-    private String middleName;
-    private String lastName;
+    private DoctorID doctorId;
+
     private float currentRating;
-    private String avatar;
 
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getDoctorId() {
+    public DoctorID getDoctorId() {
         return doctorId;
     }
 
-    public void setDoctorId(String doctorId) {
+    public void setDoctorId(DoctorID doctorId) {
         this.doctorId = doctorId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public float getCurrentRating() {

@@ -75,10 +75,10 @@ public class Utils {
 
     public static void backToLogin(Context context){
         FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
-        context.stopService(new Intent(context, YDFirebaseMessagingService.class));
-        //context.stopService(new Intent(context, YDFirebaseInstanceIDService.class));
-        context.stopService(new Intent(context, CheckNetWordChangeService.class));
-        context.stopService(new Intent(context, TimeOutChatService.class));
+        //context.stopService(new Intent(context, YDFirebaseMessagingService.class));
+        //context.stopService(new Intent(context, CheckNetWordChangeService.class));
+        //context.stopService(new Intent(context, TimeOutChatService.class));
+        SocketUtils.getInstance().disconnectConnect();
         SharedPrefs.getInstance().clear();
         Intent intent = new Intent(context, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

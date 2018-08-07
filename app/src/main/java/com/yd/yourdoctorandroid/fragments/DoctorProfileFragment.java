@@ -1,11 +1,13 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,14 +16,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorCertificationAdapter;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.favoriteDoctor.AddFavoriteDoctorService;
@@ -34,9 +40,17 @@ import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.SpecialistDetail
 import com.yd.yourdoctorandroid.models.Certification;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.networks.ratingService.MainResponRating;
+import com.yd.yourdoctorandroid.networks.ratingService.RatingRequest;
+import com.yd.yourdoctorandroid.networks.ratingService.RatingService;
+import com.yd.yourdoctorandroid.networks.reportService.MainResponReport;
+import com.yd.yourdoctorandroid.networks.reportService.ReportRequest;
+import com.yd.yourdoctorandroid.networks.reportService.ReportService;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,14 +80,17 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     @BindView(R.id.tbBackFromProfileDoctor)
     Toolbar tbBackFromProfileDoctor;
 
+    @BindView(R.id.ivRatingDoctor)
+    LinearLayout ivRatingDoctor;
+
     @BindView(R.id.ivChatWithDoctor)
-    ImageView ivChatWithDoctor;
+    LinearLayout ivChatWithDoctor;
 
     @BindView(R.id.ivVideoCallWithDoctor)
-    ImageView ivVideoCallWithDoctor;
+    LinearLayout ivVideoCallWithDoctor;
 
     @BindView(R.id.ivReportWithDoctor)
-    ImageView ivReportWithDoctor;
+    LinearLayout ivReportWithDoctor;
 
     @BindView(R.id.rlCertificationDoctor)
     RecyclerView rlCertificationDoctor;
@@ -87,6 +104,8 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     @BindView(R.id.fabFavorite)
     FloatingActionButton fabFavorite;
 
+    private EditText etReasonReport;
+
     private boolean isFavorite;
 
     Doctor currentDoctor;
@@ -94,6 +113,10 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
 
     String doctorID ;
     Unbinder butterKnife;
+
+    private AlertDialog dialogReport;
+
+    private ProgressBar pbReport;
 
     public DoctorProfileFragment() {
         // Required empty public constructor
@@ -128,13 +151,14 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         ivReportWithDoctor.setOnClickListener(this);
         ivVideoCallWithDoctor.setOnClickListener(this);
         fabFavorite.setOnClickListener(this);
-        rbDoctorRanking.setOnClickListener(this);
+        ivRatingDoctor.setOnClickListener(this);
 
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
 
         tbBackFromProfileDoctor.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventBus.getDefault().post(new EventSend(2));
                 ScreenManager.backFragment(getFragmentManager());
             }
         });
@@ -170,6 +194,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                     //rb_doctorranking.setMax(5);
                     Log.e("rating ", currentDoctor.getCurrentRating() + " ");
                     rbDoctorRanking.setRating(currentDoctor.getCurrentRating());
+
 
 
                     String specialist = " " ;
@@ -243,6 +268,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 break;
             }
             case R.id.ivReportWithDoctor:{
+                reportPatient();
                 break;
             }
             case R.id.ivVideoCallWithDoctor:{
@@ -252,10 +278,169 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 handleFabFavorite();
                 break;
             }
-            case R.id.rbDoctorRanking:{
+            case R.id.ivRatingDoctor:{
+                handleRating();
                 break;
             }
         }
+    }
+
+    private RatingBar rbRating;
+    private ProgressBar pbInfoRating;
+    private EditText etCommentRating;
+
+    private void handleRating(){
+        Log.e("clickRatingBar","hello");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.rating_dialog, null);
+        rbRating = view.findViewById(R.id.rb_rating);
+        pbInfoRating = view.findViewById(R.id.pb_info_rating);
+        etCommentRating = view.findViewById(R.id.et_comment_rating);
+
+//        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+//                LinearLayout.LayoutParams.WRAP_CONTENT,
+//                LinearLayout.LayoutParams.WRAP_CONTENT
+//        );
+//        rbRating.setLayoutParams(lp);
+//        rbRating.setMax(5);
+//        rbRating.setNumStars(5);
+//        rbRating.setStepSize((float) 0.5);
+
+        pbInfoRating.setVisibility(View.GONE);
+
+        builder.setView(view);
+        if(currentDoctor != null){
+            builder.setTitle("Đánh giá BS." + currentDoctor.getFullName());
+        }
+        builder.setPositiveButton("Đánh Gía", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialogReport = builder.create();
+        dialogReport.show();
+
+        dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pbInfoRating.setVisibility(View.VISIBLE);
+
+                if(rbRating.getNumStars() == 0 ){
+                    Toast.makeText(getContext(),"Bạn nên đánh giá ít nhất 0.5 sao!", Toast.LENGTH_LONG).show();
+                    pbInfoRating.setVisibility(View.GONE);
+                }else {
+                    //TODO
+                    RatingRequest ratingRequest = new RatingRequest();
+                    ratingRequest.setComment(etCommentRating.getText().toString());
+                    ratingRequest.setDoctorId(currentDoctor.getDoctorId());
+                    ratingRequest.setPatientId(currentPatient.getId());
+                    ratingRequest.setRating(rbRating.getRating()+"");
+
+                    RatingService ratingService = RetrofitFactory.getInstance().createService(RatingService.class);
+                    ratingService.ratingService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),ratingRequest).enqueue(new Callback<MainResponRating>() {
+                        @Override
+                        public void onResponse(Call<MainResponRating> call, Response<MainResponRating> response) {
+                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
+                            if(response.code() == 200 ) {
+                                Toast.makeText(getContext(),"Đánh giá bác sĩ thành công", Toast.LENGTH_LONG).show();
+                                etCommentRating.setText("");
+                                rbRating.setRating(0);
+                                currentDoctor.setCurrentRating(response.body().getNewRating());
+                                Log.e("ratingProfi",response.body().getNewRating()+"");
+                                rbDoctorRanking.setRating(response.body().getNewRating());
+                            }else if(response.code() == 401){
+                                Utils.backToLogin(getContext());
+                            }
+                            pbInfoRating.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onFailure(Call<MainResponRating> call, Throwable t) {
+                            Toast.makeText(getContext(),"Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
+                            pbInfoRating.setVisibility(View.GONE);
+                        }
+                    });
+
+                }
+            }
+        });
+
+
+    }
+
+    private void reportPatient(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.report_user_dialog, null);
+        etReasonReport = view.findViewById(R.id.et_reason_report);
+        pbReport = view.findViewById(R.id.pb_report);
+        pbReport.setVisibility(View.GONE);
+        builder.setView(view);
+        if(currentDoctor != null){
+            builder.setTitle("Báo cáo BS." + currentDoctor.getFullName());
+        }
+        builder.setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        });
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialogReport = builder.create();
+        dialogReport.show();
+        dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pbReport.setVisibility(View.VISIBLE);
+                if(etReasonReport.getText().toString().equals("")){
+                    Toast.makeText(getContext(),"Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
+                    pbReport.setVisibility(View.GONE);
+                }else {
+                    ReportRequest reportRequest = new ReportRequest();
+                    reportRequest.setIdPersonBeingReported(currentDoctor.getDoctorId());
+                    reportRequest.setIdReporter(currentPatient.getId());
+                    reportRequest.setReason(etReasonReport.getText().toString());
+
+                    ReportService reportService = RetrofitFactory.getInstance().createService(ReportService.class);
+                    reportService.reportService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),reportRequest).enqueue(new Callback<MainResponReport>() {
+                        @Override
+                        public void onResponse(Call<MainResponReport> call, Response<MainResponReport> response) {
+                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
+                            if(response.code() == 200 && response.body().isSuccess()) {
+                                Toast.makeText(getContext(),"Báo cáo người dùng thành công", Toast.LENGTH_LONG).show();
+                                etReasonReport.setText("");
+                            }else if(response.code() == 401){
+                                Utils.backToLogin(getContext());
+                            }
+                            pbReport.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onFailure(Call<MainResponReport> call, Throwable t) {
+                            Toast.makeText(getContext(),"Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
+                            pbReport.setVisibility(View.GONE);
+                        }
+                    });
+
+                }
+            }
+        });
+
     }
 
     private void handleFabFavorite(){

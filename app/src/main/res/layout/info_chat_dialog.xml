@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:background="@color/white"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="30dp"
+        android:background="@color/white">
+        <TextView
+            android:layout_alignParentTop="true"
+            android:id="@+id/tv_logo_chat_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thông tin cuộc chat"
+            android:textSize="20dp"
+            android:textAlignment="center"/>
+
+        <RelativeLayout
+            android:layout_below="@id/tv_logo_chat_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/btn_ok_info_doctor"
+            >
+            <ImageView
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:id="@+id/ivDoctorChat"
+                android:layout_width="60dp"
+                android:layout_height="60dp"/>
+            <TextView
+                android:id="@+id/tvNameDoctorChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="17dp"
+                android:layout_marginStart="15dp"
+                android:padding="5dp"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/ivDoctorChat"/>
+            <TextView
+                android:id="@+id/tvBirthDayChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:padding="5dp"
+                android:textSize="17dp"
+                android:layout_below="@id/tvNameDoctorChat"
+                android:layout_toEndOf="@id/ivDoctorChat"/>
+            <TextView
+                android:layout_marginTop="20dp"
+                android:padding="5dp"
+                android:id="@+id/tvContentChat"
+                android:scrollbars = "vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="18dp"
+                android:layout_below="@id/ivDoctorChat" />
+
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/btn_rate_chat_doctor"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:text="Đánh giá"
+            android:textColor="@color/white"
+            android:background="@drawable/buttonborder"/>
+
+        <Button
+            android:id="@+id/btn_ok_info_doctor"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/btn_ok"
+            android:textColor="@color/white"
+            android:background="@drawable/buttonborder"/>
+    </RelativeLayout>
+
+
+</RelativeLayout>

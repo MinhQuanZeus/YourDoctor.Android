@@ -55,7 +55,6 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
     LinearLayoutManager linearLayoutManager;
 
-    // private static final int PAGE_START = 0;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int currentPage = 0;
@@ -137,7 +136,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
     private void loadFirstPage() {
         GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
-        getDoctorRankingSpecialist.getMainObjectRanking(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
+        getDoctorRankingSpecialist.getDoctorRankingSpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
                 if(response.code() == 200){
@@ -148,12 +147,12 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                     if (doctorRankingList != null && doctorRankingList.size() > 0) {
                         for (DoctorRanking doctorRanking : doctorRankingList) {
                             Doctor doctor = new Doctor();
-                            doctor.setAvatar(doctorRanking.getAvatar());
-                            doctor.setFirstName(doctorRanking.getFirstName());
-                            doctor.setLastName(doctorRanking.getLastName());
-                            doctor.setMiddleName(doctorRanking.getMiddleName());
+                            doctor.setAvatar(doctorRanking.getDoctorId().getAvatar());
+                            doctor.setFirstName(doctorRanking.getDoctorId().getFirstName());
+                            doctor.setLastName(doctorRanking.getDoctorId().getLastName());
+                            doctor.setMiddleName(doctorRanking.getDoctorId().getMiddleName());
                             doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
-                            doctor.setDoctorId(doctorRanking.getDoctorId());
+                            doctor.setDoctorId(doctorRanking.getDoctorId().get_id());
                             doctorList.add(doctor);
                         }
 
@@ -178,14 +177,12 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
             }
         });
-
-
     }
 
     private void loadNextPage() {
 
         GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
-        getDoctorRankingSpecialist.getMainObjectRanking(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
+        getDoctorRankingSpecialist.getDoctorRankingSpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
                 if(response.code() == 200){
@@ -194,12 +191,12 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                     List<Doctor> doctorList = new ArrayList<>();
                     for (DoctorRanking doctorRanking : doctorRankingList) {
                         Doctor doctor = new Doctor();
-                        doctor.setAvatar(doctorRanking.getAvatar());
-                        doctor.setFirstName(doctorRanking.getFirstName());
-                        doctor.setLastName(doctorRanking.getLastName());
-                        doctor.setMiddleName(doctorRanking.getMiddleName());
+                        doctor.setAvatar(doctorRanking.getDoctorId().getAvatar());
+                        doctor.setFirstName(doctorRanking.getDoctorId().getFirstName());
+                        doctor.setLastName(doctorRanking.getDoctorId().getLastName());
+                        doctor.setMiddleName(doctorRanking.getDoctorId().getMiddleName());
                         doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
-                        doctor.setDoctorId(doctorRanking.getDoctorId());
+                        doctor.setDoctorId(doctorRanking.getDoctorId().get_id());
                         doctorList.add(doctor);
                     }
                     doctorRankingAdapter.removeLoadingFooter();  // 2

@@ -95,6 +95,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
+                    android:id="@+id/ivChatWithDoctor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -102,7 +103,6 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/ivChatWithDoctor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_chat_black_24dp" />
@@ -114,6 +114,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ivVideoCallWithDoctor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -121,7 +122,6 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/ivVideoCallWithDoctor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_video_call_black_24dp" />
@@ -133,6 +133,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/ivReportWithDoctor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -140,7 +141,6 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/ivReportWithDoctor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:srcCompat="@drawable/ic_report_black_24dp" />
@@ -149,6 +149,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/report" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ivRatingDoctor"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        app:srcCompat="@drawable/rating" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Đánh giá" />
                 </LinearLayout>
             </LinearLayout>
 
