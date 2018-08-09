@@ -23,7 +23,8 @@
         android:layout_margin="10dp"
         app:layout_anchorGravity="bottom"
         app:tabMode="scrollable"
-        app:tabTextColor="@color/primary_text" />
+        app:tabSelectedTextColor="@color/icon_selected"
+        app:tabTextColor="@color/icon_unselected" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vpDoctorRanking"

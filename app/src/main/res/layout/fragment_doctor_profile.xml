@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/white"
     tools:context=".fragments.DoctorProfileFragment">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="270dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -18,7 +19,7 @@
             android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/gray200"
+            android:background="@color/white"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:toolbarId="@+id/toolbar">
@@ -37,13 +38,12 @@
                     app:titleTextColor="@color/white" />
 
                 <ImageView
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="40dp"
                     android:id="@+id/ivAvaDoctor"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_below="@id/tbBackFromProfileDoctor"
                     android:layout_centerHorizontal="true" />
-
 
                 <TextView
                     android:id="@+id/tvNameDoctor"
@@ -66,8 +66,15 @@
                     android:layout_marginBottom="10dp"
                     android:isIndicator="true"
                     android:progressTint="@color/duskYellow"
-
                     />
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/tv_gender"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/colorHint"
+                    android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
 
@@ -173,7 +180,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/menu_profile_doctor">
+                android:layout_below="@id/menu_profile_doctor"
+                android:padding="10dp">
 
                 <TextView
                     android:id="@+id/tv_info_logo"
@@ -186,22 +194,166 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvIntroduceDoctor"
+
+                <ImageView
+                    android:id="@+id/tv_gender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_info_logo"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="@dimen/text_margin"
-                    android:textAlignment="center"
-                    android:textColor="@color/colorText"
-                    android:textSize="15dp" />
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/gender"
+                    android:textSize="16dp"
+                    app:srcCompat="@drawable/ic_gender_symbols" />
+
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/rg_gender"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_info_logo"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_toEndOf="@+id/tv_gender"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/radio_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="@string/male" />
+
+                    <RadioButton
+                        android:id="@+id/radio_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/female" />
+
+                    <RadioButton
+                        android:id="@+id/radio_other"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/other" />
+                </RadioGroup>
+
+                <View
+                    android:id="@+id/view7"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/tv_gender"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/colorHint" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/view7"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/colorText">
+
+                    <com.yd.yourdoctorandroid.custormviews.MyEditText
+                        android:id="@+id/ed_birthday"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_birthday_calendar"
+                        android:drawablePadding="12dp"
+                        android:focusable="false"
+                        android:hint="@string/birthday"
+                        android:inputType="date"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textSize="16dp" />
+                </android.support.design.widget.TextInputLayout>
+
+                <!--address-->
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/til_birthday"
+                    android:textColor="@color/colorText">
+
+                    <com.yd.yourdoctorandroid.custormviews.MyEditText
+                        android:id="@+id/ed_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_direction_signs"
+                        android:drawablePadding="12dp"
+                        android:hint="@string/address"
+                        android:inputType="text"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textSize="16dp" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_specialist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/til_address"
+                    android:textColor="@color/colorText">
+
+                    <com.yd.yourdoctorandroid.custormviews.MyEditText
+                        android:id="@+id/ed_specilist"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_layers_black_24dp"
+                        android:drawablePadding="12dp"
+                        android:hint="Chuyên Khoa"
+                        android:inputType="text"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textSize="16dp" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_graduate_place"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/til_specialist"
+                    android:textColor="@color/colorText">
+
+                    <com.yd.yourdoctorandroid.custormviews.MyEditText
+                        android:id="@+id/ed_graduate_place"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_book_black_24dp"
+                        android:drawablePadding="12dp"
+                        android:hint="Chuyên Khoa"
+                        android:inputType="text"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textSize="16dp" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/til_working_place"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/til_graduate_place"
+                    android:textColor="@color/colorText">
+
+                    <com.yd.yourdoctorandroid.custormviews.MyEditText
+                        android:id="@+id/ed_working_place"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_place_black_24dp"
+                        android:drawablePadding="12dp"
+                        android:hint="Nơi làm việc hiện tại"
+                        android:inputType="text"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textSize="16dp" />
+                </android.support.design.widget.TextInputLayout>
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rlCertificationDoctor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/tvIntroduceDoctor"
+                    android:layout_below="@id/til_working_place"
+                    android:layout_marginTop="30dp"
                     android:layout_margin="10dp" />
             </RelativeLayout>
 

@@ -1,32 +1,23 @@
 package com.yd.yourdoctorandroid.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RatingBar;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
-import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
-import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Notification;
-import com.yd.yourdoctorandroid.models.Specialist;
-import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
+import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationAdapterViewHolder> {
     private List<Notification> notifications;
@@ -48,15 +39,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         this.notifications = new ArrayList<>();
     }
 
-    public List<Notification> getDoctors() {
-        return notifications;
-    }
-
-    public void setDoctors(List<Notification> doctors) {
-        this.notifications = doctors;
-    }
-
-
     @NonNull
     @Override
     public NotificationAdapter.NotificationAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -70,7 +52,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
                 break;
             case LOADING:
                 View v2 = inflater.inflate(R.layout.item_process, parent, false);
-                // v2.setOnClickListener(onClickListener);
                 viewHolder = new LoadingVH(v2);
                 break;
         }
@@ -81,7 +62,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     @NonNull
     private NotificationAdapter.NotificationAdapterViewHolder getViewHolder(ViewGroup parent, LayoutInflater inflater) {
         NotificationAdapter.NotificationAdapterViewHolder viewHolder;
-        View v1 = inflater.inflate(R.layout.item_doctor_favorite, parent, false);
+        View v1 = inflater.inflate(R.layout.item_notification, parent, false);
         viewHolder = new NotificationAdapter.NotificationAdapterViewHolder(v1);
         return viewHolder;
     }
@@ -93,11 +74,26 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         switch (getItemViewType(position)) {
             case ITEM:
 
-                holder.setData(notifications.get(position), position);
+                holder.setData(notifications.get(position));
 
                 holder.setItemClickListener(new ItemClickListener() {
                     @Override
                     public void onClick(View view, int position, boolean isLongClick) {
+
+                        switch (holder.getNotification().getType()){
+                            case 1 : {
+                                Intent intent = new Intent(context, ChatActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("chatHistoryId", holder.getNotification().getStorageId());
+                                intent.putExtra("doctorChoiceId", holder.getNotification().getSenderId().getId());
+                                context.startActivity(intent);
+                                break;
+                            }
+                            case 2 :{
+                                //TODO
+                            }
+                        }
                        // DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
                        // doctorProfileFragment.setDoctorID(holder.getdoctorModel().getDoctorId());
                        // ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), doctorProfileFragment, R.id.rlContainer, true, true);
@@ -115,19 +111,19 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
 
-    public void add(Notification mc) {
-        notifications.add(mc);
+    public void add(Notification notification) {
+        notifications.add(notification);
         notifyItemInserted(notifications.size() - 1);
     }
 
-    public void addAll(List<Notification> mcList) {
-        for (Notification mc : mcList) {
-            add(mc);
+    public void addAll(List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            add(notification);
         }
     }
 
-    public void remove(Notification city) {
-        int position = notifications.indexOf(city);
+    public void remove(Notification notification) {
+        int position = notifications.indexOf(notification);
         if (position > -1) {
             notifications.remove(position);
             notifyItemRemoved(position);
@@ -172,54 +168,60 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public class NotificationAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView tvNumberRank;
-        TextView tvNameDoctorFavorite;
-        ImageView ivItemDoctorFavorite;
-        RatingBar rbDoctorFavorite;
-        TextView tvNameDoctorSpecialist;
+        ImageView ivNotification;
+        TextView tvTitleNotification;
+        TextView tvContentNotification;
+        TextView tvTime;
         private ItemClickListener itemClickListener;
-        private Notification doctorModel;
+        private Notification notification;
 
         public NotificationAdapterViewHolder(View itemView) {
             super(itemView);
-            tvNumberRank = itemView.findViewById(R.id.tvNumberRank);
-            tvNameDoctorFavorite = itemView.findViewById(R.id.tvNameDoctorFavorite);
-            ivItemDoctorFavorite = itemView.findViewById(R.id.ivItemDoctorFavorite);
-            rbDoctorFavorite = itemView.findViewById(R.id.rbDoctorFavorite);
-            tvNameDoctorSpecialist = itemView.findViewById(R.id.tvNameDoctorSpecialist);
+            ivNotification = itemView.findViewById(R.id.iv_notification);
+            tvTitleNotification = itemView.findViewById(R.id.tv_title_notification);
+            tvContentNotification = itemView.findViewById(R.id.tv_content_notification);
+            tvTime = itemView.findViewById(R.id.tv_time);
 
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
-        public void setData(Notification doctorModel, int positon) {
+        public void setData(Notification notification) {
 
-            this.doctorModel = doctorModel;
+            this.notification = notification;
 
-            if (doctorModel != null) {
-                if (context == null) Log.d("Anhle", "context bi null");
-//                ZoomImageViewUtils.loadCircleImage(context,doctorModel.getAvatar(),ivItemDoctorFavorite);
-//                tvNameDoctorFavorite.setText(doctorModel.getFullName());
-//                rbDoctorFavorite.setRating(doctorModel.getCurrentRating());
-//                tvNumberRank.setText((positon + 1) + "");
-                String specialistText = "";
-                //TODO
-//                ArrayList<Specialist> specialists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
-//                for(String idSpecialist : doctorModel.getIdSpecialist()){
-//                    for(Specialist specialist : specialists){
-//                        if(specialist.getId().equals(idSpecialist)){
-//                            specialistText = specialistText + specialist.getName() + ", ";
-//                        }
-//                    }
-//                }
-                tvNameDoctorSpecialist.setText(specialistText);
+            if (notification != null) {
+                if (context != null){
+                    ZoomImageViewUtils.loadCircleImage(context,notification.getSenderId().getAvatar(),ivNotification);
+                    //ivNotification.setImageDrawable(context.getResources().getDrawable(R.drawable.your_doctor_logo));
+                    tvContentNotification.setText(notification.getMessage());
+                    tvTime.setText(Utils.convertTimeFromMonggo(notification.getCreatedAt()));
+                    switch (notification.getType()){
+                        case 1:{
+                            tvTitleNotification.setText("Thông báo chat với BS." + notification.getNameSender() );
+                            break;
+                        }
+                        case 2:{
+                            break;
+                        }
+                        case 3:{
+                            tvTitleNotification.setText("Thông báo thanh toán với BS." + notification.getNameSender() );
+                            break;
+                        }
+                        case 4:{
+                            break;
+                        }
+                    }
+
+                }
+
             }
         }
 
 
-        public Notification getdoctorModel() {
-            return doctorModel;
+        public Notification getNotification() {
+            return notification;
         }
 
         public void setItemClickListener(ItemClickListener itemClickListener) {

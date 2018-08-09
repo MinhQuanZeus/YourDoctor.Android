@@ -117,7 +117,8 @@ public class DoctorFavoriteListFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
-                    Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                    Log.e("loi mang" ,t.toString());
+                    Toast.makeText(getContext(), "Kết nối mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
                     pbFavorite.setVisibility(View.GONE);
                 }
             });

@@ -55,6 +55,7 @@
     <string name="fname_required">Vui lòng nhập họ</string>
     <string name="lname_required">Vui lòng nhập tên</string>
     <string name="confirm_password_error">Mật khẩu không khớp</string>
+    <string name="url_newPaper">https://vnexpress.net/rss/suc-khoe.rss</string>
 
 
     <!--Error mesage-->

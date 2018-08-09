@@ -12,6 +12,7 @@ public class Doctor {
     private String avatar;
     private String birthday;
     private String address;
+    private int gender;
     private int status;
     private long remainMoney;
     private float currentRating;
@@ -182,5 +183,13 @@ public class Doctor {
 
     public void setPlaceWorking(String placeWorking) {
         this.placeWorking = placeWorking;
+    }
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
     }
 }

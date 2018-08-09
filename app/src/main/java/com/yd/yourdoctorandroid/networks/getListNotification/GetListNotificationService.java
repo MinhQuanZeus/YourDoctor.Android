@@ -9,7 +9,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface GetListNotificationService {
-    @GET("notifications/getAllNotificationByPatient/{id_patient}?")
+    @GET("notifications/getAllNotificationByUser/{id_patient}?")
     Call<MainObjectNotification> getListNotificationService(@Header("Authorization") String jwt,
                                                             @Path("id_patient") String id_patient,
                                                             @Query("pageSize") String pageSize,

@@ -54,6 +54,7 @@ import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentHistory;
 import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentResponse;
 import com.yd.yourdoctorandroid.networks.postPaymentHistory.PostPaymentHistoryService;
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
+import com.yd.yourdoctorandroid.utils.Config;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
@@ -458,6 +459,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             typeAdvisoryChoice.getPrice(),
                             currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice(),
                             typeAdvisoryChoice.getId(),
+                            doctorChoice.getDoctorId(),
                             1);
 
 
@@ -512,7 +514,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 234324243, intentTimeOut, 0);
                     AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
                     alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                            + (30 * 1000), pendingIntent);
+                            + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
 
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

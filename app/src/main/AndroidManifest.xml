@@ -36,12 +36,8 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activities.MainActivity">
-
-        </activity>
-        <activity android:name=".activities.ChatActivity">
-
-        </activity>
+        <activity android:name=".activities.MainActivity"></activity>
+        <activity android:name=".activities.ChatActivity"></activity>
         <activity android:name=".activities.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +47,6 @@
         </activity>
 
         <receiver android:name=".services.TimeOutChatService" />
-
         <receiver android:name=".services.CheckNetWordChangeService">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -66,13 +61,14 @@
             </intent-filter>
         </service>
 
-        <!--<service-->
-            <!--android:name=".services.YDFirebaseInstanceIDService"-->
-            <!--android:exported="false">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
-            <!--</intent-filter>-->
-        <!--</service>-->
+        <!-- <service -->
+        <!-- android:name=".services.YDFirebaseInstanceIDService" -->
+        <!-- android:exported="false"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.firebase.INSTANCE_ID_EVENT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
+        <activity android:name=".activities.ReaderActivity"></activity>
     </application>
 
 </manifest>

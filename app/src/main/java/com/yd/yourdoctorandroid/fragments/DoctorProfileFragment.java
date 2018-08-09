@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -95,14 +96,36 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     @BindView(R.id.rlCertificationDoctor)
     RecyclerView rlCertificationDoctor;
 
-    @BindView(R.id.tvIntroduceDoctor)
-    TextView tvIntroduceDoctor;
-
     @BindView(R.id.pbProfileDoctor)
     ProgressBar pbProfileDoctor;
 
     @BindView(R.id.fabFavorite)
     FloatingActionButton fabFavorite;
+
+    //Info
+    @BindView(R.id.radio_male)
+    RadioButton radioMale;
+
+    @BindView(R.id.radio_female)
+    RadioButton radioFemale;
+
+    @BindView(R.id.radio_other)
+    RadioButton radioOther;
+
+    @BindView(R.id.ed_birthday)
+    EditText edBirthday;
+
+    @BindView(R.id.ed_address)
+    EditText edAddress;
+
+    @BindView(R.id.ed_specilist)
+    EditText edSpecilist;
+
+    @BindView(R.id.ed_graduate_place)
+    EditText edGraduatePlace;
+
+    @BindView(R.id.ed_working_place)
+    EditText edWorkingPlace;
 
     private EditText etReasonReport;
 
@@ -204,12 +227,57 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                     }
 
                     specialist = specialist.substring(0,specialist.length() -2);
+                    edSpecilist.setText(specialist);
+                    edSpecilist.setEnabled(false);
 
                     ZoomImageViewUtils.loadCircleImage(getContext(),currentDoctor.getAvatar(),ivAvaDoctor);
-                    Resources res = getResources();
-                    String text = String.format(res.getString(R.string.introduce_doctor_text), currentDoctor.getBirthday(), currentDoctor.getAddress(), specialist, currentDoctor.getUniversityGraduate()
-                            ,currentDoctor.getYearGraduate(), currentDoctor.getPlaceWorking());
-                    tvIntroduceDoctor.setText(text);
+
+                    switch (currentDoctor.getGender()){
+                        case 1:{
+                            radioMale.setChecked(true);
+                            radioFemale.setChecked(false);
+                            radioOther.setChecked(false);
+
+                            radioMale.setEnabled(true);
+                            radioFemale.setEnabled(false);
+                            radioOther.setEnabled(false);
+                            break;
+                        }
+                        case 2:{
+                            radioMale.setChecked(false);
+                            radioFemale.setChecked(true);
+                            radioOther.setChecked(false);
+
+                            radioMale.setEnabled(false);
+                            radioFemale.setEnabled(true);
+                            radioOther.setEnabled(false);
+                            break;
+                        }
+                        case 3:{
+                            radioMale.setChecked(false);
+                            radioFemale.setChecked(true);
+                            radioOther.setChecked(false);
+
+                            radioMale.setEnabled(false);
+                            radioFemale.setEnabled(false);
+                            radioOther.setEnabled(true);
+                            break;
+                        }
+                    }
+
+                    edBirthday.setText(currentDoctor.getBirthday());
+                    edBirthday.setEnabled(false);
+
+
+                    edAddress.setText(currentDoctor.getAddress());
+                    edAddress.setEnabled(false);
+
+
+                    edGraduatePlace.setText(currentDoctor.getUniversityGraduate() + " vào năm " + currentDoctor.getYearGraduate());
+                    edGraduatePlace.setEnabled(false);
+
+                    edWorkingPlace.setText(currentDoctor.getPlaceWorking());
+                    edWorkingPlace.setEnabled(false);
 
 
                     if(currentPatient.getFavoriteDoctors() == null || currentPatient.getFavoriteDoctors().size() == 0){

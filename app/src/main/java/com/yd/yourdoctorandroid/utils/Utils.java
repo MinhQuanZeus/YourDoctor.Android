@@ -67,6 +67,7 @@ public class Utils {
             date = format.parse(timeString);
         } catch (Exception e) {
             date = new Date();
+            Log.e("LoiDat", e.toString());
         }
         format2 = new SimpleDateFormat("HH:mm, dd/MM ");
         return format2.format(date);

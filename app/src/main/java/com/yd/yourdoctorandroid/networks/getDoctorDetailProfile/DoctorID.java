@@ -73,4 +73,8 @@ public class DoctorID {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public String getFullName (){
+        return firstName + " " + middleName + " " + lastName;
+    }
 }

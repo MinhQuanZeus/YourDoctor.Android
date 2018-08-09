@@ -11,6 +11,8 @@ import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -158,7 +160,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         chatHistoryID = intent.getStringExtra("chatHistoryId");
         doctorChoiceId = intent.getStringExtra("doctorChoiceId");
-        //alertDialog = new AlertDialog.Builder(ChatActivity.this).create();
         Log.e("chat activity ", chatHistoryID);
         Log.e("Doctor Choice ", doctorChoiceId);
 
@@ -342,13 +343,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Emitter.Listener onErrorUpdate = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    String message = (String) args[0];
-                   // Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
                     progressBar.setVisibility(View.GONE);
-                    showMessageConfirm(message);
+                    String message = (String) args[0];
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    //showMessageConfirm(message);
 
                 }
             });
@@ -358,14 +361,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Emitter.Listener onFinishMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    progressBar.setVisibility(View.GONE);
                     String message = (String) args[0];
                     Log.e("emitt anh le", message);
-                    progressBar.setVisibility(View.GONE);
-                    showMessageConfirm(message);
-                   // Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    //showMessageConfirm(message);
+                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -383,7 +387,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         doctorProfileFragment.setDoctorID(doctorChoiceId);
                         ScreenManager.openFragment(getSupportFragmentManager(), doctorProfileFragment, R.id.rl_chat, true, true);
                     }
-
                 })
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
@@ -451,9 +454,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
                         SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
                         progressBar.setVisibility(View.VISIBLE);
+                        dialog.dismiss();
 
                     }
 
@@ -496,7 +499,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void showDialogInfo() {
-        final Dialog dialog = new Dialog(this);
+        final Dialog dialog = new Dialog(ChatActivity.this);
         dialog.setContentView(R.layout.info_chat_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 

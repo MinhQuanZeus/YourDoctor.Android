@@ -2,19 +2,20 @@ package com.yd.yourdoctorandroid.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.yd.yourdoctorandroid.networks.getListNotification.SenderId;
 
 public class Notification {
 
     @SerializedName("_id")
     @Expose
     private String id;
-    private String senderId;
     private String nameSender;
     private String receiverId;
     private int type;
     private String storageId;
     private String message;
     private String createdAt;
+    private SenderId senderId;
 
     public String getId() {
         return id;
@@ -24,11 +25,11 @@ public class Notification {
         this.id = id;
     }
 
-    public String getSenderId() {
+    public SenderId getSenderId() {
         return senderId;
     }
 
-    public void setSenderId(String senderId) {
+    public void setSenderId(SenderId senderId) {
         this.senderId = senderId;
     }
 
