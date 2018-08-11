@@ -8,12 +8,7 @@ import com.yd.yourdoctorandroid.models.Patient;
 import java.net.URISyntaxException;
 
 public class SocketUtils {
-    //http://192.168.124.109:3000
-    //http://192.168.43.100:3000
-    //https://your-doctor-test2.herokuapp.com
-    //192.168.124.108
-    //http://103.221.220.186:3000
-    private final static String URL_SERVER = "http://103.221.220.186:3000";
+    private final static String URL_SERVER = Config.URL_SOCKET;
     private Socket mSocket;
     private static SocketUtils socketUtils;
 
@@ -40,7 +35,7 @@ public class SocketUtils {
     public void reConnect(){
         if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
             getInstance().getSocket().connect();
-            SocketUtils.getInstance().getSocket().emit("addUser",SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
+            SocketUtils.getInstance().getSocket().emit("addUser",SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId(),1);
         }
 
     }
