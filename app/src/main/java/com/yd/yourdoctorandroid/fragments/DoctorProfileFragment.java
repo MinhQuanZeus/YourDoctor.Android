@@ -211,6 +211,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                     currentDoctor.setUniversityGraduate(mainObject.getInformationDoctor().get(0).getUniversityGraduate());
                     currentDoctor.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
                     currentDoctor.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
+                    currentDoctor.setGender(mainObject.getInformationDoctor().get(0).getDoctorId().getGender());
                     currentDoctor.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
 
                     tvNameDoctor.setText(currentDoctor.getFirstName() + " " +currentDoctor.getMiddleName() + " " +currentDoctor.getLastName());
@@ -231,6 +232,8 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                     edSpecilist.setEnabled(false);
 
                     ZoomImageViewUtils.loadCircleImage(getContext(),currentDoctor.getAvatar(),ivAvaDoctor);
+
+                    Log.e("currentGender ",currentDoctor.getGender() +"" );
 
                     switch (currentDoctor.getGender()){
                         case 1:{

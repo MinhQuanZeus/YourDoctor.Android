@@ -30,6 +30,7 @@ import com.github.nkzawa.socketio.client.IO;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
+import com.yd.yourdoctorandroid.fragments.AboutUsFragment;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorFavoriteListFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
@@ -220,6 +221,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rlContainer, true, true);
                 break;
             }
+            case R.id.navAboutUs:{
+                ScreenManager.openFragment(getSupportFragmentManager(), new AboutUsFragment(), R.id.rlContainer, true, true);
+
+                break;
+            }
+
             case R.id.navLogoutMain: {
                 //Test
                 handleLogOut();

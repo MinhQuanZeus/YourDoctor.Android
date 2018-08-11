@@ -11,7 +11,9 @@ public class SocketUtils {
     //http://192.168.124.109:3000
     //http://192.168.43.100:3000
     //https://your-doctor-test2.herokuapp.com
-    private final static String URL_SERVER = "https://your-doctor-test2.herokuapp.com";
+    //192.168.124.108
+    //http://103.221.220.186:3000
+    private final static String URL_SERVER = "http://103.221.220.186:3000";
     private Socket mSocket;
     private static SocketUtils socketUtils;
 

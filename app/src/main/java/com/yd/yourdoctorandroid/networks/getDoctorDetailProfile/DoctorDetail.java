@@ -10,9 +10,18 @@ public class DoctorDetail {
     private float currentRating;
     private List<Certification> certificates;
     private List<SpecialistDetail> idSpecialist;
+    private int gender;
     private String universityGraduate;
     private String yearGraduate;
     private String placeWorking;
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
 
     public DoctorID getDoctorId() {
         return doctorId;

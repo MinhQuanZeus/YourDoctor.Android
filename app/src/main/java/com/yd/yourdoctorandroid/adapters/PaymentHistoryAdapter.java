@@ -1,7 +1,6 @@
 package com.yd.yourdoctorandroid.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,11 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.events.ItemClickListener;
-import com.yd.yourdoctorandroid.models.Notification;
 import com.yd.yourdoctorandroid.networks.getPaymentHistory.ObjectPaymentResponse;
-import com.yd.yourdoctorandroid.networks.getPaymentHistory.TypeAdvisoryResponse;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 

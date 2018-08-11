@@ -25,11 +25,10 @@ public class RetrofitFactory {
                 .build();
         //https://your-doctor-test2.herokuapp.com/api/
         //your-doctor.herokuapp.com
-        //192.168.124.104
-        //10.22.116.167
-        //http://10.22.116.167:3000/api/
+        //http://103.221.220.186:3000/api/
+        //192.168.124.108
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://your-doctor-test2.herokuapp.com/api/")
+                .baseUrl("http://103.221.220.186:3000/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();

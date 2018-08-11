@@ -7,8 +7,17 @@ public class DoctorID {
     private String lastName;
     private String phoneNumber;
     private String avatar;
+    private int gender;
     private String birthday;
     private String address;
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
 
     public String get_id() {
         return _id;

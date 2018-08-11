@@ -116,7 +116,7 @@ public class DoctorRankFragment extends Fragment {
                     if(response.code() == 200){
                         Log.e("AnhLe", "success: " + response.body());
                         MainObjectSpecialist mainObjectSpecialist = response.body();
-                        specialists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                        specialists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
                         LoadDefaultModel.getInstance().setSpecialists(specialists);
                         setupViewPager(vpDoctorRanking);
                         vpDoctorRanking.setCurrentItem(0);

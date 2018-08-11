@@ -240,7 +240,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     if (response.code() == 200) {
                         Log.e("AnhLe", "success: " + response.body());
                         MainObjectSpecialist mainObjectSpecialist = response.body();
-                        spectlists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                        spectlists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
                         arrayspecialists = new String[spectlists.size()];
 
                         for (int i = 0; i < arrayspecialists.length; i++) {

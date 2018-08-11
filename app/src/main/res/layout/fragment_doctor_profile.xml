@@ -11,7 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="270dp"
+        android:layout_height="300dp"
         android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -38,7 +38,7 @@
                     app:titleTextColor="@color/white" />
 
                 <ImageView
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="35dp"
                     android:id="@+id/ivAvaDoctor"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -47,34 +47,25 @@
 
                 <TextView
                     android:id="@+id/tvNameDoctor"
+                    android:layout_below="@id/ivAvaDoctor"
+                    android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="40dp"
                     android:textColor="@color/colorText"
                     android:textSize="21dp"
                     android:textStyle="bold" />
-
                 <RatingBar
                     android:id="@+id/rbDoctorRanking"
-                    style="@style/customRatingBar"
+                    style="?android:attr/ratingBarStyleIndicator"
                     android:layout_width="wrap_content"
+                    android:layout_below="@id/tvNameDoctor"
+                    android:layout_marginTop="10dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="10dp"
                     android:isIndicator="true"
                     android:progressTint="@color/duskYellow"
                     />
-                <View
-                    android:id="@+id/view8"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_below="@+id/tv_gender"
-                    android:layout_marginTop="16dp"
-                    android:background="@color/colorHint"
-                    android:layout_alignParentBottom="true"/>
             </RelativeLayout>
 
 
@@ -91,14 +82,19 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp">
+            android:layout_height="wrap_content">
+            <View
+            android:id="@+id/view8"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray200"
+            android:layout_alignParentTop="true"/>
 
             <LinearLayout
                 android:id="@+id/menu_profile_doctor"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="45dp"
                 android:orientation="horizontal">
 
                 <LinearLayout

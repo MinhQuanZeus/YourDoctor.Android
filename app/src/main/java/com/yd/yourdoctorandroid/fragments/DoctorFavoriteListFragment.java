@@ -110,7 +110,7 @@ public class DoctorFavoriteListFragment extends Fragment {
                 public void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
                     Log.e("AnhLe", "success: " + response.body());
                     MainObjectSpecialist mainObjectSpecialist = response.body();
-                    LoadDefaultModel.getInstance().setSpecialists((ArrayList<Specialist>) mainObjectSpecialist.getSpecialist());
+                    LoadDefaultModel.getInstance().setSpecialists((ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist());
                     setDoctorFavoriteList(rvListDoctorFavorite);
 
                 }

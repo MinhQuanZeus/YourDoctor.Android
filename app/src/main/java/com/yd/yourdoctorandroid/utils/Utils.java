@@ -7,21 +7,14 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingService;
 import com.yd.yourdoctorandroid.activities.AuthActivity;
 import com.yd.yourdoctorandroid.models.Patient;
-import com.yd.yourdoctorandroid.networks.checkStatusChatService.CheckStatusChatService;
-import com.yd.yourdoctorandroid.services.CheckNetWordChangeService;
-import com.yd.yourdoctorandroid.services.TimeOutChatService;
-import com.yd.yourdoctorandroid.services.YDFirebaseInstanceIDService;
-import com.yd.yourdoctorandroid.services.YDFirebaseMessagingService;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.Format;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -80,7 +73,9 @@ public class Utils {
         //context.stopService(new Intent(context, CheckNetWordChangeService.class));
         //context.stopService(new Intent(context, TimeOutChatService.class));
         SocketUtils.getInstance().disconnectConnect();
-        SharedPrefs.getInstance().clear();
+        SharedPrefs.getInstance().remove("JWT_TOKEN");
+        SharedPrefs.getInstance().remove("USER_INFO");
+        SharedPrefs.getInstance().remove("listChatTimeOutNot");
         Intent intent = new Intent(context, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

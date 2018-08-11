@@ -66,7 +66,7 @@ public class LoadDefaultModel {
                 if(response.code() == 200){
                     Log.e("AnhLe", "success: " + response.body());
                     MainObjectSpecialist mainObjectSpecialist = response.body();
-                    specialists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                    specialists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
                 }
             }
 

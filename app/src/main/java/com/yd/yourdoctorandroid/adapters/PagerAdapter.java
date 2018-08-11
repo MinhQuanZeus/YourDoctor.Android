@@ -21,14 +21,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        switch (position){
+        switch (position) {
             case 0:
                 return new NotifyFragment();
             case 1:
                 return new HomeFragment();
-            case 2:{
+            case 2:
                 return new SpecialistInfoFragment();
-            }
             case 3:
                 return new HistoryTransactionFragment();
             default:

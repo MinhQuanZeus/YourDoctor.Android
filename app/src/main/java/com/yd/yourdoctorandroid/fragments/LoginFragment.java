@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class LoginFragment extends Fragment {
 
     public static final String JWT_TOKEN = "JWT_TOKEN";
     public static final String USER_INFO = "USER_INFO";
+    @BindView(R.id.tv_signup)
     TextView tvSignUp;
     @BindView(R.id.ed_phone)
     EditText edPhone;
@@ -59,6 +61,10 @@ public class LoginFragment extends Fragment {
     @BindView(R.id.btn_sign_in)
     CircularProgressButton btnLogin;
     private Unbinder unbinder;
+
+    //Check box remember username, password
+    @BindView(R.id.checkBoxRemember)
+    CheckBox checkBoxRemember;
 
     int countSuccessInitialization;
 
@@ -78,7 +84,14 @@ public class LoginFragment extends Fragment {
 
     private void setUp(View view) {
         unbinder = ButterKnife.bind(this, view);
-        tvSignUp = (TextView) view.findViewById(R.id.tv_signup);
+        String phone = SharedPrefs.getInstance().get("phone",String.class);
+        String password = SharedPrefs.getInstance().get("password",String.class);
+        if(phone != null && phone!= "" && password != null && password != null){
+            checkBoxRemember.setChecked(true);
+            edPhone.setText(phone);
+            edPassword.setText(password);
+        }
+
         LoadDefaultModel.getInstance();
         countSuccessInitialization = 0;
         tvSignUp.setOnClickListener(new View.OnClickListener() {
@@ -95,6 +108,7 @@ public class LoginFragment extends Fragment {
             }
         });
     }
+
 
     private boolean onValidate() {
         boolean isValidate = true;
@@ -137,7 +151,7 @@ public class LoginFragment extends Fragment {
             public void onResponse(Call<AuthResponse> call, final Response<AuthResponse> response) {
 
                 if (response.code() == 200 || response.code() == 201) {
-                    Log.e("Login ", response.body().getJwtToken() );
+                    Log.e("Login ", response.body().getJwtToken());
                     SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
 
                     if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
@@ -147,6 +161,18 @@ public class LoginFragment extends Fragment {
                     Log.e("idPatient", response.body().getPatient().getId());
                     FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
                     SocketUtils.getInstance().reConnect();
+
+                    if(checkBoxRemember.isChecked()){
+                        SharedPrefs.getInstance().put("phone",edPhone.getText().toString());
+                        SharedPrefs.getInstance().put("password",edPassword.getText().toString());
+                    }else {
+                        SharedPrefs.getInstance().put("phone","");
+                        SharedPrefs.getInstance().put("password","");
+                    }
+
+
+
+
                     LoadDefaultModel.getInstance().loadFavoriteDoctor(response.body().getPatient(), getActivity(), btnLogin);
 
                 } else {

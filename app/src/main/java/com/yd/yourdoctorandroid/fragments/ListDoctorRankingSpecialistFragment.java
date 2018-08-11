@@ -158,13 +158,12 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
 
                         doctorRankingAdapter.addAll(doctorList);
-
+                        progressBar.setVisibility(View.GONE);
 
                         if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    //progressBar.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
+
                 }else if(response.code() == 401){
                     Utils.backToLogin(getContext());
                 }
