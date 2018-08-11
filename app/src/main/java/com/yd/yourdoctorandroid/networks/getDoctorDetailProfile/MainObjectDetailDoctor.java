@@ -3,7 +3,7 @@ package com.yd.yourdoctorandroid.networks.getDoctorDetailProfile;
 import java.util.List;
 
 public class MainObjectDetailDoctor {
-    List<DoctorDetail> informationDoctor;
+    private List<DoctorDetail> informationDoctor;
 
     public List<DoctorDetail> getInformationDoctor() {
         return informationDoctor;

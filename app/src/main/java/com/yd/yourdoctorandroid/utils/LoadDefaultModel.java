@@ -40,6 +40,14 @@ public class LoadDefaultModel {
         loadTypeAdvisory();
     }
 
+    public void setSpecialists(List<Specialist> specialists) {
+        this.specialists = specialists;
+    }
+
+    public void setTypeAdvisories(List<TypeAdvisory> typeAdvisories) {
+        this.typeAdvisories = typeAdvisories;
+    }
+
     public List<Specialist> getSpecialists() {
 
         return specialists;
@@ -55,9 +63,11 @@ public class LoadDefaultModel {
         getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
             @Override
             public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
-                Log.e("AnhLe", "success: " + response.body());
-                MainObjectSpecialist mainObjectSpecialist = response.body();
-                specialists = (ArrayList<Specialist>) mainObjectSpecialist.getSpecialist();
+                if(response.code() == 200){
+                    Log.e("AnhLe", "success: " + response.body());
+                    MainObjectSpecialist mainObjectSpecialist = response.body();
+                    specialists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
+                }
             }
 
             @Override
@@ -69,12 +79,15 @@ public class LoadDefaultModel {
 
     public void loadTypeAdvisory() {
         GetAllTypesAdvisoryService getAllTypesAdvisoryService = RetrofitFactory.getInstance().createService(GetAllTypesAdvisoryService.class);
-        getAllTypesAdvisoryService.getMainObjectTypeAdvisories().enqueue(new Callback<MainObjectTypeAdivosry>() {
+        getAllTypesAdvisoryService.getMainObjectTypeAdvisories(SharedPrefs.getInstance().get("JWT_TOKEN", String.class)).enqueue(new Callback<MainObjectTypeAdivosry>() {
             @Override
             public void onResponse(Call<MainObjectTypeAdivosry> call, Response<MainObjectTypeAdivosry> response) {
-                Log.e("AnhLe", "success: " + response.body());
-                MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
-                typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
+                if(response.code() == 200){
+                    Log.e("AnhLe", "success: " + response.body());
+                    MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
+                    typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
+                }
+
             }
 
             @Override
@@ -93,17 +106,19 @@ public class LoadDefaultModel {
 
     public void loadFavoriteDoctor(final Patient currentPatient , final FragmentActivity fragmentActivity , final CircularProgressButton btnLogin) {
         GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
-        getListIDFavoriteDoctor.getMainObjectIDFavorite(currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
             @Override
             public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
-                MainObjectIDFavorite mainObject = response.body();
-                if (mainObject != null) {
-                    currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
-                    SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                    Intent intent = new Intent(fragmentActivity, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    fragmentActivity.startActivity(intent);
+                if(response.code() == 200){
+                    MainObjectIDFavorite mainObject = response.body();
+                    if (mainObject != null) {
+                        currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                        SharedPrefs.getInstance().put("USER_INFO", currentPatient);
+                        Intent intent = new Intent(fragmentActivity, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        fragmentActivity.startActivity(intent);
+                    }
                 }
                 btnLogin.revertAnimation();
             }
@@ -119,11 +134,11 @@ public class LoadDefaultModel {
 
     public void startServiceTimeOut(Context context , String idChat){
         Intent intent = new Intent(context, TimeOutChatService.class);
-        intent.putExtra("idChat","theanh");
+        intent.putExtra("idChat",idChat);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 234324243, intent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (360 * 1000), pendingIntent);
+                + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
     }
 
     public void addIdChatToListTimeOut(String idChat){

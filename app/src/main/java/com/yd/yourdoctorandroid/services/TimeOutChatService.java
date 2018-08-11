@@ -7,9 +7,16 @@ import android.util.Log;
 
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.checkStatusChatService.CheckStatusChatService;
-import com.yd.yourdoctorandroid.networks.checkStatusChatService.StatusResponse;
+import com.yd.yourdoctorandroid.networks.checkStatusChatService.ListNotDoneResponse;
+import com.yd.yourdoctorandroid.networks.checkStatusChatService.ListRequest;
+import com.yd.yourdoctorandroid.networks.sendListChatToCheck.ResponDoneChat;
+import com.yd.yourdoctorandroid.networks.sendListChatToCheck.SendListChatToCheckDoneService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.NetworkUtils;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,54 +26,63 @@ public class TimeOutChatService extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         String idChat = intent.getStringExtra("idChat");
-        if (NetworkUtils.isOnline(context)) {
-            //Toast.makeText(context, intent.getStringExtra("idChat") + "hello", Toast.LENGTH_LONG).show();
-            checking(idChat);
-        } else {
+        LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
 
-            LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
+        if (NetworkUtils.isOnline(context)) {
+            List<String> listChatTimeOut = SharedPrefs.getInstance().get("listChatTimeOutNot", List.class);
+            checking(listChatTimeOut);
         }
 
-        this.clearAbortBroadcast();
     }
 
-    private void checking(final String idChat){
-        CheckStatusChatService checkStatusChatService = RetrofitFactory.getInstance().createService(CheckStatusChatService.class);
-        checkStatusChatService.checkStatusChatService(idChat).enqueue(new Callback<StatusResponse>() {
-            @Override
-            public  void onResponse(Call<StatusResponse> call, Response<StatusResponse> response) {
-                Log.e("AnhLe", "success: " + response.body());
-                StatusResponse mainObject = response.body();
-                if(response.code() == 200 && mainObject != null){
-                    if(!mainObject.getStatusDone()){
-                        LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
-                        //ban luon cho 1 list server check
-                        //tru but trong share
-
+    private void checking(final List<String> listChatTimeOut) {
+        ListRequest listRequest = new ListRequest();
+        listRequest.setListId(listChatTimeOut);
+        if (listRequest.getListId() != null && listRequest.getListId().size() != 0) {
+            CheckStatusChatService checkStatusChatService = RetrofitFactory.getInstance().createService(CheckStatusChatService.class);
+            checkStatusChatService.checkStatusChatService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),listRequest).enqueue(new Callback<ListNotDoneResponse>() {
+                @Override
+                public void onResponse(Call<ListNotDoneResponse> call, Response<ListNotDoneResponse> response) {
+                    Log.e("AnhLe", "checking: " + response.body());
+                    ListNotDoneResponse mainObject = response.body();
+                    if (response.code() == 200 && mainObject != null) {
+                        SharedPrefs.getInstance().put("listChatTimeOutNot", mainObject.getListID());
+                        sendToCheckout();
                     }
-                }else {
-                    LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
                 }
 
-            }
+                @Override
+                public void onFailure(Call<ListNotDoneResponse> call, Throwable t) {
+                    TimeOutChatService.this.clearAbortBroadcast();
+                }
+            });
+        }
 
-            @Override
-            public void onFailure(Call<StatusResponse> call, Throwable t) {
-                LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
-            }
-        });
     }
 
-//    private void addIdChatToListTimeOut(String idChat){
-//        List<String> listChatTimeOut =SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
-//        if(listChatTimeOut == null){
-//            listChatTimeOut = new ArrayList<>();
-//            listChatTimeOut.add(idChat);
-//            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-//        }else {
-//            listChatTimeOut.add(idChat);
-//            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-//        }
-//    }
+    private void sendToCheckout() {
+        ListRequest listRequest = new ListRequest();
+        listRequest.setListId(SharedPrefs.getInstance().get("listChatTimeOutNot", List.class));
+        if (listRequest.getListId() != null && listRequest.getListId().size() != 0) {
+            SendListChatToCheckDoneService sendListChatToCheckDoneService = RetrofitFactory.getInstance().createService(SendListChatToCheckDoneService.class);
+            sendListChatToCheckDoneService.sendListChatToCheckDoneService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),listRequest).enqueue(new Callback<ResponDoneChat>() {
+                @Override
+                public void onResponse(Call<ResponDoneChat> call, Response<ResponDoneChat> response) {
+                    Log.e("AnhLe", "send : " + response.body());
+                    ResponDoneChat mainObject = response.body();
+                    if (response.code() == 200 && mainObject != null) {
+
+                        SharedPrefs.getInstance().put("listChatTimeOutNot", mainObject.getArrayChatHistoryCheckFailed());
+                    }
+                    TimeOutChatService.this.clearAbortBroadcast();
+                }
+
+                @Override
+                public void onFailure(Call<ResponDoneChat> call, Throwable t) {
+                    TimeOutChatService.this.clearAbortBroadcast();
+                }
+            });
+        }
+    }
 
 }

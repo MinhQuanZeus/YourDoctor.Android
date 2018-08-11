@@ -3,7 +3,7 @@ package com.yd.yourdoctorandroid.networks.getListDoctorFavorite;
 import java.util.List;
 
 public class ListFavoriteDoctor {
-    List<FavoriteDoctor> favoriteDoctors;
+    private List<FavoriteDoctor> favoriteDoctors;
 
     public List<FavoriteDoctor> getFavoriteDoctors() {
         return favoriteDoctors;

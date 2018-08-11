@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".fragments.AboutUsFragment">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tbAboutUs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary" />
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/iv_introduce"
+        android:layout_below="@id/tbAboutUs"
+        android:layout_marginTop="70dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/your_doctor_logo"
+        android:layout_centerHorizontal="true"
+         />
+    <TextView
+        android:id="@+id/tv_introduce"
+        android:layout_marginTop="10dp"
+        android:padding="20dp"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:textAlignment="textStart"
+        android:text="@string/introduce_us"
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/iv_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

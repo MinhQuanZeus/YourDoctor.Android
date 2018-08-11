@@ -23,6 +23,8 @@ import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.GetDoctorRankingSpecialist;
 import com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist.MainObjectRanking;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,17 +45,16 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
     private Context context;
     Unbinder butterKnife;
 
-    @BindView(R.id.rv_list_doctor_ranking)
-    RecyclerView rv_list_doctor_ranking;
+    @BindView(R.id.rvListDoctorRanking)
+    RecyclerView rvListDoctorRanking;
 
-    @BindView(R.id.pb_ranking)
+    @BindView(R.id.pbRanking)
     ProgressBar progressBar;
 
     private DoctorRankingSpecialistAdapter doctorRankingAdapter;
 
     LinearLayoutManager linearLayoutManager;
 
-    // private static final int PAGE_START = 0;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int currentPage = 0;
@@ -71,7 +72,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_doctor_ranking_specialist, container, false);
         butterKnife = ButterKnife.bind(this, view);
         doctorRankingAdapter = new DoctorRankingSpecialistAdapter(getContext());
-        setDoctorRankList(specialistId, rv_list_doctor_ranking);
+        setDoctorRankList(specialistId, rvListDoctorRanking);
 
         return view;
     }
@@ -135,34 +136,38 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
     private void loadFirstPage() {
         GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
-        getDoctorRankingSpecialist.getMainObjectRanking(specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
+        getDoctorRankingSpecialist.getDoctorRankingSpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
-                MainObjectRanking mainObject = response.body();
-                Log.e("haha" , response.body().toString());
-                List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
-                List<Doctor> doctorList = new ArrayList<>();
-                if (doctorRankingList != null && doctorRankingList.size() > 0) {
-                    for (DoctorRanking doctorRanking : doctorRankingList) {
-                        Doctor doctor = new Doctor();
-                        doctor.setAvatar(doctorRanking.getAvatar());
-                        doctor.setFirstName(doctorRanking.getFirstName());
-                        doctor.setLastName(doctorRanking.getLastName());
-                        doctor.setMiddleName(doctorRanking.getMiddleName());
-                        doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
-                        doctor.setDoctorId(doctorRanking.getDoctorId());
-                        doctorList.add(doctor);
+                if(response.code() == 200){
+                    MainObjectRanking mainObject = response.body();
+                    Log.e("haha" , response.body().toString());
+                    List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
+                    List<Doctor> doctorList = new ArrayList<>();
+                    if (doctorRankingList != null && doctorRankingList.size() > 0) {
+                        for (DoctorRanking doctorRanking : doctorRankingList) {
+                            Doctor doctor = new Doctor();
+                            doctor.setAvatar(doctorRanking.getDoctorId().getAvatar());
+                            doctor.setFirstName(doctorRanking.getDoctorId().getFirstName());
+                            doctor.setLastName(doctorRanking.getDoctorId().getLastName());
+                            doctor.setMiddleName(doctorRanking.getDoctorId().getMiddleName());
+                            doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
+                            doctor.setDoctorId(doctorRanking.getDoctorId().get_id());
+                            doctorList.add(doctor);
+                        }
+
+
+                        doctorRankingAdapter.addAll(doctorList);
+                        progressBar.setVisibility(View.GONE);
+
+                        if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
+                        else isLastPage = true;
                     }
 
-
-                    doctorRankingAdapter.addAll(doctorList);
-
-
-                    if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
-                    else isLastPage = true;
+                }else if(response.code() == 401){
+                    Utils.backToLogin(getContext());
                 }
-                //progressBar.setVisibility(View.GONE);
-                progressBar.setVisibility(View.GONE);
+
             }
 
             @Override
@@ -171,36 +176,39 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                 progressBar.setVisibility(View.GONE);
             }
         });
-
-
     }
 
     private void loadNextPage() {
 
         GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
-        getDoctorRankingSpecialist.getMainObjectRanking(specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
+        getDoctorRankingSpecialist.getDoctorRankingSpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
-                MainObjectRanking mainObject = response.body();
-                List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
-                List<Doctor> doctorList = new ArrayList<>();
-                for (DoctorRanking doctorRanking : doctorRankingList) {
-                    Doctor doctor = new Doctor();
-                    doctor.setAvatar(doctorRanking.getAvatar());
-                    doctor.setFirstName(doctorRanking.getFirstName());
-                    doctor.setLastName(doctorRanking.getLastName());
-                    doctor.setMiddleName(doctorRanking.getMiddleName());
-                    doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
-                    doctor.setDoctorId(doctorRanking.getDoctorId());
-                    doctorList.add(doctor);
+                if(response.code() == 200){
+                    MainObjectRanking mainObject = response.body();
+                    List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
+                    List<Doctor> doctorList = new ArrayList<>();
+                    for (DoctorRanking doctorRanking : doctorRankingList) {
+                        Doctor doctor = new Doctor();
+                        doctor.setAvatar(doctorRanking.getDoctorId().getAvatar());
+                        doctor.setFirstName(doctorRanking.getDoctorId().getFirstName());
+                        doctor.setLastName(doctorRanking.getDoctorId().getLastName());
+                        doctor.setMiddleName(doctorRanking.getDoctorId().getMiddleName());
+                        doctor.setCurrentRating((float) doctorRanking.getCurrentRating());
+                        doctor.setDoctorId(doctorRanking.getDoctorId().get_id());
+                        doctorList.add(doctor);
+                    }
+                    doctorRankingAdapter.removeLoadingFooter();  // 2
+                    isLoading = false;   // 3
+
+                    doctorRankingAdapter.addAll(doctorList);   // 4
+
+                    if (doctorList.size()==5) doctorRankingAdapter.addLoadingFooter();  // 5
+                    else isLastPage = true;
+                }else if(response.code() == 401){
+                    Utils.backToLogin(getContext());
                 }
-                doctorRankingAdapter.removeLoadingFooter();  // 2
-                isLoading = false;   // 3
 
-                doctorRankingAdapter.addAll(doctorList);   // 4
-
-                if (doctorList.size()==5) doctorRankingAdapter.addLoadingFooter();  // 5
-                else isLastPage = true;
             }
 
             @Override

@@ -1,11 +1,11 @@
 package com.yd.yourdoctorandroid.networks.getListDoctorFavorite;
 
 public class FavoriteDoctor {
-    String _id;
-    String firstName;
-    String middleName;
-    String lastName;
-    String avatar;
+    private String _id;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String avatar;
 
     public String get_id() {
         return _id;

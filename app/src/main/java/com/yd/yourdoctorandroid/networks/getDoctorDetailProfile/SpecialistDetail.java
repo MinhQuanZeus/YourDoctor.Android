@@ -1,9 +1,9 @@
 package com.yd.yourdoctorandroid.networks.getDoctorDetailProfile;
 
 public class SpecialistDetail {
-    String _id;
-    String specialistId;
-    String name;
+    private String _id;
+    private String specialistId;
+    private String name;
 
     public String get_id() {
         return _id;

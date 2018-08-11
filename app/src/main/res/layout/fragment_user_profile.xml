@@ -1,62 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?><!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--xmlns:tools="http://schemas.android.com/tools"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:background="@color/primary_text"--><!--android:clickable="true"--><!--android:orientation="vertical"--><!--tools:context=".fragments.UserProfileFragment">-->
-
-<!--<LinearLayout--><!--android:layout_width="match_parent"--><!--android:layout_height="350dp"--><!--android:background="@drawable/gradientbackground"--><!--android:orientation="vertical">-->
-
-<!--<android.support.v7.widget.Toolbar--><!--android:id="@+id/tb_back_from_profile"--><!--app:titleTextColor="@color/white"--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:background="@drawable/gradientbackground" />-->
-
-<!--<RelativeLayout--><!--android:layout_width="150dp"--><!--android:layout_height="150dp"--><!--android:layout_gravity="center_horizontal"--><!--android:layout_marginTop="20dp">-->
-
-<!--<de.hdodenhof.circleimageview.CircleImageView--><!--android:id="@+id/iv_ava_profile"--><!--android:layout_width="150dp"--><!--android:layout_height="150dp"--><!--android:layout_centerHorizontal="true"--><!--android:layout_marginTop="24dp"--><!--android:src="@drawable/patient_avatar"--><!--app:civ_border_color="@color/colorPrimary"--><!--app:civ_border_width="2dp" />-->
-
-<!--<de.hdodenhof.circleimageview.CircleImageView--><!--android:id="@+id/iv_choose_image"--><!--android:layout_width="50dp"--><!--android:layout_height="50dp"--><!--android:layout_alignBottom="@+id/iv_ava_profile"--><!--android:layout_alignEnd="@+id/iv_ava_profile"--><!--android:src="@drawable/camera"--><!--android:visibility="gone"--><!--app:civ_border_color="@color/colorPrimary"--><!--app:civ_border_width="2dp" />-->
-
-<!--</RelativeLayout>-->
-
-
-<!--<LinearLayout--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_gravity="center_horizontal"--><!--android:layout_marginTop="10dp"--><!--android:orientation="horizontal">-->
-
-<!--<EditText--><!--android:id="@+id/ed_firstname"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:background="@null"--><!--android:text="Wiliam"--><!--android:textColor="#fff"--><!--android:textSize="19sp"--><!--android:textStyle="bold" />--><!--<EditText--><!--android:id="@+id/ed_middlename"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_marginStart="5dp"--><!--android:background="@null"--><!--android:editable="false"--><!--android:text="Snoe"--><!--android:textColor="#fff"--><!--android:textSize="19sp"--><!--android:textStyle="bold" />-->
-
-<!--<EditText--><!--android:id="@+id/ed_lastname"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_marginStart="5dp"--><!--android:background="@null"--><!--android:editable="false"--><!--android:text="Snoe"--><!--android:textColor="#fff"--><!--android:textSize="19sp"--><!--android:textStyle="bold" />--><!--</LinearLayout>-->
-
-<!--<EditText--><!--android:id="@+id/ed_address_user"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_gravity="center_horizontal"--><!--android:layout_marginTop="10dp"--><!--android:background="@null"--><!--android:editable="false"--><!--android:text="28 trần hưng đạo hà nội"--><!--android:textColor="#fff"--><!--android:textSize="17sp"--><!--android:textStyle="bold" />-->
-
-
-<!--<LinearLayout--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_gravity="center_horizontal"--><!--android:layout_marginTop="10dp"--><!--android:orientation="horizontal">--><!--<TextView--><!--android:id="@+id/tv_remain_money_profile"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_marginTop="10dp"--><!--android:text="30000"--><!--android:textColor="#fff"--><!--android:textSize="17sp"--><!--android:textStyle="bold" />--><!--<TextView--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_marginTop="10dp"--><!--android:text=" đ"--><!--android:textColor="#fff"--><!--android:textSize="17sp"--><!--android:textStyle="bold" />--><!--</LinearLayout>-->
-
-<!--</LinearLayout>-->
-
-<!--<LinearLayout--><!--android:layout_width="360dp"--><!--android:layout_height="wrap_content"--><!--android:layout_gravity="center"--><!--android:layout_marginTop="10dp"--><!--android:orientation="vertical">-->
-
-<!--<LinearLayout--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:orientation="horizontal"--><!--android:paddingLeft="25dp">-->
-
-<!--<ImageView--><!--android:layout_width="36dp"--><!--android:layout_height="36dp"--><!--app:srcCompat="@drawable/ic_today_black_24dp" />-->
-
-<!--<TextView--><!--android:id="@+id/tv_birthday_user"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_gravity="center_vertical"--><!--android:paddingLeft="20dp"--><!--android:text="30/5/2017"--><!--android:textStyle="bold" />--><!--</LinearLayout>-->
-
-<!--<LinearLayout--><!--android:layout_width="match_parent"--><!--android:layout_height="wrap_content"--><!--android:layout_marginTop="25dp"--><!--android:orientation="horizontal"--><!--android:paddingLeft="25dp">-->
-
-<!--<ImageView--><!--android:layout_width="36dp"--><!--android:layout_height="36dp"--><!--app:srcCompat="@drawable/ic_phone_iphone_black_24dp" />-->
-
-<!--<TextView--><!--android:id="@+id/tv_phone_number_user"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:layout_gravity="center_vertical"--><!--android:paddingLeft="20dp"--><!--android:text="+266 225 225"--><!--android:textStyle="bold" />--><!--</LinearLayout>-->
-
-<!--</LinearLayout>-->
-
-<!--<RelativeLayout--><!--android:layout_marginTop="10dp"--><!--android:layout_width="wrap_content"--><!--android:layout_height="wrap_content"--><!--android:orientation="horizontal"--><!--android:layout_gravity="center_horizontal"--><!--&gt;-->
-
-<!--<Button--><!--android:id="@+id/btn_change_password"--><!--android:layout_width="150dp"--><!--android:layout_height="wrap_content"--><!--android:background="@drawable/buttonborder"--><!--android:text="@string/change_password"--><!--android:textColor="@color/colorPrimaryDark" />-->
-
-<!--<Button--><!--android:id="@+id/btn_edit_profile"--><!--android:layout_width="150dp"--><!--android:layout_height="wrap_content"--><!--android:layout_marginStart="30dp"--><!--android:layout_toEndOf="@id/btn_change_password"--><!--android:background="@drawable/buttonborder"--><!--android:text="@string/edit"--><!--android:textColor="@color/colorPrimaryDark" />--><!--</RelativeLayout>-->
-
-
-<!--</LinearLayout>-->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.UserProfileFragment"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".fragments.UserProfileFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -94,113 +43,78 @@
                 app:civ_border_color="@color/colorPrimary"
                 app:civ_border_width="2dp" />
 
-            <RelativeLayout
-                android:id="@+id/rl_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_avatar"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_horizontal">
 
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/til_fname"
-                    android:layout_width="wrap_content"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv_avatar"
+                android:textAlignment="gravity"
+                android:textColor="@color/colorText">
+
+                <RelativeLayout
+                    android:id="@+id/rl_name"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:textColor="@color/colorText">
+                    android:layout_below="@+id/iv_avatar"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal">
 
                     <EditText
                         android:id="@+id/ed_fname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:drawablePadding="12dp"
-                        android:gravity="left"
-
                         android:inputType="text"
                         android:maxLength="12"
                         android:padding="16dp"
                         android:textColor="@color/colorText"
                         android:textColorHint="@color/colorHint"
                         android:textSize="16dp" />
-
-                </android.support.design.widget.TextInputLayout>
-
-                <!--android:hint="@string/first_name"-->
-                <!--mid name-->
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/til_mname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/til_fname"
-                    android:textColor="@color/colorText">
 
                     <EditText
                         android:id="@+id/ed_mname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/ed_fname"
                         android:drawablePadding="12dp"
-                        android:gravity="left"
-
+                        android:gravity="center"
                         android:inputType="text"
                         android:maxLength="12"
                         android:padding="16dp"
                         android:textColor="@color/colorText"
                         android:textColorHint="@color/colorHint"
                         android:textSize="16dp" />
-
-                </android.support.design.widget.TextInputLayout>
-
-
-                <!--last name-->
-                <!--android:hint="@string/mid_name"-->
-                <android.support.design.widget.TextInputLayout
-                    android:id="@+id/til_lname"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/til_mname"
-                    android:textColor="@color/colorText">
 
                     <EditText
                         android:id="@+id/ed_lname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/ed_mname"
                         android:drawablePadding="12dp"
-                        android:gravity="left"
-
                         android:inputType="text"
                         android:maxLength="12"
                         android:padding="16dp"
                         android:textColor="@color/colorText"
                         android:textColorHint="@color/colorHint"
                         android:textSize="16dp" />
+                </RelativeLayout>
+            </android.support.design.widget.TextInputLayout>
 
-                </android.support.design.widget.TextInputLayout>
-
-            </RelativeLayout>
-            <!--android:hint="@string/last_name"-->
-            <!--first name-->
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/till_remainMoney"
+            <TextView
+                android:id="@+id/tv_remainMoney"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/til_full_name"
                 android:layout_centerHorizontal="true"
+                android:drawablePadding="12dp"
+                android:gravity="left"
+                android:inputType="text"
+                android:maxLength="12"
+                android:padding="5dp"
                 android:textColor="@color/colorText"
-                android:layout_below="@id/rl_name">
-
-                <EditText
-                    android:id="@+id/ed_remainMoney"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="12dp"
-                    android:gravity="left"
-                    android:inputType="text"
-                    android:maxLength="12"
-                    android:padding="5dp"
-                    android:textColor="@color/colorText"
-                    android:textColorHint="@color/colorHint"
-                    android:textSize="16dp" />
-
-            </android.support.design.widget.TextInputLayout>
+                android:textColorHint="@color/colorHint"
+                android:textSize="16dp" />
 
 
             <!--phone-->
@@ -208,7 +122,7 @@
                 android:id="@+id/til_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/till_remainMoney"
+                android:layout_below="@+id/tv_remainMoney"
                 android:textColor="@color/colorText">
 
                 <com.yd.yourdoctorandroid.custormviews.MyEditText
@@ -275,19 +189,13 @@
                 android:layout_below="@+id/tv_gender"
                 android:layout_marginTop="16dp"
                 android:background="@color/colorHint" />
-            <!--password-->
 
-
-            <!--confirm password-->
-
-
-            <!--birth day-->
             <android.support.design.widget.TextInputLayout
-                android:layout_marginTop="10dp"
                 android:id="@+id/til_birthday"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/view8"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/colorText">
 
                 <com.yd.yourdoctorandroid.custormviews.MyEditText
@@ -326,6 +234,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <RelativeLayout
+                android:id="@+id/rl_mainButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/til_address"
@@ -339,7 +248,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/buttonborder"
                     android:text="@string/change_password"
-                    android:textColor="@color/redButton"
+                    android:textColor="@color/white"
                     android:textSize="15sp" />
 
                 <Button
@@ -350,30 +259,48 @@
                     android:layout_toEndOf="@id/btn_change_password"
                     android:background="@drawable/buttonborder"
                     android:text="@string/edit"
-                    android:textColor="@color/redButton"
+                    android:textColor="@color/white"
                     android:textSize="15sp" />
             </RelativeLayout>
 
-            <!--<br.com.simplepass.loading_button_lib.customViews.CircularProgressButton-->
-            <!--android:id="@+id/btn_sign_up"-->
-            <!--android:layout_width="270dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_below="@id/til_address"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_marginTop="32dp"-->
-            <!--android:background="@drawable/buttonshape"-->
-            <!--android:gravity="center"-->
-            <!--android:shadowColor="#A8A8A8"-->
-            <!--android:shadowDx="0"-->
-            <!--android:shadowDy="0"-->
-            <!--android:shadowRadius="5"-->
-            <!--android:text="@string/str_continue"-->
-            <!--android:textColor="@color/primary_text"-->
-            <!--android:textSize="20sp"-->
-            <!--app:spinning_bar_color="#FFF"-->
-            <!--app:spinning_bar_padding="6dp"-->
-            <!--app:spinning_bar_width="4dp" />-->
+            <RelativeLayout
+                android:id="@+id/rl_YesNoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/til_address"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_no"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/buttonborder"
+                    android:text="@string/btn_cancel"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/btn_yes"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_toEndOf="@id/btn_no"
+                    android:background="@drawable/buttonborder"
+                    android:text="@string/btn_ok"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
         </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/pbProfilePatient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 </ScrollView>

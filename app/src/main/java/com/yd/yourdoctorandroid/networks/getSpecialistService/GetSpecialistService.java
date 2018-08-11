@@ -5,6 +5,6 @@ import retrofit2.http.GET;
 
 public interface GetSpecialistService {
 
-    @GET("specialists")
+    @GET("specialists/getListSpecialist")
     Call<MainObjectSpecialist> getMainObjectSpecialist();
 }

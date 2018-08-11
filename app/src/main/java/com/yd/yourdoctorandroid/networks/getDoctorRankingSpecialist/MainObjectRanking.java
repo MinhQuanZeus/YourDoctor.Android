@@ -3,13 +3,13 @@ package com.yd.yourdoctorandroid.networks.getDoctorRankingSpecialist;
 import java.util.List;
 
 public class MainObjectRanking {
-    private List<DoctorRanking> listDoctor;
+    private List<DoctorRanking> listDoctorRanking;
 
     public List<DoctorRanking> getListDoctor() {
-        return listDoctor;
+        return listDoctorRanking;
     }
 
     public void setListDoctor(List<DoctorRanking> listDoctor) {
-        this.listDoctor = listDoctor;
+        this.listDoctorRanking = listDoctor;
     }
 }

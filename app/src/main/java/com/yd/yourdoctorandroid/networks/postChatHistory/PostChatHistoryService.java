@@ -5,9 +5,10 @@ import com.yd.yourdoctorandroid.networks.postPaymentHistory.PaymentHistory;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 public interface PostChatHistoryService {
     @POST("chatshistorys")
-    Call<ChatHistoryResponse> addChatHistory(@Body ChatHistory chatHistory);
+    Call<ChatHistoryResponse> addChatHistory(@Header("Authorization") String jwt, @Body ChatHistory chatHistory);
 }

@@ -11,11 +11,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.PorterDuff;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -35,23 +35,27 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.BuildConfig;
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.managers.AzureImageManager;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
-import com.yd.yourdoctorandroid.networks.models.AuthResponse;
-import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
+import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.changePassword.ChangePasswordService;
+import com.yd.yourdoctorandroid.networks.changePassword.PasswordRequest;
+import com.yd.yourdoctorandroid.networks.changePassword.PasswordResponse;
+import com.yd.yourdoctorandroid.networks.changeProfile.ChangeProfilePaitentService;
+import com.yd.yourdoctorandroid.networks.changeProfile.PatientRequest;
+import com.yd.yourdoctorandroid.networks.changeProfile.PatientResponse;
+import com.yd.yourdoctorandroid.networks.getLinkImageService.GetLinkImageService;
+import com.yd.yourdoctorandroid.networks.getLinkImageService.MainGetLink;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,17 +63,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
-import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.Manifest.permission.CAMERA;
@@ -79,27 +83,27 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserProfileFragment extends Fragment implements View.OnClickListener{
+public class UserProfileFragment extends Fragment implements View.OnClickListener {
 
     public static final String JWT_TOKEN = "JWT_TOKEN";
     public static final String USER_INFO = "USER_INFO";
 
-    public static final String TAG = "RegisterFragment";
+    public static final int TYPE_EDIT = 1;
+    public static final int TYPE_CANCEL = 2;
+
+    public static final String TAG = "UserProfileFragment";
     public static final int REQUEST_PERMISSION_CODE = 1;
     private static final int REQUEST_TAKE_PHOTO = 1;
     private static final int REQUEST_CHOOSE_PHOTO = 2;
     private static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%]).{6,15})";
-
-    private String mImagePathToBeAttached;
-    private Bitmap mImageToBeAttached;
-    private String phoneNumber;
-    private String filename;
 
     @BindView(R.id.iv_avatar)
     CircleImageView ivAvatar;
     @BindView(R.id.iv_upload_avatar)
     CircleImageView ivUploadAvatar;
 
+    @BindView(R.id.tb_main)
+    Toolbar tbMain;
     @BindView(R.id.ed_fname)
     EditText edFname;
     @BindView(R.id.ed_mname)
@@ -112,18 +116,25 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     EditText edBirthday;
     @BindView(R.id.ed_address)
     EditText edAddress;
-    @BindView(R.id.ed_remainMoney)
-    EditText ed_remainMoney;
+    @BindView(R.id.tv_remainMoney)
+    TextView tv_remainMoney;
+    @BindView(R.id.rl_mainButton)
+    RelativeLayout rlMainButton;
+    @BindView(R.id.rl_YesNoButton)
+    RelativeLayout rlYesNoButton;
+
+    @BindView(R.id.btn_no)
+    Button btnNo;
+    @BindView(R.id.btn_yes)
+    Button btnYes;
 
     @BindView(R.id.btn_change_password)
-    Button btn_change_password;
-
+    Button btnChangePassword;
     @BindView(R.id.btn_edit_profile)
-    Button btn_edit_profile;
+    Button btnEditProfile;
 
     @BindView(R.id.rg_gender)
     RadioGroup groupGender;
-
     @BindView(R.id.radio_male)
     RadioButton rbMale;
     @BindView(R.id.radio_other)
@@ -131,111 +142,221 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     @BindView(R.id.radio_female)
     RadioButton rbFmale;
 
-
-    @BindView(R.id.til_fname)
-    TextInputLayout tilFname;
-    @BindView(R.id.til_mname)
-    TextInputLayout tilMname;
-    @BindView(R.id.til_lname)
-    TextInputLayout tillname;
-    @BindView(R.id.till_remainMoney)
-    TextInputLayout till_remainMoney;
+    @BindView(R.id.pbProfilePatient)
+    ProgressBar pbProfilePatient;
+    @BindView(R.id.til_full_name)
+    TextInputLayout tilFullname;
 
     private Unbinder unbinder;
 
-    ProgressBar progress_change_password;
+    private boolean isChangeInfo;
 
+    //handle password
+    EditText et_old_password;
+    EditText et_new_password;
+    EditText et_confirm_new_password;
+    TextView tv_message_change_password;
+    ProgressBar progress_change_password;
     AlertDialog dialogChangePassword;
 
+    //handle image
+    private String mImagePathToBeAttached;
+    private Bitmap mImageToBeAttached;
+    private String filename;
 
+    //Current Patient
     Patient currentPatient;
+
 
     public UserProfileFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_profile, container, false);
         setupUI(view);
-        // Inflate the layout for this fragment
         return view;
     }
 
     private void setupUI(View view) {
 
-        ButterKnife.bind(this,view);
-        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+        unbinder = ButterKnife.bind(this, view);
+        currentPatient = SharedPrefs.getInstance().get(USER_INFO, Patient.class);
+        isChangeInfo = false;
 
-        filename = UUID.randomUUID().toString();
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.tb_main);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-        toolbar.setTitle(R.string.profile_page);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.primary_text));
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        tbMain.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        tbMain.setTitle(R.string.profile_page);
+        tbMain.setTitleTextColor(getResources().getColor(R.color.primary_text));
+        tbMain.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               ScreenManager.backFragment(getFragmentManager());
+                ScreenManager.backFragment(getFragmentManager());
             }
         });
-
-        btn_change_password.setOnClickListener(this);
-        btn_edit_profile.setOnClickListener(this);
-        ivUploadAvatar.setOnClickListener(this);
-        unbinder = ButterKnife.bind(this, view);
+        // can not edit phone, and remain money
         edPhone.setEnabled(false);
-        //setUpCalendar();
+        tv_remainMoney.setEnabled(false);
 
-        edFname.setText(currentPatient.getfName());
-        edMname.setText(currentPatient.getmName());
-        edLname.setText(currentPatient.getlName());
-        Picasso.with(getContext()).load(currentPatient.getAvatar().toString()).transform(new CropCircleTransformation()).into(ivAvatar);
-        edPhone.setText(currentPatient.getPhoneNumber());
-        edAddress.setText(currentPatient.getAddress());
-        edBirthday.setText(currentPatient.getBirthday());
-        ed_remainMoney.setText(currentPatient.getRemainMoney() + " đ");
-        switch (currentPatient.getGender()){
-            case 1:{
-                rbMale.setChecked(true);
-                rbFmale.setChecked(false);
-                rbOther.setChecked(false);
-                break;
+        //set on click
+        btnChangePassword.setOnClickListener(this);
+        btnEditProfile.setOnClickListener(this);
+        ivUploadAvatar.setOnClickListener(this);
+        btnNo.setOnClickListener(this);
+        btnYes.setOnClickListener(this);
+
+        setUpCalendar();
+        setScreenFunction(TYPE_CANCEL);
+    }
+
+    private void setScreenFunction(int type) {
+        if (type == TYPE_EDIT) {
+            enableAll();
+            rlMainButton.setVisibility(View.GONE);
+            rlYesNoButton.setVisibility(View.VISIBLE);
+        } else if (type == TYPE_CANCEL) {
+            isChangeInfo = false;
+            edFname.setText(currentPatient.getfName());
+            edMname.setText(currentPatient.getmName());
+            edLname.setText(currentPatient.getlName());
+            ZoomImageViewUtils.loadCircleImage(getContext(), currentPatient.getAvatar().toString(), ivAvatar);
+            edPhone.setText(currentPatient.getPhoneNumber());
+            edAddress.setText(currentPatient.getAddress());
+            edBirthday.setText(currentPatient.getBirthday());
+            tv_remainMoney.setText(currentPatient.getRemainMoney() + " đ");
+            switch (currentPatient.getGender()) {
+                case 1: {
+                    rbMale.setChecked(true);
+                    rbFmale.setChecked(false);
+                    rbOther.setChecked(false);
+                    break;
+                }
+                case 2: {
+                    rbMale.setChecked(false);
+                    rbFmale.setChecked(true);
+                    rbOther.setChecked(false);
+                    break;
+                }
+                case 3: {
+                    rbMale.setChecked(false);
+                    rbFmale.setChecked(false);
+                    rbOther.setChecked(true);
+                    break;
+                }
             }
-            case 2:{
-                rbMale.setChecked(false);
-                rbFmale.setChecked(true);
-                rbOther.setChecked(false);
-                break;
-            }
-            case 3:{
-                rbMale.setChecked(false);
-                rbFmale.setChecked(false);
-                rbOther.setChecked(true);
-                break;
-            }
+            disableAll();
+            rlMainButton.setVisibility(View.VISIBLE);
+            rlYesNoButton.setVisibility(View.GONE);
         }
-
-        disableAll();
-
+        mImageToBeAttached = null;
+        tilFullname.setError(null);
+        pbProfilePatient.setVisibility(View.GONE);
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.btn_change_password:{
+        switch (view.getId()) {
+            case R.id.btn_change_password: {
+                showDialogChangePassword();
                 break;
             }
-            case R.id.iv_upload_avatar:{
+            case R.id.iv_upload_avatar: {
+                //imageUtils.displayAttachImageDialog();
                 displayAttachImageDialog();
                 break;
             }
-            case R.id.btn_edit_profile:{
+            case R.id.btn_edit_profile: {
+                setScreenFunction(TYPE_EDIT);
+                break;
+            }
+            case R.id.btn_yes: {
+                onSubmit();
+                break;
+            }
+            case R.id.btn_no: {
+                setScreenFunction(TYPE_CANCEL);
                 break;
             }
         }
+    }
+
+    private void showDialogChangePassword() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.change_password_dialog, null);
+        et_old_password = view.findViewById(R.id.et_old_password);
+        et_new_password = view.findViewById(R.id.et_new_password);
+        et_confirm_new_password = view.findViewById(R.id.et_confirm_new_password);
+        et_old_password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+        et_new_password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+        et_confirm_new_password.getBackground().mutate().setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
+        tv_message_change_password = view.findViewById(R.id.tv_message_change_password);
+        progress_change_password = view.findViewById(R.id.progress_change_password);
+        builder.setView(view);
+        builder.setTitle("Thay đổi mật khẩu");
+
+        builder.setPositiveButton("Thay đổi", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialogChangePassword = builder.create();
+        dialogChangePassword.show();
+        dialogChangePassword.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onValidatePassword(et_new_password.getText().toString(), et_confirm_new_password.getText().toString(), tv_message_change_password)) {
+                    pbProfilePatient.setVisibility(View.VISIBLE);
+                    PasswordRequest passwordRequest = new PasswordRequest();
+                    passwordRequest.setId(currentPatient.getId());
+                    passwordRequest.setOldPassword(et_old_password.getText().toString());
+                    passwordRequest.setNewPassword(et_new_password.getText().toString());
+
+                    Log.e(TAG, SharedPrefs.getInstance().get(JWT_TOKEN, String.class));
+
+                    ChangePasswordService changePasswordService = RetrofitFactory.getInstance().createService(ChangePasswordService.class);
+                    changePasswordService.changePasswordService(SharedPrefs.getInstance().get(JWT_TOKEN, String.class), passwordRequest).enqueue(new Callback<PasswordResponse>() {
+                        @Override
+                        public void onResponse(Call<PasswordResponse> call, Response<PasswordResponse> response) {
+                            tv_message_change_password.setVisibility(View.VISIBLE);
+                            PasswordResponse passwordResponse = response.body();
+                            if (response.code() == 200 && passwordResponse.isChangePasswordSuccess()) {
+                                tv_message_change_password.setText(passwordResponse.getMessage().toString());
+                                tv_message_change_password.setTextColor(getResources().getColor(R.color.colorPrimary));
+                                et_old_password.setText("");
+                                et_new_password.setText("");
+                                et_confirm_new_password.setText("");
+                            } else if(response.code() == 401) {
+                                Utils.backToLogin(getContext());
+
+                            }else {
+                                tv_message_change_password.setTextColor(getResources().getColor(R.color.red));
+                                tv_message_change_password.setText("Không thể thay đổi mật khẩu do lỗi máy chủ!");
+                            }
+                            pbProfilePatient.setVisibility(View.GONE);
+
+                        }
+
+                        @Override
+                        public void onFailure(Call<PasswordResponse> call, Throwable t) {
+                            tv_message_change_password.setVisibility(View.VISIBLE);
+                            tv_message_change_password.setText("Không kết nối được với máy chủ!");
+                            pbProfilePatient.setVisibility(View.GONE);
+
+                        }
+                    });
+                }
+
+            }
+        });
     }
 
 
@@ -267,122 +388,116 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         });
     }
 
-    private String uploadImage() throws Exception {
-        Log.d("UPLOAD", "uploadImage");
-        final String imageName = AzureImageManager.randomString(10);
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            mImageToBeAttached.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            final ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
-            final int imageLength = bs.available();
-
-            final Handler handler = new Handler();
-
-            Thread th = new Thread(new Runnable() {
-                public void run() {
-
-                    try {
-                        final String fileName = AzureImageManager.UploadImage(imageName, bs, imageLength);
-                        Log.d("UPLOAD", "Image");
-                    } catch (Exception e) {
-                        Log.d("UPLOAD", e.getMessage());
-                        try {
-                            throw new Exception("error");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            });
-            th.start();
-        } catch (Exception ex) {
-            Log.d("UPLOAD", ex.toString());
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        return imageName;
-    }
-
     private void updateBirthDay(Calendar myCalendar) {
-        String myFormat = "dd/MM/yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-
-        edBirthday.setText(sdf.format(myCalendar.getTime()));
+        if (myCalendar.getTimeInMillis() >= (Calendar.getInstance().getTimeInMillis())) {
+            Toast.makeText(getContext(), "Bạn không thể chọn ngày sinh của bạn sau thời gian hiện tại", Toast.LENGTH_LONG).show();
+        } else {
+            String myFormat = "dd/MM/yyyy";
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+            edBirthday.setText(sdf.format(myCalendar.getTime()));
+        }
     }
 
     private void onSubmit() {
-        if (!onValidate()) {
-            return;
-        }
-        String avatar = null;
-        onCreateUser(avatar);
-
-    }
-
-    private void onCreateUser(String avatar) {
         String fname = edFname.getText().toString();
         String mname = edMname.getText().toString();
         String lname = edLname.getText().toString();
         String birthday = edBirthday.getText().toString();
         String address = edAddress.getText().toString();
         int gender = getGender();
-        //Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, gender, birthday, address, 1,0, null);
-        MultipartBody.Part avatarUpload = null;
-        // Map is used to multipart the file using okhttp3.RequestBody
-        File file = null;
-        if (mImageToBeAttached != null) {
-            file = Utils.persistImage(mImageToBeAttached, filename, getContext());
-            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
-            avatarUpload = MultipartBody.Part.createFormData("avatar", file.getName(), requestBody);
+
+        if (!currentPatient.getfName().equals(fname)) isChangeInfo = true;
+        if (!currentPatient.getmName().equals(mname)) isChangeInfo = true;
+        if (!currentPatient.getlName().equals(lname)) isChangeInfo = true;
+        if (currentPatient.getGender() != gender) isChangeInfo = true;
+        if (!currentPatient.getBirthday().equals(birthday)) isChangeInfo = true;
+        if (!currentPatient.getAddress().equals(address)) isChangeInfo = true;
+
+        if (!isChangeInfo) {
+            Toast.makeText(getContext(), "Bạn không thay đổi bất kỳ thông tin nào!", Toast.LENGTH_LONG).show();
+            return;
+        } else if (onValidate()) {
+            Patient newPatient = currentPatient;
+            newPatient.setfName(fname);
+            newPatient.setmName(mname);
+            newPatient.setlName(lname);
+            newPatient.setAddress(address);
+            newPatient.setBirthday(birthday);
+            newPatient.setGender(gender);
+            onUpdateUser(newPatient);
         }
 
+    }
 
-        //Log.d("CREATE USER", patient.toString());
-//        RegisterPatientService registerPatientService = RetrofitFactory.getInstance().createService(RegisterPatientService.class);
-//        final File finalFile = file;
-//        registerPatientService.register(avatarUpload, patient)
-//                .enqueue(new Callback<AuthResponse>() {
-//                    @Override
-//                    public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-//
-//                        if (finalFile != null) {
-//                            try {
-//                                finalFile.delete();
-//                            } catch (Exception e) {
-//                            }
-//                        }
-//                        if (response.code() == 200 || response.code() == 201) {
-//                            SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
-//                            SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
-//                            FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-//                            LoadDefaultModel.getInstance().loadFavoriteDoctor( response.body().getPatient(), getActivity(), btnSignUp);
-//
-//                        } else {
-//                            CommonErrorResponse commonErrorResponse = parseToCommonError(response);
-//                            if (commonErrorResponse.getError() != null) {
-//                                String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
-//                                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-//                                Log.d("RESPONSE", error);
-//                            }
-//                            btnSignUp.revertAnimation();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(Call<AuthResponse> call, Throwable t) {
-//                        btnSignUp.revertAnimation();
-//                        if (finalFile != null) {
-//                            try {
-//                                finalFile.delete();
-//                            } catch (Exception e) {
-//                            }
-//                        }
-//                        if (t instanceof SocketTimeoutException) {
-//                            Toast.makeText(getActivity(), getResources().getText(R.string.error_timeout), Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
+    private void onUpdateUser(final Patient newPatient) {
+        pbProfilePatient.setVisibility(View.VISIBLE);
+        if (mImageToBeAttached != null) {
+            GetLinkImageService getLinkeImageService = RetrofitFactory.getInstance().createService(GetLinkImageService.class);
+            getLinkeImageService.uploadImageToGetLink(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),getImageUpload()).enqueue(new Callback<MainGetLink>() {
+                @Override
+                public void onResponse(Call<MainGetLink> call, Response<MainGetLink> response) {
+
+                    if (response.code() == 200) {
+                        updatePatientNetWork(newPatient, response.body().getFilePath());
+                    } else {
+                        Toast.makeText(getContext(), "Không thể kết nối máy chủ", Toast.LENGTH_LONG).show();
+                        pbProfilePatient.setVisibility(View.GONE);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<MainGetLink> call, Throwable t) {
+                    Toast.makeText(getContext(), "Không thể kết nối máy chủ", Toast.LENGTH_LONG).show();
+                    pbProfilePatient.setVisibility(View.GONE);
+                }
+            });
+        } else {
+            updatePatientNetWork(newPatient, null);
+        }
+
+    }
+
+    private void updatePatientNetWork(Patient newPatient, String linkImage) {
+        PatientRequest patientRequest;
+        if (linkImage == null) {
+            patientRequest = new PatientRequest(newPatient.getId(), newPatient.getfName(), newPatient.getmName()
+                    , newPatient.getlName(), newPatient.getBirthday(), newPatient.getAddress(),
+                    newPatient.getAvatar(), newPatient.getGender());
+        } else {
+            patientRequest = new PatientRequest(newPatient.getId(), newPatient.getfName(), newPatient.getmName()
+                    , newPatient.getlName(), newPatient.getBirthday(), newPatient.getAddress(),
+                    linkImage, newPatient.getGender());
+        }
+        ChangeProfilePaitentService changeProfilePaitentService = RetrofitFactory.getInstance().createService(ChangeProfilePaitentService.class);
+        changeProfilePaitentService.changeProfilePaitentService(SharedPrefs.getInstance().get(JWT_TOKEN, String.class), patientRequest).enqueue(new Callback<PatientResponse>() {
+            @Override
+            public void onResponse(Call<PatientResponse> call, Response<PatientResponse> response) {
+                if (response.code() == 200) {
+                    PatientResponse patientResponse = response.body();
+                    if (patientResponse != null) {
+                        currentPatient.setfName(patientResponse.getUpdateSuccess().getFirstName());
+                        currentPatient.setmName(patientResponse.getUpdateSuccess().getMiddleName());
+                        currentPatient.setlName(patientResponse.getUpdateSuccess().getLastName());
+                        currentPatient.setGender(patientResponse.getUpdateSuccess().getGender());
+                        currentPatient.setAddress(patientResponse.getUpdateSuccess().getAddress());
+                        currentPatient.setAvatar(patientResponse.getUpdateSuccess().getAvatar());
+                        currentPatient.setBirthday(patientResponse.getUpdateSuccess().getBirthday());
+                        SharedPrefs.getInstance().put(USER_INFO, currentPatient);
+                        Toast.makeText(getContext(), "Chỉnh sửa thành công", Toast.LENGTH_LONG).show();
+                        setScreenFunction(TYPE_CANCEL);
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Kết nối máy chủ không thành công", Toast.LENGTH_LONG).show();
+                }
+                pbProfilePatient.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onFailure(Call<PatientResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Kết nối máy chủ không thành công", Toast.LENGTH_LONG).show();
+                pbProfilePatient.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void enableAll() {
@@ -403,30 +518,27 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         edBirthday.setEnabled(false);
         edLname.setEnabled(false);
         edMname.setEnabled(false);
-        ed_remainMoney.setEnabled(false);
+
         ivUploadAvatar.setVisibility(View.GONE);
 
-        switch (currentPatient.getGender()){
-            case 1:{
+        switch (currentPatient.getGender()) {
+            case 1: {
                 rbFmale.setEnabled(false);
                 rbOther.setEnabled(false);
                 break;
             }
-            case 2:{
+            case 2: {
                 rbMale.setEnabled(false);
                 rbOther.setEnabled(false);
                 break;
             }
-            case 3:{
+            case 3: {
                 rbMale.setEnabled(false);
                 rbFmale.setEnabled(false);
                 break;
             }
         }
 
-//        rbFmale.set(false);
-//        rbMale.setEnabled(false);
-//        rbOther.setEnabled(false);
     }
 
     private int getGender() {
@@ -443,56 +555,43 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         return checked;
     }
 
-    public CommonErrorResponse parseToCommonError(Response<AuthResponse> response) {
-        CommonErrorResponse commonErrorResponse = new CommonErrorResponse();
-        Gson gson = new GsonBuilder().create();
-        try {
-            commonErrorResponse = gson.fromJson(response.errorBody().string(), CommonErrorResponse.class);
-        } catch (IOException e) {
-            // handle failure to read error
-        }
-        return commonErrorResponse;
-    }
-
     private boolean onValidate() {
-        boolean isValidate = true;
+
         String fname = edFname.getText().toString();
-        String mname = edMname.getText().toString();
         String lname = edLname.getText().toString();
-        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
-        Matcher matcher;
 
-//        if (fname == null || fname.trim().length() == 0) {
-//            isValidate = false;
-//            tilFname.setError(getResources().getString(R.string.fname_required));
-//        } else {
-//            tilFname.setError(null);
-//        }
-//
-//        if (lname == null || lname.trim().length() == 0) {
-//            isValidate = false;
-//            tillname.setError(getResources().getString(R.string.lname_required));
-//        } else {
-//            tillname.setError(null);
-//        }
-//
-//        if (!pattern.matcher(password).matches()) {
-//            isValidate = false;
-//            tilPassword.setError(getResources().getString(R.string.password_rule));
-//        } else {
-//            tilPassword.setError(null);
-//        }
-//        if (!password.equals(confirmPassword)) {
-//            isValidate = false;
-//            tilConfirmPassword.setError(getResources().getString(R.string.confirm_password_error));
-//        } else {
-//            tilConfirmPassword.setError(null);
-//        }
+        if (fname == null || fname.trim().length() == 0) {
+            tilFullname.setError(getResources().getString(R.string.fname_required));
+            return false;
+        }
 
-        return isValidate;
+        if (lname == null || lname.trim().length() == 0) {
+            tilFullname.setError(getResources().getString(R.string.lname_required));
+            return false;
+        }
 
+        tilFullname.setError(null);
+
+        return true;
     }
 
+    private boolean onValidatePassword(String newPassword, String confirmPassword, TextView tv_message_change_password) {
+
+        boolean isValidate = true;
+        Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
+        if (!pattern.matcher(newPassword).matches()) {
+            tv_message_change_password.setText(getResources().getString(R.string.password_rule));
+            tv_message_change_password.setVisibility(View.VISIBLE);
+            isValidate = false;
+        } else if (!newPassword.equals(confirmPassword)) {
+            tv_message_change_password.setText(getResources().getString(R.string.confirm_password_error));
+            tv_message_change_password.setVisibility(View.VISIBLE);
+            isValidate = false;
+        } else {
+            tv_message_change_password.setVisibility(View.GONE);
+        }
+        return isValidate;
+    }
 
     @Override
     public void onDestroyView() {
@@ -500,15 +599,115 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         unbinder.unbind();
     }
 
-    public void updateUI() {
-        if (mImageToBeAttached != null) {
-            ivAvatar.setImageBitmap(mImageToBeAttached);
-        } else {
-            ivAvatar.setImageResource(R.drawable.patient_avatar);
+    private void displayAttachImageDialog() {
+        CharSequence[] items;
+        if (mImageToBeAttached != null)
+            items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh", "Xóa ảnh"};
+        else
+            items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh"};
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setTitle("Ảnh đại diện");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (item == 0) {
+                    dispatchTakePhotoIntent();
+                } else if (item == 1) {
+                    dispatchChoosePhotoIntent();
+                } else {
+                    deleteCurrentPhoto();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    public int getOrientation(Context context, Uri photoUri) {
+        /* it's on the external media. */
+        Cursor cursor = context.getContentResolver().query(photoUri,
+                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
+
+        if (cursor.getCount() != 1) {
+            return -1;
+        }
+
+        cursor.moveToFirst();
+        return cursor.getInt(0);
+    }
+
+
+    private void dispatchTakePhotoIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                Log.e(TAG, "Cannot create a temp image file", e);
+            }
+
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(getActivity(),
+                        BuildConfig.APPLICATION_ID + ".provider", photoFile));
+                if (checkPermission()) {
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                } else {
+                    requestPermission();
+                }
+            }
         }
     }
 
-    //avatar
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(getActivity(), new
+                String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, REQUEST_PERMISSION_CODE);
+    }
+
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                CAMERA);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fileName = "TODO_LITE-" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(fileName, ".jpg", storageDir);
+        mImagePathToBeAttached = image.getAbsolutePath();
+        return image;
+    }
+
+    private void dispatchChoosePhotoIntent() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSE_PHOTO);
+    }
+
+    private void deleteCurrentPhoto() {
+        if (mImageToBeAttached != null) {
+            mImageToBeAttached.recycle();
+            mImageToBeAttached = null;
+            ZoomImageViewUtils.loadCircleImage(getContext(), currentPatient.getAvatar(), ivAvatar);
+        }
+    }
+
+    public MultipartBody.Part getImageUpload() {
+
+        filename = UUID.randomUUID().toString();
+        if (mImageToBeAttached != null) {
+            File file = Utils.persistImage(mImageToBeAttached, filename, getContext());
+            RequestBody requestBody = RequestBody.create(MediaType.parse("*/*"), file);
+            return MultipartBody.Part.createFormData("imageChat", file.getName(), requestBody);
+        }
+        return null;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -559,88 +758,16 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         updateUI();
     }
 
-    public int getOrientation(Context context, Uri photoUri) {
-        /* it's on the external media. */
-        Cursor cursor = context.getContentResolver().query(photoUri,
-                new String[]{MediaStore.Images.ImageColumns.ORIENTATION}, null, null, null);
 
-        if (cursor.getCount() != 1) {
-            return -1;
-        }
-
-        cursor.moveToFirst();
-        return cursor.getInt(0);
-    }
-
-
-    private void dispatchTakePhotoIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException e) {
-                Log.e(TAG, "Cannot create a temp image file", e);
-            }
-
-            if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(getActivity(),
-                        BuildConfig.APPLICATION_ID + ".provider", photoFile));
-                if (checkPermission()) {
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
-                } else {
-                    requestPermission();
-                }
-            }
-        }
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fileName = "TODO_LITE-" + timeStamp + "_";
-        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(fileName, ".jpg", storageDir);
-        mImagePathToBeAttached = image.getAbsolutePath();
-        return image;
-    }
-
-    private void dispatchChoosePhotoIntent() {
-        Intent intent = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSE_PHOTO);
-    }
-
-    private void deleteCurrentPhoto() {
+    public void updateUI() {
         if (mImageToBeAttached != null) {
-            mImageToBeAttached.recycle();
-            mImageToBeAttached = null;
+            Log.e("UserProfileImage", "not null");
+            ivAvatar.setImageBitmap(mImageToBeAttached);
+            isChangeInfo = true;
+        } else {
+            Log.e("UserProfileImage", "is null");
             ivAvatar.setImageResource(R.drawable.patient_avatar);
         }
-    }
-
-    private void displayAttachImageDialog() {
-        CharSequence[] items;
-        if (mImageToBeAttached != null)
-            items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh", "Xóa ảnh"};
-        else
-            items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh"};
-
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
-        builder.setTitle("Ảnh đại diện");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-                if (item == 0) {
-                    dispatchTakePhotoIntent();
-                } else if (item == 1) {
-                    dispatchChoosePhotoIntent();
-                } else {
-                    deleteCurrentPhoto();
-                }
-            }
-        });
-        builder.show();
     }
 
     @Override
@@ -655,29 +782,14 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                             PackageManager.PERMISSION_GRANTED;
 
                     if (StoragePermission && RecordPermission) {
-                        Toast.makeText(getActivity(), "Permission Granted",
+                        Toast.makeText(getContext(), "Permission Granted",
                                 Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getActivity(), "Permission Denied", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Permission Denied", Toast.LENGTH_LONG).show();
                     }
                 }
                 break;
         }
     }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(getActivity(), new
-                String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, REQUEST_PERMISSION_CODE);
-    }
-
-    public boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                WRITE_EXTERNAL_STORAGE);
-        int result1 = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
-                CAMERA);
-        return result == PackageManager.PERMISSION_GRANTED &&
-                result1 == PackageManager.PERMISSION_GRANTED;
-    }
-
 
 }

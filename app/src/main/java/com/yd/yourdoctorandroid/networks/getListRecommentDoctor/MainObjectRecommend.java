@@ -3,17 +3,13 @@ package com.yd.yourdoctorandroid.networks.getListRecommentDoctor;
 import java.util.List;
 
 public class MainObjectRecommend {
-    private List<DoctorRecommend> listDoctor;
+    private List<DoctorRecommend> doctorList;
 
-    public MainObjectRecommend(List<DoctorRecommend> listDoctor) {
-        this.listDoctor = listDoctor;
+    public List<DoctorRecommend> getDoctorList() {
+        return doctorList;
     }
 
-    public List<DoctorRecommend> getListDoctor() {
-        return listDoctor;
-    }
-
-    public void setListDoctor(List<DoctorRecommend> listDoctor) {
-        this.listDoctor = listDoctor;
+    public void setDoctorList(List<DoctorRecommend> doctorList) {
+        this.doctorList = doctorList;
     }
 }

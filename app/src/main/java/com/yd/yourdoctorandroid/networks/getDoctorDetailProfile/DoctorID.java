@@ -1,14 +1,23 @@
 package com.yd.yourdoctorandroid.networks.getDoctorDetailProfile;
 
 public class DoctorID {
-    String _id;
-    String firstName;
-    String middleName;
-    String lastName;
-    String phoneNumber;
-    String avatar;
-    String birthday;
-    String address;
+    private String _id;
+    private String firstName;
+    private String middleName;
+    private String lastName;
+    private String phoneNumber;
+    private String avatar;
+    private int gender;
+    private String birthday;
+    private String address;
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
 
     public String get_id() {
         return _id;
@@ -72,5 +81,9 @@ public class DoctorID {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getFullName (){
+        return firstName + " " + middleName + " " + lastName;
     }
 }

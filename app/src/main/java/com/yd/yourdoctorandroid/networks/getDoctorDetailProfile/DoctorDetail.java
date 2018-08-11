@@ -6,13 +6,22 @@ import java.util.List;
 
 public class DoctorDetail {
 
-    DoctorID doctorId;
-    float currentRating;
-    List<Certification> certificates;
-    List<SpecialistDetail> idSpecialist;
-    String universityGraduate;
-    String yearGraduate;
-    String placeWorking;
+    private DoctorID doctorId;
+    private float currentRating;
+    private List<Certification> certificates;
+    private List<SpecialistDetail> idSpecialist;
+    private int gender;
+    private String universityGraduate;
+    private String yearGraduate;
+    private String placeWorking;
+
+    public int getGender() {
+        return gender;
+    }
+
+    public void setGender(int gender) {
+        this.gender = gender;
+    }
 
     public DoctorID getDoctorId() {
         return doctorId;

@@ -1,7 +1,7 @@
 package com.yd.yourdoctorandroid.networks.favoriteDoctor;
 
 public class MainResponseFavorite {
-    Boolean success;
+    private Boolean success;
 
     public Boolean getSuccess() {
         return success;

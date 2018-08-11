@@ -6,8 +6,8 @@
     <color name="colorPrimaryLight">#00FFC4</color>
     <color name="primary_text">#FCFDFC</color>
     <color name="secondary_text">#DAE8E6</color>
-    <color name="icon_selected">#ffffff</color>
-    <color name="icon_unselected">#70ffffff</color>
+    <color name="icon_selected">#3BCFAD</color>
+    <color name="icon_unselected">#a9aaac</color>
     <color name="duskYellow">#FFEE58</color>
     <color name="colorText">#100b20</color>
     <color name="colorHint">#a9aaac</color>

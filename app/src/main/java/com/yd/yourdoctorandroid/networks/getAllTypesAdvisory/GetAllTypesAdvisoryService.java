@@ -4,8 +4,9 @@ import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpeciali
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 
 public interface GetAllTypesAdvisoryService {
     @GET("typeadvisorys/getAllTypeAdvisories")
-    Call<MainObjectTypeAdivosry> getMainObjectTypeAdvisories();
+    Call<MainObjectTypeAdivosry> getMainObjectTypeAdvisories(@Header("Authorization") String jwt);
 }

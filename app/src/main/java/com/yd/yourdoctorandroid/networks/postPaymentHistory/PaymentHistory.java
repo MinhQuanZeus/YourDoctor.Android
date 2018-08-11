@@ -5,13 +5,15 @@ public class PaymentHistory {
     private long amount;
     private long remainMoney;
     private String typeAdvisoryID;
+    private String fromUser;
     private int status;
 
-    public PaymentHistory(String userID, long amount, long remainMoney, String typeAdvisoryID, int status) {
+    public PaymentHistory(String userID, long amount, long remainMoney, String typeAdvisoryID, String fromUser ,int status) {
         this.userID = userID;
         this.amount = amount;
         this.remainMoney = remainMoney;
         this.typeAdvisoryID = typeAdvisoryID;
+        this.fromUser = fromUser;
         this.status = status;
     }
 
@@ -53,6 +55,14 @@ public class PaymentHistory {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(String fromUser) {
+        this.fromUser = fromUser;
     }
 
     @Override

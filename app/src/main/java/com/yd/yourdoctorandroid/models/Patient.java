@@ -22,6 +22,7 @@ public class Patient {
     private String phoneNumber;
     private String password;
     private String avatar;
+    private int status;
     private int gender;
     private String birthday;
     private String address;
@@ -29,7 +30,10 @@ public class Patient {
     private long remainMoney;
     private List<String> favoriteDoctors;
 
-    public Patient(String id, String fName, String mName, String lName, String phoneNumber, String password, String avatar, int gender, String birthday, String address, int role, long remainMoney, List<String> favoriteDoctors) {
+    public Patient() {
+    }
+
+    public Patient(String id, String fName, String mName, String lName, String phoneNumber, String password, String avatar, int status ,int gender, String birthday, String address, int role, long remainMoney, List<String> favoriteDoctors) {
         this.id = id;
         this.fName = fName;
         this.mName = mName;
@@ -37,12 +41,25 @@ public class Patient {
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.avatar = avatar;
+        this.status = status;
         this.gender = gender;
         this.birthday = birthday;
         this.address = address;
         this.role = role;
         this.remainMoney = remainMoney;
         this.favoriteDoctors = favoriteDoctors;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String  getFullName(){
+        return fName + " "+ mName + " " + lName;
     }
 
     public String getId() {

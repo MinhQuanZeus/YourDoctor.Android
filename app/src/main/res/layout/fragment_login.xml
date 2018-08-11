@@ -81,7 +81,7 @@
             android:orientation="horizontal">
 
             <CheckBox
-                android:id="@+id/remember"
+                android:id="@+id/checkBoxRemember"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="60dp"

@@ -48,6 +48,7 @@ import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.services.RegisterPatientService;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.ByteArrayInputStream;
@@ -286,7 +287,7 @@ public class RegisterFragment extends Fragment {
         String birthday = edBirthday.getText().toString();
         String address = edAddress.getText().toString();
         int gender = getGender();
-        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, gender, birthday, address, 1,0, null);
+        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, 1, gender, birthday, address, 1,0, null);
         MultipartBody.Part avatarUpload = null;
         // Map is used to multipart the file using okhttp3.RequestBody
         File file = null;
@@ -313,8 +314,14 @@ public class RegisterFragment extends Fragment {
                         }
                         if (response.code() == 200 || response.code() == 201) {
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+
+                            if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                            }
+
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                            SocketUtils.getInstance().reConnect();
                             LoadDefaultModel.getInstance().loadFavoriteDoctor( response.body().getPatient(), getActivity(), btnSignUp);
 
                         } else {
