@@ -96,5 +96,6 @@
     <string name="change_password">Đổi Mật Khẩu</string>
     <string name="edit">Chỉnh sửa</string>
     <string name="incoming_call">Đanh gọi bạn...</string>
+    <string name="calling">Đang gọi</string>
 
 </resources>

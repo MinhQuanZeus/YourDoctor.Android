@@ -165,4 +165,12 @@ public class Patient {
     public void setFavoriteDoctors(List<String> favoriteDoctors) {
         this.favoriteDoctors = favoriteDoctors;
     }
+
+    public String getFullName() {
+        if(!this.mName.isEmpty()) {
+            return this.fName + " " + this.mName + " " + this.lName;
+        }else {
+            return this.fName + " " + this.lName;
+        }
+    }
 }
