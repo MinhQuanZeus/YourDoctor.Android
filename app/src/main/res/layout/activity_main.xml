@@ -2,18 +2,18 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawLayoutMain"
+    android:id="@+id/draw_layout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:fitsSystemWindows="true"
     tools:context=".activities.MainActivity">
 
+
     <FrameLayout
-        android:id="@+id/rlContainer"
+        android:id="@+id/rl_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -30,31 +30,59 @@
                 android:background="@color/colorPrimary"
                 app:title="Your Doctor" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fabQuestion"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/toolbar"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
-                app:backgroundTint="@color/colorPrimary"
-                app:srcCompat="@drawable/ic_question_answer_black_24dp" />
-
             <android.support.v4.view.ViewPager
-                android:id="@+id/viewPager"
+                android:id="@+id/view_pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_above="@id/tabLayout"
+                android:layout_above="@id/tab_layout"
                 android:layout_below="@id/toolbar" />
 
             <android.support.design.widget.TabLayout
-                android:id="@+id/tabLayout"
+                android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true" />
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_question"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                app:elevation="6dp"
+                app:backgroundTint="@color/colorAccent"
+                app:pressedTranslationZ="12dp"
+                android:layout_margin="@dimen/fab_margin"
+                app:srcCompat="@drawable/ic_add_black_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="80dp"
+                android:layout_above="@+id/fab_question"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="@dimen/fab_margin"
+                android:visibility="invisible"
+                app:backgroundTint="@color/colorPrimaryDark"
+                app:elevation="6dp"
+                app:pressedTranslationZ="12dp"
+                app:srcCompat="@drawable/ic_question_answer_black_24dp" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_video_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_above="@+id/fab_question"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="@dimen/fab_margin"
+                android:visibility="invisible"
+                app:elevation="6dp"
+                app:backgroundTint="@color/colorPrimaryDark"
+                app:pressedTranslationZ="12dp"
+                app:srcCompat="@drawable/ic_video_call_white_24dp" />
             <ProgressBar
-                android:id="@+id/pbMain"
+                android:id="@+id/pb_main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -64,7 +92,7 @@
 
 
     <android.support.design.widget.NavigationView
-        android:id="@+id/navViewMenu"
+        android:id="@+id/nav_view_menu"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"

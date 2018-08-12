@@ -1,5 +1,7 @@
 package com.yd.yourdoctorandroid.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class Doctor {
@@ -21,12 +23,14 @@ public class Doctor {
     private String universityGraduate;
     private String yearGraduate;
     private String placeWorking;
+    private boolean isFavorite = false;
+    private boolean isOnline = false;
 
     public Doctor() {
     }
 
-    public Doctor(String doctorId, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, long remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking) {
-        this.id = doctorId;
+    public Doctor(String id, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, long remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking, boolean isFavorite, boolean isOnline) {
+        this.id = id;
         this.phoneNumber = phoneNumber;
         this.password = password;
         this.firstName = firstName;
@@ -43,18 +47,16 @@ public class Doctor {
         this.universityGraduate = universityGraduate;
         this.yearGraduate = yearGraduate;
         this.placeWorking = placeWorking;
-    }
-
-    public String  getFullName(){
-        return firstName + " "+ middleName + " " + lastName;
+        this.isFavorite = isFavorite;
+        this.isOnline = isOnline;
     }
 
     public String getDoctorId() {
         return id;
     }
 
-    public void setDoctorId(String doctorId) {
-        this.id = doctorId;
+    public void setDoctorId(String id) {
+        this.id = id;
     }
 
     public String getPhoneNumber() {
@@ -191,5 +193,54 @@ public class Doctor {
 
     public void setGender(int gender) {
         this.gender = gender;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    public String getFullName() {
+        if(!this.middleName.isEmpty()) {
+            return this.firstName + " " + this.middleName + " " + this.lastName;
+        }else {
+            return this.firstName + " " + this.lastName;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Doctor{" +
+                "id='" + id + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", password='" + password + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", address='" + address + '\'' +
+                ", status=" + status +
+                ", remainMoney=" + remainMoney +
+                ", currentRating=" + currentRating +
+                ", certificates=" + certificates +
+                ", idSpecialist=" + idSpecialist +
+                ", universityGraduate='" + universityGraduate + '\'' +
+                ", yearGraduate='" + yearGraduate + '\'' +
+                ", placeWorking='" + placeWorking + '\'' +
+                ", isFavorite=" + isFavorite +
+                ", isOnline=" + isOnline +
+                '}';
     }
 }

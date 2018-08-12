@@ -1,12 +1,12 @@
 package com.yd.yourdoctorandroid.networks;
 
-import com.yd.yourdoctorandroid.utils.Config;
-
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.yd.yourdoctorandroid.Constants.SERVER_URL;
 
 public class RetrofitFactory {
     private static Retrofit retrofit;
@@ -26,7 +26,7 @@ public class RetrofitFactory {
                 .readTimeout(3000, TimeUnit.SECONDS)
                 .build();
         retrofit = new Retrofit.Builder()
-                .baseUrl(Config.URL_SERVER)
+                .baseUrl(SERVER_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
