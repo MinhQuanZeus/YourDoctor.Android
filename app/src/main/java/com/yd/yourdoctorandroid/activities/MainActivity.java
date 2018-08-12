@@ -32,6 +32,7 @@ import com.github.nkzawa.socketio.client.IO;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.fragments.AboutUsFragment;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorFavoriteListFragment;
@@ -44,6 +45,10 @@ import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.net.URISyntaxException;
 
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupUI();
-
+        EventBus.getDefault().register(this);
         Log.d("MainActivity", "USER_INFO");
         Log.d("MainActivity", SharedPrefs.getInstance().get("USER_INFO", Patient.class).toString());
         Log.d("MainActivity", SharedPrefs.getInstance().get("JWT_TOKEN", String.class));
@@ -142,12 +147,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fabChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                animateFAB();
                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
             }
         });
         fabVideoCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                animateFAB();
                 Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
                 startActivity(intent);
             }
@@ -197,6 +204,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         pbMain.setVisibility(View.GONE);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EventSend eventSend) {
+        if(eventSend.getType() == 1){
+            currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+            if(currentPatient != null){
+                tvNameUser.setText(currentPatient.getFullName());
+                Picasso.with(this).load(currentPatient.getAvatar().toString()).into(ivAvaUser);
+                tvMoneyUser.setText(currentPatient.getRemainMoney() + "" );
+            }
+        }
     }
 
     public void animateFAB(){
@@ -267,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ScreenManager.openFragment(getSupportFragmentManager(), new UserProfileFragment(), R.id.rl_container, true, true);
                 break;
             }
-            case R.id.nav_ranking_docto_main: {
+            case R.id.nav_ranking_doctor_main: {
                 ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rl_container, true, true);
                 break;
             }

@@ -9,6 +9,7 @@
     </style>
 
     <style name="customRatingBar" parent="android:style/Widget.Material.RatingBar.Small"></style>
+    <style name="customRatingBarMedium" parent="android:style/Widget.Material.RatingBar.Small"></style>
 
     <style name="PrimaryButton" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorButtonNormal">@color/colorPrimary</item>

@@ -11,9 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
+import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.YourDoctorApplication;
 import com.yd.yourdoctorandroid.adapters.DoctorVideoCallAdapter;
@@ -22,11 +26,14 @@ import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.DoctorSocketOnline;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.models.TypeAdvisory;
 import com.yd.yourdoctorandroid.models.TypeCall;
 import com.yd.yourdoctorandroid.models.VideoCallSession;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.doctorsvideocall.DoctorsBySpecialist;
 import com.yd.yourdoctorandroid.networks.doctorsvideocall.GetDoctorsBySpecialistService;
+import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisoryService;
+import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.MainObjectTypeAdivosry;
 import com.yd.yourdoctorandroid.utils.RxScheduler;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
@@ -43,6 +50,7 @@ import java.util.stream.Collectors;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,13 +67,22 @@ public class VideoCallFragment extends Fragment {
     Toolbar toolbar;
     @BindView(R.id.rv_doctors)
     RecyclerView rvDoctors;
+    @BindView(R.id.iv_special)
+    ImageView ivSpecialist;
+    @BindView(R.id.rl_blank_user)
+    RelativeLayout rlBlankUser;
 
     private List<Doctor> doctorList = new ArrayList<>();
+    private List<Doctor> onlineDoctors = new ArrayList<>();
     private List<DoctorSocketOnline> doctorSocketOnlines = new ArrayList<DoctorSocketOnline>();
     DoctorVideoCallAdapter doctorVideoCallAdapter;
     private Unbinder unbinder;
     private Patient userInfo;
     private Socket socket;
+    private List<TypeAdvisory> typeAdvisories;
+    private TypeAdvisory videoCallTypeAdvisory;
+    private int remainTime;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,6 +91,7 @@ public class VideoCallFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_video_call, container, false);
         init(view);
         loadData();
+        loadTypeAdvisory();
         setupSocket();
         return view;
     }
@@ -104,6 +122,7 @@ public class VideoCallFragment extends Fragment {
                     Log.d(TAG, data.toString());
                     Iterator<String> iter = data.keys();
                     doctorSocketOnlines = new ArrayList<DoctorSocketOnline>();
+                    onlineDoctors = new ArrayList<>();
                     Log.d(TAG, doctorSocketOnlines.toString());
                     while (iter.hasNext()) {
                         String key = iter.next();
@@ -119,32 +138,34 @@ public class VideoCallFragment extends Fragment {
                             for (DoctorSocketOnline doctorSocketOnline : doctorSocketOnlines) {
                                 if (doctor.getDoctorId().equals(doctorSocketOnline.getDoctorId())) {
                                     doctor.setOnline(true);
-                                }else {
+                                    onlineDoctors.add(doctor);
+                                } else {
                                     doctor.setOnline(false);
                                 }
                             }
                         }
-                    }else if(doctorList != null && doctorList.size() > 0) {
+                    } else if (doctorList != null && doctorList.size() > 0) {
                         for (Doctor doctor : doctorList) {
                             doctor.setOnline(false);
                         }
                     }
-                    Collections.sort(doctorList, new Comparator<Doctor>() {
+                    Collections.sort(onlineDoctors, new Comparator<Doctor>() {
                         @Override
                         public int compare(Doctor o1, Doctor o2) {
                             int c;
-                            c = (o1.isOnline() == o2.isOnline()) ? 0 : (o1.isOnline() ? -1 : 0);
-                            if (c == 0) {
-                                c = (o1.isFavorite() == o2.isFavorite()) ? 0 : (o1.isFavorite() ? -1 : 0);
-                            }
+                            c = (o1.isFavorite() == o2.isFavorite()) ? 0 : (o1.isFavorite() ? -1 : 0);
                             if (c == 0) {
                                 c = o1.getCurrentRating() == o2.getCurrentRating() ? 0 : o1.getCurrentRating() > o2.getCurrentRating() ? -1 : 0;
                             }
                             return c;
                         }
                     });
-                    Log.d(TAG, doctorList.toString());
-                    doctorVideoCallAdapter.swap(doctorList);
+                    if (onlineDoctors.size() > 0) {
+                        rlBlankUser.setVisibility(View.GONE);
+                    } else {
+                        rlBlankUser.setVisibility(View.VISIBLE);
+                    }
+                    doctorVideoCallAdapter.swap(onlineDoctors);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -155,7 +176,7 @@ public class VideoCallFragment extends Fragment {
     private void init(View view) {
         unbinder = ButterKnife.bind(this, view);
         userInfo = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
-
+        rlBlankUser.setVisibility(View.GONE);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,11 +185,12 @@ public class VideoCallFragment extends Fragment {
             }
         });
         toolbar.setTitle(this.specialist.getName());
+        Picasso.with(getContext()).load(specialist.getImage()).into(ivSpecialist);
         setUpDoctorList();
     }
 
     private void setUpDoctorList() {
-        doctorVideoCallAdapter = new DoctorVideoCallAdapter(doctorList, getContext());
+        doctorVideoCallAdapter = new DoctorVideoCallAdapter(onlineDoctors, getContext());
         doctorVideoCallAdapter.setOnItemClickListner(new DoctorVideoCallAdapter.onItemClickListner() {
             @Override
             public void onCall(String calleeId, String calleename, String calleeAvatar) {
@@ -187,8 +209,9 @@ public class VideoCallFragment extends Fragment {
             this.specialist = specialist;
         } else {
             this.specialist = new Specialist();
-            this.specialist.setId("5b3cef83fd56f62d5c33d1f5");
-            this.specialist.setName("Than kinh");
+            this.specialist.setId("5b6d4e316f0e1b129ca48588");
+            this.specialist.setName("Dinh dưỡng");
+            this.specialist.setImage("https://s3-ap-southeast-1.amazonaws.com/yourdoctor-assets-public/dinhduong.png");
         }
         return this;
     }
@@ -201,7 +224,7 @@ public class VideoCallFragment extends Fragment {
 
     private void loadData() {
         GetDoctorsBySpecialistService getDoctorsBySpecialistService = RetrofitFactory.getInstance().createService(GetDoctorsBySpecialistService.class);
-        getDoctorsBySpecialistService.getDoctorsBySpecialist(specialist.getId(), userInfo.getId()).enqueue(new Callback<DoctorsBySpecialist>() {
+        getDoctorsBySpecialistService.getDoctorsBySpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), specialist.getId(), userInfo.getId()).enqueue(new Callback<DoctorsBySpecialist>() {
             @Override
             public void onResponse(Call<DoctorsBySpecialist> call, Response<DoctorsBySpecialist> response) {
                 DoctorsBySpecialist mainObject = response.body();
@@ -222,7 +245,6 @@ public class VideoCallFragment extends Fragment {
                         }
                         socket.emit("getDoctorOnline");
                     }
-                    doctorVideoCallAdapter.swap(doctorList);
                 }
             }
 
@@ -235,13 +257,41 @@ public class VideoCallFragment extends Fragment {
 
     public void makeCall(String calleeId, String calleename, String calleeAvatar) {
         VideoCallSession videoCallSession = new VideoCallSession(userInfo.getId(), userInfo.getFullName(), calleeId, calleename, calleeAvatar, TypeCall.CALL);
-        Log.d(TAG, calleename);
-        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new CallingFragment().setVideoCallSession(videoCallSession), R.id.fl_video_call, true, true);
+        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new CallingFragment().setVideoCallSession(videoCallSession, specialist, remainTime, videoCallTypeAdvisory), R.id.fl_video_call, false, true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        socket.connect();
+    }
+
+    public void loadTypeAdvisory() {
+        GetAllTypesAdvisoryService getAllTypesAdvisoryService = RetrofitFactory.getInstance().createService(GetAllTypesAdvisoryService.class);
+        getAllTypesAdvisoryService.getMainObjectTypeAdvisories(SharedPrefs.getInstance().get("JWT_TOKEN", String.class)).enqueue(new Callback<MainObjectTypeAdivosry>() {
+            @Override
+            public void onResponse(Call<MainObjectTypeAdivosry> call, Response<MainObjectTypeAdivosry> response) {
+                if (response.code() == 200) {
+                    MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
+                    typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
+                    if (typeAdvisories != null && typeAdvisories.size() > 0) {
+                        for (TypeAdvisory typeAdvisory : typeAdvisories) {
+                            if (typeAdvisory.getName().toLowerCase().contains("video call")) {
+                                videoCallTypeAdvisory = typeAdvisory;
+                                float userMoney = userInfo.getRemainMoney();
+                                remainTime = (int) (userMoney / videoCallTypeAdvisory.getPrice());
+                                int min = remainTime / 60;
+                                int sec = remainTime % 60;
+                                Toast.makeText(getActivity(), "Video call có giá là " + videoCallTypeAdvisory.getPrice() + "đ/s. Bạn có " + userMoney + "đ trong tải khoản, bạn có thể thực hiện cuộc gọi trong " + min + "m" + sec + "s", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectTypeAdivosry> call, Throwable t) {
+            }
+        });
     }
 }

@@ -171,6 +171,7 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
+                Log.d("LOGIN", t.getMessage());
                 btnLogin.revertAnimation();
                 enableAll();
                 if (t instanceof SocketTimeoutException) {

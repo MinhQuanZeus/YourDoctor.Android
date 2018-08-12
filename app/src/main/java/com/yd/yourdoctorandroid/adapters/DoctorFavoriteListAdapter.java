@@ -99,7 +99,7 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
                     public void onClick(View view, int position, boolean isLongClick) {
                         DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
                         doctorProfileFragment.setDoctorID(holder.getdoctorModel().getDoctorId());
-                        ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), doctorProfileFragment, R.id.rlContainer, true, true);
+                        ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), doctorProfileFragment, R.id.rl_container, true, true);
                     }
                 });
                 break;

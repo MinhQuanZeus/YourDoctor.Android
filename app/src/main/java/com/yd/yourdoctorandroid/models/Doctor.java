@@ -16,7 +16,7 @@ public class Doctor {
     private String address;
     private int gender;
     private int status;
-    private long remainMoney;
+    private float remainMoney;
     private float currentRating;
     private ArrayList<Certification> certificates;
     private ArrayList<String> idSpecialist;
@@ -29,7 +29,7 @@ public class Doctor {
     public Doctor() {
     }
 
-    public Doctor(String id, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, long remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking, boolean isFavorite, boolean isOnline) {
+    public Doctor(String id, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, float remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking, boolean isFavorite, boolean isOnline) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -131,11 +131,11 @@ public class Doctor {
         this.status = status;
     }
 
-    public long getRemainMoney() {
+    public float getRemainMoney() {
         return remainMoney;
     }
 
-    public void setRemainMoney(long remainMoney) {
+    public void setRemainMoney(float remainMoney) {
         this.remainMoney = remainMoney;
     }
 
