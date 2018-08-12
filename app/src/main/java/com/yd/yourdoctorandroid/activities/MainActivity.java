@@ -1,14 +1,18 @@
 package com.yd.yourdoctorandroid.activities;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.socketio.client.IO;
+import com.nhancv.npermission.NPermission;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
@@ -56,7 +61,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.RECORD_AUDIO;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NPermission.OnPermissionResult {
 
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Boolean isFabOpen = false;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+    private NPermission nPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +116,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void setupUI() {
         ButterKnife.bind(this);
-
+        if (!checkPermission()) {
+            Log.d("MAIN", "request checkPermission");
+            nPermission = new NPermission(false);
+            nPermission.requestPermission(this, Manifest.permission.CAMERA);
+            nPermission.requestPermission(this, Manifest.permission.RECORD_AUDIO);
+        }
         View headerView = navigationViewMain.inflateHeaderView(R.layout.nav_header_main);
         ivAvaUser = headerView.findViewById(R.id.iv_ava_user);
         tvNameUser = headerView.findViewById(R.id.tv_name_user);
@@ -341,6 +355,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onPause() {
         super.onPause();
         fabQuestion.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.d("MAIN", "request");
+        nPermission.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    @Override
+    public void onPermissionResult(String s, boolean b) {
+        switch (s) {
+            case Manifest.permission.CAMERA:
+                if (!b) {
+                    nPermission.requestPermission(this, Manifest.permission.CAMERA);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                CAMERA);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
     }
 }
 
