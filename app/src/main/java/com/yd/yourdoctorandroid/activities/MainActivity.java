@@ -256,15 +256,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onBackPressed() {
 
+
         if (drawerViewMenu.isDrawerOpen(GravityCompat.START)) {
             drawerViewMenu.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        handleLogOut();
+
     }
 
     @Override

@@ -172,16 +172,20 @@ public class LoginFragment extends Fragment {
             public void onResponse(Call<AuthResponse> call, final Response<AuthResponse> response) {
 
                 if (response.code() == 200 || response.code() == 201) {
-                    Log.e("Login ", response.body().getJwtToken());
-                    SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
-
-                    if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
-                        FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                    if(response.body().getPatient().getStatus() != 3){
+                        SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+                        if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                        }
+                        SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
+                        FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                        SocketUtils.getInstance().reConnect();
+                        loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
+                    }else {
+                        Toast.makeText(getContext(),"Tài khoản đang bị khóa, mọi thắc mắc xin liện hệ đến tổng đài!", Toast.LENGTH_LONG).show();
+                        btnLogin.revertAnimation();
                     }
-                    SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
-                    Log.e("idPatient", response.body().getPatient().getId());
-                    FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-                    loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
+
                 }else if(response.code() == 404){
                     enableAll();
                         Toast.makeText(getActivity(), "Không tìm thấy", Toast.LENGTH_SHORT).show();
@@ -189,12 +193,17 @@ public class LoginFragment extends Fragment {
                 }
                 else {
                     enableAll();
-                    CommonErrorResponse commonErrorResponse = parseToCommonError(response);
-                    if (commonErrorResponse.getError() != null) {
-                        String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                        Log.d("RESPONSE", error);
+                    try{
+                        CommonErrorResponse commonErrorResponse = parseToCommonError(response);
+                        if (commonErrorResponse.getError() != null) {
+                            String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
+                            Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                            Log.d("RESPONSE", error);
+                        }
+                    }catch (Exception e){
+                        Toast.makeText(getActivity(), "Lỗi Đăng nhập!", Toast.LENGTH_SHORT).show();
                     }
+
                     btnLogin.revertAnimation();
                 }
             }
@@ -219,9 +228,9 @@ public class LoginFragment extends Fragment {
                 if(response.code() == 200){
                     MainObjectIDFavorite mainObject = response.body();
                     if (mainObject != null) {
-                        currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
-                        SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                        SocketUtils.getInstance().reConnect();
+                        Patient newPatient = currentPatient;
+                        newPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                        SharedPrefs.getInstance().put("USER_INFO", newPatient);
                         loadAllChatPending(currentPatient);
                         Intent intent = new Intent(getContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

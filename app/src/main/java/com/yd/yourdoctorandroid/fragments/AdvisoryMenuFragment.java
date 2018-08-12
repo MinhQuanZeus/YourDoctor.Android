@@ -7,10 +7,12 @@ import android.app.PendingIntent;
 
 import com.github.nkzawa.emitter.Emitter;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -430,8 +432,29 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     Toast.makeText(getContext(), "Bạn cần chọn bác sĩ trước !!!", Toast.LENGTH_LONG).show();
                 } else if (et_question.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Bạn cần nhập nội dung câu hỏi !!!", Toast.LENGTH_LONG).show();
-                } else {
-                    handlePostRequest();
+                }else if(typeAdvisoryChoice.getPrice() > currentPatient.getRemainMoney()){
+                    Toast.makeText(getContext(), "Số tiền của bạn không đủ để thực hiện cuộc tư vấn !", Toast.LENGTH_LONG).show();
+                }
+                else {
+
+                    new AlertDialog.Builder(getContext())
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Xác nhận tạo cuộc tư vấn")
+                            .setMessage("Cuộc tư vấn " + typeAdvisoryChoice.getName()+" với BS." + doctorChoice.getFullName() +". Phí là " + typeAdvisoryChoice.getPrice() +" đ ?")
+                            .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    handlePostRequest();
+                                }
+
+                            })
+                            .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            }).show();
+
                 }
                 break;
             }
@@ -494,6 +517,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
                     currentPatient.setRemainMoney(currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice());
                     SharedPrefs.getInstance().put("USER_INFO", currentPatient);
+                    EventBus.getDefault().post(new EventSend(1));
                     progressBar.setVisibility(View.GONE);
                     Intent intentTimeOut = new Intent(getContext(), TimeOutChatService.class);
                     intentTimeOut.putExtra("idChat", chatHistoryResponse.getChatHistory().get_id());

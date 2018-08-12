@@ -41,6 +41,7 @@ import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.BuildConfig;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.changePassword.ChangePasswordService;
@@ -55,6 +56,8 @@ import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -488,6 +491,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         currentPatient.setAvatar(patientResponse.getUpdateSuccess().getAvatar());
                         currentPatient.setBirthday(patientResponse.getUpdateSuccess().getBirthday());
                         SharedPrefs.getInstance().put(USER_INFO, currentPatient);
+                        EventBus.getDefault().post(new EventSend(1));
                         Toast.makeText(getContext(), "Chỉnh sửa thành công", Toast.LENGTH_LONG).show();
                         setScreenFunction(TYPE_CANCEL);
                     }
