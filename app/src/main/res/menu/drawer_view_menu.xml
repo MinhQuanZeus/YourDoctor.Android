@@ -2,23 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/navCreateAdvisoryMain"
+            android:id="@+id/nav_create_advisory_main"
             android:icon="@drawable/ic_create_black_24dp"
             android:title="@string/logo_text_menu_advisory" />
         <item
-            android:id="@+id/navFavoriteDoctorMain"
+            android:id="@+id/nav_favorite_doctor_main"
             android:icon="@drawable/ic_favorite_border_black_24dp"
             android:title="@string/favorite_doctor" />
         <item
-            android:id="@+id/navRankingDoctoMain"
+            android:id="@+id/nav_ranking_doctor_main"
             android:icon="@drawable/ic_people_black_24dp"
             android:title="@string/ranking_doctor" />
         <item
-            android:id="@+id/navExchangeMoneyMain"
+            android:id="@+id/nav_exchange_money_main"
             android:icon="@drawable/ic_attach_money_black_24dp"
             android:title="@string/exchange_money" />
         <item
-            android:id="@+id/navProfileMain"
+            android:id="@+id/nav_profile_main"
             android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/profile_page" />
         <item
@@ -26,7 +26,7 @@
             android:icon="@drawable/ic_book_black_24dp"
             android:title="@string/about_us_page" />
         <item
-            android:id="@+id/navLogoutMain"
+            android:id="@+id/nav_logout_main"
             android:icon="@drawable/log_out"
             android:title="@string/log_out" />
     </group>

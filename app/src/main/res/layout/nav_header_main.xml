@@ -5,13 +5,13 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:id="@+id/ivAvaUser"
+        android:id="@+id/iv_ava_user"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop" />
 
     <TextView
-        android:id="@+id/tvNameUser"
+        android:id="@+id/tv_name_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/tvMoneyAll"
@@ -45,7 +45,7 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvMoneyUser"
+            android:id="@+id/tv_money_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

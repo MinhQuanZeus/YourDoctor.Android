@@ -2,8 +2,10 @@ package com.yd.yourdoctorandroid.fragments;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,11 +34,18 @@ import com.nhancv.webrtcpeer.rtc_plugins.RTCAudioManager;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.YourDoctorApplication;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.kurento.KurentoRTCCClient;
+import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.models.TypeAdvisory;
 import com.yd.yourdoctorandroid.models.TypeCall;
 import com.yd.yourdoctorandroid.models.VideoCallSession;
 import com.yd.yourdoctorandroid.utils.RxScheduler;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.webrtc.Camera1Enumerator;
@@ -53,6 +62,7 @@ import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoCapturer;
 import org.webrtc.VideoRenderer;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -98,6 +108,10 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     private Timer timer;
     private TimerTask timerTask;
     private int timeCounter = 0;
+    private int remainTime = 0;
+    private Specialist specialist;
+    private TypeAdvisory typeAdvisory;
+    private Handler handler = new Handler();
 
     @BindView(R.id.rl_timer)
     RelativeLayout rlTimer;
@@ -167,7 +181,9 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         connectServer();
 
         if (videoCallSession.getType() == TypeCall.CALL) {
+            Log.d(TAG, "call");
             transactionToCalling(videoCallSession.getCallerId(), videoCallSession.getCalleeId(), true);
+            Log.d(TAG, "transactionToCalling done");
             mMediaPlayer = new MediaPlayer();
             mMediaPlayer = MediaPlayer.create(getContext(), R.raw.phone_call);
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -183,18 +199,20 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
             @Override
             public void onClick(View v) {
                 if (!isStartComunication) {
-                    logAndToast("Deni");
                     decline();
                 } else {
-                    logAndToast("STOP CALL");
                     stopCall();
                 }
             }
         });
+        startHandler();
     }
 
-    public CallingFragment setVideoCallSession(VideoCallSession videoCallSession) {
+    public CallingFragment setVideoCallSession(VideoCallSession videoCallSession, Specialist specialist, int remainTime, TypeAdvisory typeAdvisory) {
         this.videoCallSession = videoCallSession;
+        this.specialist = specialist;
+        this.remainTime = remainTime;
+        this.typeAdvisory = typeAdvisory;
         return this;
     }
 
@@ -231,6 +249,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     @Override
     public void onLocalDescription(SessionDescription sessionDescription) {
+        Log.d(TAG, "onLocalDescription");
         RxScheduler.runOnUi(o -> {
             if (rtcClient != null) {
                 if (signalingParameters.initiator) {
@@ -277,7 +296,6 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     @Override
     public void onIceDisconnected() {
         RxScheduler.runOnUi(o -> {
-            logAndToast("ICE disconnected");
             iceConnected = false;
             disconnect();
         });
@@ -315,7 +333,6 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
                             getRemoteProxyRenderer(), videoCapturer,
                             signalingParameters);
 
-            logAndToast("Creating OFFER...");
             peerConnectionClient.createOffer();
         });
     }
@@ -329,7 +346,6 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
             }
             peerConnectionClient.setRemoteDescription(sessionDescription);
             if (!signalingParameters.initiator) {
-                logAndToast("Creating ANSWER...");
                 // Create answer. Answer SDP will be sent to offering client in
                 // PeerConnectionEvents.onLocalDescription event.
                 peerConnectionClient.createAnswer();
@@ -363,7 +379,6 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     @Override
     public void onChannelClose() {
         RxScheduler.runOnUi(o -> {
-            logAndToast("Remote end hung up; dropping PeerConnection");
             disconnect();
         });
     }
@@ -385,6 +400,18 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     @Override
     public void disconnect() {
+        if (rtcClient != null) {
+            rtcClient = null;
+        }
+        if (peerConnectionClient != null) {
+            peerConnectionClient.close();
+            peerConnectionClient = null;
+        }
+
+        if (audioManager != null) {
+            audioManager.stop();
+            audioManager = null;
+        }
         localProxyRenderer.setTarget(null);
         if (vGLSurfaceViewCallFull != null) {
             vGLSurfaceViewCallFull.release();
@@ -446,7 +473,9 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     @Override
     public void transactionToCalling(String fromPeer, String toPeer, boolean isHost) {
+        Log.d(TAG, "START CALL");
         initPeerConfig(fromPeer, toPeer, isHost);
+        Log.d(TAG, "done initPeerConfig");
         startCall();
     }
 
@@ -463,8 +492,8 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         disconnect();
         if (iceConnected) {
             disconnectKurento();
-            android.os.Process.killProcess(android.os.Process.myPid());
         }
+        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new DoneVideoCallFragment().setVideoCallSession(videoCallSession, timeCounter, typeAdvisory), R.id.fl_video_call, false, true);
 
     }
 
@@ -513,7 +542,9 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     }
 
     public void startCall() {
+        Log.d(TAG, "startCall");
         if (!(Build.VERSION.SDK_INT < 23 || isGranted)) {
+            Log.d(TAG, "request permission");
             nPermission.requestPermission(getActivity(), Manifest.permission.CAMERA);
             return;
         }
@@ -537,15 +568,19 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
                     }
                 }, true, null, null, null, null, null);
         onSignalConnected(parameters);
+        Log.d(TAG, "startCall audioManager");
         audioManager = RTCAudioManager.create(getActivity().getApplicationContext());
+        Log.d(TAG, "End audioManager");
         Log.d(TAG, "Starting the audio manager...");
         Log.d(TAG, "Starting the audio manager..." + parameters.iceServers.toString());
         audioManager.start((audioDevice, availableAudioDevices) ->
                 Log.d(TAG, "onAudioManagerDevicesChanged: " + availableAudioDevices + ", "
                         + "selected: " + audioDevice));
+
     }
 
     private void callConnected() {
+        isStartComunication = true;
         if (videoCallSession.getType() == TypeCall.CALL) {
             mMediaPlayer.stop();
         }
@@ -563,12 +598,16 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     }
 
     public void initPeerConfig(String fromPeer, String toPeer, boolean isHost) {
+        if (!this.client.connected()) {
+            this.client.connect();
+        }
         rtcClient = new KurentoRTCCClient(client, fromPeer, toPeer, isHost);
         defaultConfig = new DefaultConfig();
         peerConnectionParameters = defaultConfig.createPeerConnectionParams();
         peerConnectionClient = PeerConnectionClient.getInstance();
         peerConnectionClient.createPeerConnectionFactory(
                 getActivity().getApplicationContext(), peerConnectionParameters, this);
+        Log.d(TAG, "Done initPeerConfig");
     }
 
     public void disconnectKurento() {
@@ -587,6 +626,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     }
 
     public void connectServer() {
+        client.emit("onGetVideoCallType", typeAdvisory.getId());
         client.on("incomingCall", incomingCall);
         client.on("callResponse", callResponse);
         client.on("iceCandidate", iceCandidate);
@@ -618,9 +658,9 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
                 Log.d(TAG, data.toString());
                 if (data.getString("response").equalsIgnoreCase("rejected")) {
                     RxScheduler.runOnUi(o -> {
-                        logAndToast("rejected");
+                        logAndToast("Bác sĩ không thể nghe máy lúc này, vui lòng gọi lại sau");
                         disconnect();
-                        android.os.Process.killProcess(android.os.Process.myPid());
+                        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new VideoCallFragment().setSpecialist(specialist), R.id.fl_video_call, false, true);
                     });
                 } else {
                     SessionDescription sdp = new SessionDescription(SessionDescription.Type.ANSWER,
@@ -678,25 +718,9 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
     private Emitter.Listener stopCommunication = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            isStartComunication = false;
             RxScheduler.runOnUi(o -> {
                 stopCalling();
             });
-        }
-    };
-
-    private Emitter.Listener onEject = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            android.os.Process.killProcess(android.os.Process.myPid());
-            //mListener.onReject();
-        }
-    };
-
-    private Emitter.Listener onRemoveCall = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            android.os.Process.killProcess(android.os.Process.myPid());
         }
     };
 
@@ -717,14 +741,13 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
             timerTask.cancel();
         }
         client.emit("stop", "stop");
-        getActivity().onBackPressed();
-//        android.os.Process.killProcess(android.os.Process.myPid());
-//        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new VideoCallFragment(), R.id.fl_video_call, true, true);
+        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new DoneVideoCallFragment().setVideoCallSession(videoCallSession, timeCounter, typeAdvisory), R.id.fl_video_call, false, true);
     }
 
     private void decline() {
         client.emit("onCallerReject", videoCallSession.getCalleeId());
-        getActivity().onBackPressed();
+        disconnect();
+        ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new VideoCallFragment().setSpecialist(specialist), R.id.fl_video_call, false, true);
     }
 
     private void countTime() {
@@ -737,19 +760,23 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        timeCounter ++;
+                        timeCounter++;
+                        if (timeCounter > remainTime) {
+                            Toast.makeText(getActivity(), "Bạn đã hết tiền trong tài khoản, vui lòng nạp tiền để tiếp tục thực hiện cuộc gọi", Toast.LENGTH_SHORT).show();
+                            stopCall();
+                        }
                         int min = timeCounter / 60;
                         int sec = timeCounter % 60;
                         String timeMin = "";
                         String timeSec = "";
                         if (min < 10) {
                             timeMin = "0" + min;
-                        }else{
+                        } else {
                             timeMin = min + "";
                         }
-                        if(sec < 10) {
+                        if (sec < 10) {
                             timeSec = "0" + sec;
-                        }else{
+                        } else {
                             timeSec = sec + "";
                         }
                         String time = timeMin + ":" + timeSec;
@@ -758,7 +785,56 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
                 });
             }
         };
-        timer.scheduleAtFixedRate(timerTask,1000,1000);
+        timer.scheduleAtFixedRate(timerTask, 1000, 1000);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        // TODO trừ tiền
+        handler.removeCallbacksAndMessages(null);
+        if (timeCounter > 0) {
+            int money = (int) (timeCounter * typeAdvisory.getPrice());
+            Patient patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+            patient.setRemainMoney(patient.getRemainMoney() - money);
+            SharedPrefs.getInstance().put("USER_INFO", patient);
+            EventBus.getDefault().post(new EventSend(1));
+        }
+
+    }
+
+    public void startHandler() {
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                if (!isNetworkConnected()){
+                    logAndToast("Mất kết nối mạng");
+                    stopCalling();
+                };
+                handler.postDelayed(this, 5000);
+            }
+        }, 5000);
+    }
+
+    public boolean isOnline() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
+    }
 }

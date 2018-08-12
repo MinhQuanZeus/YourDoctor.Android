@@ -24,6 +24,7 @@ public class KurentoRTCCClient implements RTCClient {
         this.toPeer = toPeer;
         this.client = client;
         this.isHost = isHost;
+        this.client.connect();
     }
 
     @Override
@@ -31,12 +32,14 @@ public class KurentoRTCCClient implements RTCClient {
 
         try {
             if (isHost) {
+                Log.d("KurentoRTCCClient", "Emit call");
                 JSONObject obj = new JSONObject();
                 obj.put("id", "call");
                 obj.put("from", fromPeer);
                 obj.put("to", toPeer);
                 obj.put("sdpOffer", sessionDescription.description);
                 client.emit("call", obj);
+                Log.d("KurentoRTCCClient", "Emit call done");
 
             } else {
                 JSONObject obj = new JSONObject();

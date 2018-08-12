@@ -2,13 +2,13 @@ package com.yd.yourdoctorandroid.networks.postPaymentHistory;
 
 public class PaymentHistory {
     private String userID;
-    private long amount;
-    private long remainMoney;
+    private float amount;
+    private float remainMoney;
     private String typeAdvisoryID;
     private String fromUser;
     private int status;
 
-    public PaymentHistory(String userID, long amount, long remainMoney, String typeAdvisoryID, String fromUser ,int status) {
+    public PaymentHistory(String userID, float amount, float remainMoney, String typeAdvisoryID, String fromUser ,int status) {
         this.userID = userID;
         this.amount = amount;
         this.remainMoney = remainMoney;
@@ -29,7 +29,7 @@ public class PaymentHistory {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
@@ -37,7 +37,7 @@ public class PaymentHistory {
         return remainMoney;
     }
 
-    public void setRemainMoney(long remainMoney) {
+    public void setRemainMoney(float remainMoney) {
         this.remainMoney = remainMoney;
     }
 

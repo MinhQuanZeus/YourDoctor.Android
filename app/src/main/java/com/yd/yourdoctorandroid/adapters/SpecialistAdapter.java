@@ -54,7 +54,7 @@ public class SpecialistAdapter extends RecyclerView.Adapter<SpecialistAdapter.Sp
             public void onClick(View view, int position, boolean isLongClick) {
                 SpecilistInfoDetailFragment specilistInfoDetailFragment = new SpecilistInfoDetailFragment();
                 specilistInfoDetailFragment.setData(holder.getSpecialist().getId());
-                ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), specilistInfoDetailFragment, R.id.rlContainer, true, true);
+                ScreenManager.openFragment(((FragmentActivity) context).getSupportFragmentManager(), specilistInfoDetailFragment, R.id.rl_container, true, true);
 
             }
         });
