@@ -3,6 +3,7 @@ package com.yd.yourdoctorandroid.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,6 +74,10 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -322,6 +328,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     @Override
     public void onSignalConnected(SignalingParameters signalingParameters) {
+        Log.d(TAG, "onSignalConnected");
         RxScheduler.runOnUi(o -> {
             this.signalingParameters = signalingParameters;
             VideoCapturer videoCapturer = null;
@@ -543,7 +550,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     public void startCall() {
         Log.d(TAG, "startCall");
-        if (!(Build.VERSION.SDK_INT < 23 || isGranted)) {
+        if (!(Build.VERSION.SDK_INT < 23 || !checkPermission())) {
             Log.d(TAG, "request permission");
             nPermission.requestPermission(getActivity(), Manifest.permission.CAMERA);
             return;
@@ -836,5 +843,14 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    public boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                RECORD_AUDIO);
+        int result1 = ContextCompat.checkSelfPermission(getActivity().getApplicationContext(),
+                CAMERA);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
     }
 }
