@@ -255,15 +255,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-
-
         if (drawerViewMenu.isDrawerOpen(GravityCompat.START)) {
             drawerViewMenu.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            handleLogOut();
         }
-        handleLogOut();
-
     }
 
     @Override
@@ -389,6 +385,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 CAMERA);
         return result == PackageManager.PERMISSION_GRANTED &&
                 result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 }
 
