@@ -36,6 +36,7 @@ import com.github.nkzawa.socketio.client.IO;
 import com.nhancv.npermission.NPermission;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.YourDoctorApplication;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.fragments.AboutUsFragment;
@@ -325,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Utils.backToLogin(getApplicationContext());
+                        YourDoctorApplication.self().getSocket().close();
                     }
 
                 })
