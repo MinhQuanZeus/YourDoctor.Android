@@ -1,11 +1,15 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +23,21 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.GetListPendingChatService;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.IDPending;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.MainPendingResponse;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Login;
 import com.yd.yourdoctorandroid.networks.services.LoginService;
+import com.yd.yourdoctorandroid.services.TimeOutChatService;
+import com.yd.yourdoctorandroid.utils.Config;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.SocketUtils;
@@ -33,6 +45,7 @@ import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.List;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -58,6 +71,10 @@ public class LoginFragment extends Fragment {
     EditText edPhone;
     @BindView(R.id.ed_password)
     EditText edPassword;
+
+    @BindView(R.id.forgotpass)
+    com.yd.yourdoctorandroid.custormviews.MyTextView forgotPass;
+
     @BindView(R.id.til_phone)
     TextInputLayout tilPhone;
     @BindView(R.id.til_password)
@@ -87,7 +104,7 @@ public class LoginFragment extends Fragment {
     private void setUp(View view) {
         unbinder = ButterKnife.bind(this, view);
         tvSignUp = (TextView) view.findViewById(R.id.tv_signup);
-        LoadDefaultModel.getInstance();
+        //LoadDefaultModel.getInstance();
         countSuccessInitialization = 0;
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +117,16 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 onLogin();
+            }
+        });
+
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputPhoneNumberFragment inputPhoneNumberFragment = new InputPhoneNumberFragment();
+                inputPhoneNumberFragment.setIsForgetPassword(true);
+                ScreenManager.openFragment(getActivity().getSupportFragmentManager(), inputPhoneNumberFragment, R.id.fl_auth, true, true);
+
             }
         });
     }
@@ -154,10 +181,13 @@ public class LoginFragment extends Fragment {
                     SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                     Log.e("idPatient", response.body().getPatient().getId());
                     FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-                    SocketUtils.getInstance().reConnect();
-                    LoadDefaultModel.getInstance().loadFavoriteDoctor(response.body().getPatient(), getActivity(), btnLogin);
-
-                } else {
+                    loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
+                }else if(response.code() == 404){
+                    enableAll();
+                        Toast.makeText(getActivity(), "Không tìm thấy", Toast.LENGTH_SHORT).show();
+                    btnLogin.revertAnimation();
+                }
+                else {
                     enableAll();
                     CommonErrorResponse commonErrorResponse = parseToCommonError(response);
                     if (commonErrorResponse.getError() != null) {
@@ -180,6 +210,73 @@ public class LoginFragment extends Fragment {
             }
         });
     }
+
+    public void loadFavoriteDoctor(final Patient currentPatient) {
+        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
+        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+            @Override
+            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
+                if(response.code() == 200){
+                    MainObjectIDFavorite mainObject = response.body();
+                    if (mainObject != null) {
+                        currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                        SharedPrefs.getInstance().put("USER_INFO", currentPatient);
+                        SocketUtils.getInstance().reConnect();
+                        loadAllChatPending(currentPatient);
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(intent);
+                    }
+                }
+                btnLogin.revertAnimation();
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
+                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                btnLogin.revertAnimation();
+            }
+        });
+
+    }
+
+    public void loadAllChatPending(final Patient currentPatient){
+        GetListPendingChatService getListPendingChatService = RetrofitFactory.getInstance().createService(GetListPendingChatService.class);
+        getListPendingChatService.getListPendingChatService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainPendingResponse>() {
+            @Override
+            public void onResponse(Call<MainPendingResponse> call, Response<MainPendingResponse> response) {
+                if(response.code() == 200){
+                    MainPendingResponse mainObject = response.body();
+                    //check lại time nhe
+                    for (IDPending idPending:mainObject.getListPending()) {
+                        handleChatIsPending(idPending);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MainPendingResponse> call, Throwable t) {
+                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                btnLogin.revertAnimation();
+            }
+        });
+    }
+
+    public void handleChatIsPending(IDPending idPending){
+
+        if((idPending.getTimeRemain() / 1000) >= Config.TIME_OUT_CHAT_CONVERSATION){
+            Utils.addIdChatToListTimeOut(idPending.getId());
+        }else {
+            Intent intentTimeOut = new Intent(getContext(), TimeOutChatService.class);
+            intentTimeOut.putExtra("idChat", idPending.getId());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 234324243, intentTimeOut, 0);
+            AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+                    + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
+        }
+    }
+
 
 
     private void enableAll() {

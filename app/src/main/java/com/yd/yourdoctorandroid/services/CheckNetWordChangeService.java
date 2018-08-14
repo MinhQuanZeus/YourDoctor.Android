@@ -32,7 +32,10 @@ public class CheckNetWordChangeService extends BroadcastReceiver {
                 checking(SharedPrefs.getInstance().get("listChatTimeOutNot", List.class));
             }
         }else {
-            SocketUtils.getInstance().disconnectConnect();
+            if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                SocketUtils.getInstance().disconnectConnect();
+            }
+
         }
     }
 

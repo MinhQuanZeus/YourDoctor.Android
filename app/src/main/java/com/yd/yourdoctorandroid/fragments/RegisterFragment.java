@@ -40,6 +40,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.BuildConfig;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.AzureImageManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
@@ -263,10 +264,21 @@ public class RegisterFragment extends Fragment {
     }
 
     private void updateBirthDay(Calendar myCalendar) {
-        String myFormat = "dd/MM/yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        edBirthday.setText(sdf.format(myCalendar.getTime()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -100);
+
+        if (myCalendar.getTimeInMillis() >= (Calendar.getInstance().getTimeInMillis())) {
+            Toast.makeText(getContext(), "Bạn không thể chọn ngày sinh của bạn sau thời gian hiện tại", Toast.LENGTH_LONG).show();
+        } else if (myCalendar.getTimeInMillis() <= calendar.getTimeInMillis()) {
+            Toast.makeText(getContext(), "Năm sinh của bạn không hợp lệ", Toast.LENGTH_LONG).show();
+        } else {
+            String myFormat = "dd/MM/yyyy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+            edBirthday.setText(sdf.format(myCalendar.getTime()));
+        }
+
     }
 
     private void onSubmit() {
@@ -287,7 +299,7 @@ public class RegisterFragment extends Fragment {
         String birthday = edBirthday.getText().toString();
         String address = edAddress.getText().toString();
         int gender = getGender();
-        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, 1, gender, birthday, address, 1,0, null);
+        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, 1, gender, birthday, address, 1, 0, null);
         MultipartBody.Part avatarUpload = null;
         // Map is used to multipart the file using okhttp3.RequestBody
         File file = null;
@@ -315,15 +327,18 @@ public class RegisterFragment extends Fragment {
                         if (response.code() == 200 || response.code() == 201) {
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
 
-                            if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                            if (SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null) {
                                 FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
                             }
 
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
                             SocketUtils.getInstance().reConnect();
-                            LoadDefaultModel.getInstance().loadFavoriteDoctor( response.body().getPatient(), getActivity(), btnSignUp);
-
+                            Intent intent = new Intent(getContext(), MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            getContext().startActivity(intent);
+                            btnSignUp.revertAnimation();
                         } else {
                             CommonErrorResponse commonErrorResponse = parseToCommonError(response);
                             if (commonErrorResponse.getError() != null) {
@@ -552,7 +567,6 @@ public class RegisterFragment extends Fragment {
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSE_PHOTO);
     }
-
 
 
     private void displayAttachImageDialog() {

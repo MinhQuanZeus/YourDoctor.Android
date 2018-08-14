@@ -104,33 +104,7 @@ public class LoadDefaultModel {
         return loadDefaultModel;
     }
 
-    public void loadFavoriteDoctor(final Patient currentPatient , final FragmentActivity fragmentActivity , final CircularProgressButton btnLogin) {
-        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
-        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
-            @Override
-            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
-                if(response.code() == 200){
-                    MainObjectIDFavorite mainObject = response.body();
-                    if (mainObject != null) {
-                        currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
-                        SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                        Intent intent = new Intent(fragmentActivity, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        fragmentActivity.startActivity(intent);
-                    }
-                }
-                btnLogin.revertAnimation();
-            }
 
-            @Override
-            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
-                //Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-                btnLogin.revertAnimation();
-            }
-        });
-
-    }
 
     public void startServiceTimeOut(Context context , String idChat){
         Intent intent = new Intent(context, TimeOutChatService.class);
@@ -141,18 +115,7 @@ public class LoadDefaultModel {
                 + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
     }
 
-    public void addIdChatToListTimeOut(String idChat){
-        List<String> listChatTimeOut =SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
-        if(listChatTimeOut == null){
-            listChatTimeOut = new ArrayList<>();
-            listChatTimeOut.add(idChat);
-            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-        }else {
-            listChatTimeOut.add(idChat);
-            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-            Log.e("HelloA", "put success");
-        }
-    }
+
 
     public void getListPendingChat(){
         //TODO

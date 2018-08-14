@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.ChatAdapter;
 import com.yd.yourdoctorandroid.events.EventSend;
+import com.yd.yourdoctorandroid.fragments.ConfirmEndChatFragment;
 import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
@@ -140,13 +142,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private int typeChatCurrent;
 
+    private boolean isDone;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
         ButterKnife.bind(this);
-
+        EventBus.getDefault().register(this);
         ivDone.setOnClickListener(this);
         ivInfo.setOnClickListener(this);
         btnImage.setOnClickListener(this);
@@ -154,7 +158,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         ivCancel.setOnClickListener(this);
 
         imageUtils = new ImageUtils(this);
-
+        isDone = false;
         typeChatCurrent = 1;
         currentPaitent = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
         Intent intent = getIntent();
@@ -197,9 +201,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(chatApapter);
         loadDoctorChoice(doctorChoiceId);
 
-        EventBus.getDefault().register(this);
 
     }
+
+
 
     @Override
     protected void onStop() {
@@ -238,6 +243,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             public void onResponse(Call<MainObjectChatHistory> call, Response<MainObjectChatHistory> response) {
                 mainObject = response.body();
                 if (response.code() == 200 && mainObject != null) {
+                    if(mainObject.getObjConversation().getStatus() == 2){
+                        isDone = true;
+                    }
+
                     List<MainRecord> mainRecords = mainObject.getObjConversation().getRecords();
                     if (mainRecords != null) {
                         for (MainRecord mainRecord : mainRecords) {
@@ -334,7 +343,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     String message = (String) args[0];
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                     progressBar.setVisibility(View.GONE);
-
+                    isDone = true;
                 }
             });
         }
@@ -343,6 +352,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Emitter.Listener onErrorUpdate = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -350,7 +364,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     progressBar.setVisibility(View.GONE);
                     String message = (String) args[0];
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    isDone = true;
+                    try {
+                        ConfirmEndChatFragment confirmEndChatFragment = new ConfirmEndChatFragment();
+                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message);
+                        ScreenManager.openFragment(getSupportFragmentManager(), confirmEndChatFragment, R.id.rl_chat, true, true);
+                    }catch (Exception e){
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                    //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                     //showMessageConfirm(message);
 
                 }
@@ -361,15 +383,28 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Emitter.Listener onFinishMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
-
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     progressBar.setVisibility(View.GONE);
                     String message = (String) args[0];
                     Log.e("emitt anh le", message);
+                    isDone = true;
                     //showMessageConfirm(message);
-                    Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    try{
+                        ConfirmEndChatFragment confirmEndChatFragment = new ConfirmEndChatFragment();
+                        confirmEndChatFragment.setData(currentPaitent,doctorChoice,message);
+                        ScreenManager.openFragment(getSupportFragmentManager(), confirmEndChatFragment, R.id.rl_chat, true, true);
+                    }catch (Exception e){
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                    }
+
+                    //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -399,6 +434,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -439,6 +479,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private void backToMainActivity() {
         // mSocket.emit("disconnect");
         //mSocket.disconnect();
+
         SocketUtils.getInstance().getSocket().emit("leaveRoom", chatHistoryID);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -454,10 +495,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
-                        progressBar.setVisibility(View.VISIBLE);
-                        dialog.dismiss();
+                        if(!isDone){
+                            SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
+                            progressBar.setVisibility(View.VISIBLE);
 
+                        }else {
+                            Toast.makeText(getApplicationContext(),"Cuộc tư vấn đã kết thúc trước đó", Toast.LENGTH_LONG).show();
+                        }
+
+                        dialog.dismiss();
                     }
 
                 })

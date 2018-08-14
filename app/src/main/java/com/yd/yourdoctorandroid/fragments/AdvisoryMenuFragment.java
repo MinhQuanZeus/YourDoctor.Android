@@ -4,6 +4,9 @@ package com.yd.yourdoctorandroid.fragments;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
+
+import com.github.nkzawa.emitter.Emitter;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,11 +33,17 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.activities.ChatActivity;
+import com.yd.yourdoctorandroid.activities.MainActivity;
+import com.yd.yourdoctorandroid.adapters.ChatAdapter;
 import com.yd.yourdoctorandroid.adapters.DoctorChoiceAdapter;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.models.Record;
 import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.DoctorRecommend;
 import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.GetListRecommentDoctorService;
 import com.yd.yourdoctorandroid.networks.getListRecommentDoctor.MainObjectRecommend;
@@ -57,8 +66,17 @@ import com.yd.yourdoctorandroid.services.TimeOutChatService;
 import com.yd.yourdoctorandroid.utils.Config;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -76,15 +94,6 @@ import retrofit2.Response;
  * A simple {@link Fragment} subclass.
  */
 public class AdvisoryMenuFragment extends Fragment implements View.OnClickListener {
-
-    @BindView(R.id.rb_choose_chat)
-    RadioButton rb_choose_chat;
-
-    @BindView(R.id.rb_choose_video_call)
-    RadioButton rb_choose_video_call;
-
-    @BindView(R.id.rl_chat)
-    RelativeLayout rl_chat;
 
     @BindView(R.id.btn_post)
     Button btn_post;
@@ -116,6 +125,9 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     @BindView(R.id.pb_ranking)
     ProgressBar progressBar;
 
+    @BindView(R.id.iv_status_menu)
+    ImageView iv_status_menu;
+
     Unbinder butterKnife;
 
     DoctorChoiceAdapter doctorChoiceAdapter;
@@ -141,44 +153,53 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     Button btn_ok_choose;
     RecyclerView rv_list_doctor;
 
+    private List<Doctor> doctorListRecommend;
+
     public AdvisoryMenuFragment() {
         // Required empty public constructor
     }
 
+    View view;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_advisory_menu, container, false);
+        // EventBus.getDefault().register(this);
         setupUI(view);
         return view;
     }
 
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onEventMainThread(EventSend eventSend) {
+//        if(eventSend.getType() == 2){
+//            Log.e("helloEvent" , "anhle");
+//           // progressBar.setVisibility(View.VISIBLE);
+//            setupUI(view);
+//        }
+//    }
+
     private void setupUI(View view) {
         butterKnife = ButterKnife.bind(AdvisoryMenuFragment.this, view);
-        rb_choose_chat.setOnClickListener(this);
-        rb_choose_video_call.setOnClickListener(this);
+
         btn_post.setOnClickListener(this);
         btn_choose_Doctor.setOnClickListener(this);
 
         countProcess = 0;
-        spectlists = new ArrayList<Specialist>();
-        typeAdvisories = new ArrayList<TypeAdvisory>();
+        spectlists = new ArrayList<>();
+        typeAdvisories = new ArrayList<>();
         isChat = true;
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(tb_main);
-        final ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_arrow_back_black_24dp);
-        actionbar.setTitle(R.string.logo_text_menu_advisory);
 
+        tb_main.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        tb_main.setTitle(R.string.logo_text_menu_advisory);
+        tb_main.setTitleTextColor(getResources().getColor(R.color.primary_text));
         tb_main.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 ScreenManager.backFragment(getFragmentManager());
-
             }
         });
 
@@ -225,8 +246,10 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
         });
 
+        SocketUtils.getInstance().getSocket().on("getDoctorOnline", GetDoctorOnline);
 
     }
+
 
     private void setUpSpecialists() {
         spectlists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
@@ -398,48 +421,14 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rb_choose_chat:
-                if (((RadioButton) v).isChecked()) {
-                    isChat = true;
-                    rl_chat.setVisibility(View.VISIBLE);
-                    setSpinerTypeAdvisory(arrTypeChatAdvisories);
-                    //  rl_videocall.setVisibility(View.INVISIBLE);
-                    if (typeAdvisories.size() != 0) {
-                        for (int i = 0; i < typeAdvisories.size(); i++) {
-                            if (typeAdvisories.get(i).getName().equals(arrTypeChatAdvisories[0])) {
-                                typeAdvisoryChoice = typeAdvisories.get(i);
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                break;
-            case R.id.rb_choose_video_call:
-                if (((RadioButton) v).isChecked()) {
-                    isChat = false;
-                    rl_chat.setVisibility(View.INVISIBLE);
-                    setSpinerTypeAdvisory(arrTypeVideoCallAdvisories);
-                    // rl_videocall.setVisibility(View.VISIBLE);
-                    if (typeAdvisories.size() != 0) {
-                        for (int i = 0; i < typeAdvisories.size(); i++) {
-                            if (typeAdvisories.get(i).getName().equals(arrTypeVideoCallAdvisories[0])) {
-                                typeAdvisoryChoice = typeAdvisories.get(i);
-                                break;
-                            }
-                        }
-                    }
-                }
-                break;
             case R.id.btn_choose_Doctor: {
                 showDialogChooseDoctor();
                 break;
             }
             case R.id.btn_post: {
-                // Toast.makeText(getContext(),"specialist " + specialistChoice.getName() + ", " + " Typespecialist " + typeAdvisoryChoice.getName() , Toast.LENGTH_LONG).show();
                 if (doctorChoice == null) {
                     Toast.makeText(getContext(), "Bạn cần chọn bác sĩ trước !!!", Toast.LENGTH_LONG).show();
-                } else if (isChat && et_question.getText().toString().equals("")) {
+                } else if (et_question.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Bạn cần nhập nội dung câu hỏi !!!", Toast.LENGTH_LONG).show();
                 } else {
                     handlePostRequest();
@@ -453,48 +442,45 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     private void handlePostRequest() {
         progressBar.setVisibility(View.VISIBLE);
 
-        if (isChat) {
-            PaymentHistory paymentHistoryPatient =
-                    new PaymentHistory(currentPatient.getId(),
-                            typeAdvisoryChoice.getPrice(),
-                            currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice(),
-                            typeAdvisoryChoice.getId(),
-                            doctorChoice.getDoctorId(),
-                            1);
+        PaymentHistory paymentHistoryPatient =
+                new PaymentHistory(currentPatient.getId(),
+                        typeAdvisoryChoice.getPrice(),
+                        currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice(),
+                        typeAdvisoryChoice.getId(),
+                        doctorChoice.getDoctorId(),
+                        1);
 
 
-            Log.e("Payment Patient ", paymentHistoryPatient.toString());
-            PostPaymentHistoryService postPaymentHistoryService = RetrofitFactory.getInstance().createService(PostPaymentHistoryService.class);
-            postPaymentHistoryService.addPaymentHistory(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), paymentHistoryPatient).enqueue(new Callback<PaymentResponse>() {
-                @Override
-                public void onResponse(Call<PaymentResponse> call, Response<PaymentResponse> response) {
-                    Toast.makeText(getContext(), "code la" + response.code(), Toast.LENGTH_LONG).show();
-                    if (response.code() == 200) {
-                        PaymentResponse paymentResponse = (PaymentResponse) response.body();
-                        ChatHistory chatHistory = new ChatHistory();
-                        chatHistory.setContentTopic(et_question.getText().toString());
-                        chatHistory.setPatientId(currentPatient.getId());
-                        chatHistory.setDoctorId(doctorChoice.getDoctorId());
-                        chatHistory.setStatus(1);
-                        chatHistory.setTypeAdvisoryID(typeAdvisoryChoice.getId());
-                        chatHistory.setPaymentPatientID(paymentResponse.getPaymentsHistory());
-                        postHistoryChat(chatHistory);
-                        //progressBar.setVisibility(View.GONE);
-                    } else if (response.code() == 401) {
-                        Utils.backToLogin(getContext());
-                    } else {
-                        Toast.makeText(getContext(), "Đã có lỗi xảy ra 1", Toast.LENGTH_LONG).show();
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<PaymentResponse> call, Throwable t) {
-                    Log.e("anh le error", " remove");
+        Log.e("Payment Patient ", paymentHistoryPatient.toString());
+        PostPaymentHistoryService postPaymentHistoryService = RetrofitFactory.getInstance().createService(PostPaymentHistoryService.class);
+        postPaymentHistoryService.addPaymentHistory(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), paymentHistoryPatient).enqueue(new Callback<PaymentResponse>() {
+            @Override
+            public void onResponse(Call<PaymentResponse> call, Response<PaymentResponse> response) {
+                Toast.makeText(getContext(), "code la" + response.code(), Toast.LENGTH_LONG).show();
+                if (response.code() == 200) {
+                    PaymentResponse paymentResponse = (PaymentResponse) response.body();
+                    ChatHistory chatHistory = new ChatHistory();
+                    chatHistory.setContentTopic(et_question.getText().toString());
+                    chatHistory.setPatientId(currentPatient.getId());
+                    chatHistory.setDoctorId(doctorChoice.getDoctorId());
+                    chatHistory.setStatus(1);
+                    chatHistory.setTypeAdvisoryID(typeAdvisoryChoice.getId());
+                    chatHistory.setPaymentPatientID(paymentResponse.getPaymentsHistory());
+                    postHistoryChat(chatHistory);
                     //progressBar.setVisibility(View.GONE);
+                } else if (response.code() == 401) {
+                    Utils.backToLogin(getContext());
+                } else {
+                    Toast.makeText(getContext(), "Đã có lỗi xảy ra 1", Toast.LENGTH_LONG).show();
+                    progressBar.setVisibility(View.GONE);
                 }
-            });
-        }
+            }
+
+            @Override
+            public void onFailure(Call<PaymentResponse> call, Throwable t) {
+                Log.e("anh le error", " remove");
+            }
+        });
 
     }
 
@@ -539,9 +525,13 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
     }
 
 
+    Dialog dialog;
+
     public void showDialogChooseDoctor() {
         progressBar.setVisibility(View.VISIBLE);
-        final Dialog dialog = new Dialog(getContext());
+        dialog = new Dialog(getContext());
+        progressBar.setVisibility(View.VISIBLE);
+
         dialog.setContentView(R.layout.choose_doctor_dialog);
         dialog.setTitle("Lựa Chọn Bác Sĩ của bạn");
 
@@ -550,13 +540,14 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         btn_ok_choose = dialog.findViewById(R.id.btn_ok_choose_doctor);
         rv_list_doctor = dialog.findViewById(R.id.rv_list_doctor);
 
+        // if button is clicked, close the custom dialog
 
         GetListRecommentDoctorService getListRecommentDoctorService = RetrofitFactory.getInstance().createService(GetListRecommentDoctorService.class);
         getListRecommentDoctorService.getListRecommentDoctor(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), specialistChoice.getId(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
             @Override
             public void onResponse(Call<MainObjectRecommend> call, Response<MainObjectRecommend> response) {
                 MainObjectRecommend mainObject = response.body();
-                List<Doctor> doctorList = new ArrayList<>();
+                doctorListRecommend = new ArrayList<>();
                 if (response.code() == 200 && mainObject != null) {
                     List<DoctorRecommend> doctorRecomments = mainObject.getDoctorList();
                     if (doctorRecomments != null && doctorRecomments.size() > 0) {
@@ -568,23 +559,23 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             doctor.setMiddleName(doctorRecomment.getMiddleName());
                             doctor.setCurrentRating((float) doctorRecomment.getCurrentRating());
                             doctor.setDoctorId(doctorRecomment.getDoctorId());
-                            doctorList.add(doctor);
-                        }
-                        doctorChoiceAdapter = new DoctorChoiceAdapter(doctorList, getContext(), dialog);
-                        rv_list_doctor.setAdapter(doctorChoiceAdapter);
-                        rv_list_doctor.setLayoutManager(new LinearLayoutManager(getContext()));
-                        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-                        rv_list_doctor.addItemDecoration(dividerItemDecoration);
+                            doctor.setOnline(false);
+                            doctorListRecommend.add(doctor);
+                            //progressBar.setVisibility(View.GONE);
 
+                        }
+                        Log.e("1docchoice", doctorListRecommend.size() + "");
+                        SocketUtils.getInstance().getSocket().emit("getDoctorOnline");
+                        //progressBar.setVisibility(View.GONE);
 
                     }
                 } else if (response.code() == 401) {
                     Utils.backToLogin(getContext());
+                } else {
+                    progressBar.setVisibility(View.GONE);
                 }
 
 
-                progressBar.setVisibility(View.GONE);
-                dialog.show();
             }
 
             @Override
@@ -595,13 +586,10 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
         });
 
-
-        // if button is clicked, close the custom dialog
         btn_cancel_choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -610,10 +598,14 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             public void onClick(View v) {
                 doctorChoice = doctorChoiceAdapter.getdoctorChoice();
                 if (doctorChoice != null) {
-
+                    rb_doctorChosen.setVisibility(View.VISIBLE);
+                    iv_status_menu.setVisibility(View.VISIBLE);
                     Picasso.with(getContext()).load(doctorChoice.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
-                    tv_name_doctor_chosen.setText(doctorChoice.getFirstName() + " " + doctorChoice.getMiddleName() + " " + doctorChoice.getLastName());
+                    tv_name_doctor_chosen.setText(doctorChoice.getFullName());
                     rb_doctorChosen.setRating(doctorChoice.getCurrentRating());
+                    if (doctorChoice.isOnline())
+                        iv_status_menu.setImageResource(R.drawable.circle_green_line);
+
                 }
                 dialog.dismiss();
 
@@ -623,10 +615,74 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
     }
 
+    public Emitter.Listener GetDoctorOnline = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // here you check the value of getActivity() and break up if needed
+            if (getActivity() == null){
+                progressBar.setVisibility(View.GONE);
+            }else {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayList<String> listIDDoctorOnline = new ArrayList<>();
+                        try {
+                            JSONArray data = new JSONArray(args[0].toString());
+
+                            for (int i = 0; i < data.length(); i++) {
+                                listIDDoctorOnline.add(data.get(i).toString());
+                            }
+
+                            if (doctorListRecommend != null) {
+                                for (Doctor doctor : doctorListRecommend) {
+                                    for (String idDoctorOnline : listIDDoctorOnline) {
+                                        if (doctor.getDoctorId().equals(idDoctorOnline)) {
+                                            doctor.setOnline(true);
+                                            //doctorChoiceAdapter.notifyDataSetChanged();
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                doctorChoiceAdapter = new DoctorChoiceAdapter(doctorListRecommend, getContext(), dialog);
+                                rv_list_doctor.setAdapter(doctorChoiceAdapter);
+                                rv_list_doctor.setLayoutManager(new LinearLayoutManager(getContext()));
+                                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+                                rv_list_doctor.addItemDecoration(dividerItemDecoration);
+                            }
+
+                            progressBar.setVisibility(View.GONE);
+                            dialog.show();
+
+
+                        } catch (Exception e) {
+                            Log.e("loiListOnlone : ", e.toString());
+                            progressBar.setVisibility(View.GONE);
+                            dialog.show();
+                        }
+                    }
+                });
+            }
+
+
+
+
+        }
+    };
+
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        butterKnife.unbind();
+        //butterKnife.unbind();
+        // EventBus.getDefault().unregister(this);
     }
 }
 

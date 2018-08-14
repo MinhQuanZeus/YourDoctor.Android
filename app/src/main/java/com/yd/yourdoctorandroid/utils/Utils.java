@@ -16,7 +16,9 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class Utils {
@@ -69,16 +71,26 @@ public class Utils {
 
     public static void backToLogin(Context context){
         FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
-        //context.stopService(new Intent(context, YDFirebaseMessagingService.class));
-        //context.stopService(new Intent(context, CheckNetWordChangeService.class));
-        //context.stopService(new Intent(context, TimeOutChatService.class));
         SocketUtils.getInstance().disconnectConnect();
         SharedPrefs.getInstance().remove("JWT_TOKEN");
         SharedPrefs.getInstance().remove("USER_INFO");
-        SharedPrefs.getInstance().remove("listChatTimeOutNot");
         Intent intent = new Intent(context, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static void addIdChatToListTimeOut(String idChat){
+        List<String> listChatTimeOut =SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
+        if(listChatTimeOut == null){
+            listChatTimeOut = new ArrayList<>();
+            listChatTimeOut.add(idChat);
+            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
+        }else {
+            if(!listChatTimeOut.contains(idChat)){
+                listChatTimeOut.add(idChat);
+                SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
+            }
+        }
     }
 }

@@ -83,6 +83,7 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
 
     public class DoctorChoiceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         ImageView ivItemDoctorChosen;
+        de.hdodenhof.circleimageview.CircleImageView ivStatus;
         TextView tvNameDoctorChosen;
         RatingBar rbDoctorChosen;
         private ItemClickListener itemClickListener;
@@ -93,6 +94,7 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
             ivItemDoctorChosen = itemView.findViewById(R.id.ivItemDoctorChosen);
             tvNameDoctorChosen = itemView.findViewById(R.id.tvNameDoctorChosen);
             rbDoctorChosen = itemView.findViewById(R.id.rbDoctorChosen);
+            ivStatus = itemView.findViewById(R.id.iv_status);
 
 
             itemView.setOnClickListener(this);
@@ -105,6 +107,12 @@ public class DoctorChoiceAdapter extends RecyclerView.Adapter<DoctorChoiceAdapte
                 ZoomImageViewUtils.loadCircleImage(context,doctorModel.getAvatar(),ivItemDoctorChosen);
                 tvNameDoctorChosen.setText(doctorModel.getFirstName() + " "+ doctorModel.getMiddleName() + " " + doctorModel.getLastName());
                 rbDoctorChosen.setRating(doctorModel.getCurrentRating());
+                if(doctorModel.isOnline()){
+                    ivStatus.setImageResource(R.drawable.circle_green_line);
+                   // ivStatus.setBackground(context.getResources().getDrawable(R.drawable.circle_green_line));
+                }
+                //if(doctorChoice.isOnline()) ivStatus.setBackground(context.getResources().getDrawable(R.color.green));
+
             }
         }
 

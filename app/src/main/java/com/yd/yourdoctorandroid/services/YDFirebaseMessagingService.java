@@ -48,6 +48,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) == null) return;
         if (remoteMessage == null) {
             Log.e(TAG, "Notify is null");
             return;

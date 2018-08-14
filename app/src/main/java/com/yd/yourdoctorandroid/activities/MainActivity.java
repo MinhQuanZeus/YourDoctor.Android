@@ -304,9 +304,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ScreenManager.openFragment(getSupportFragmentManager(), new DoctorRankFragment(), R.id.rl_container, true, true);
                 break;
             }
+            case R.id.nav_about_us: {
+                ScreenManager.openFragment(getSupportFragmentManager(), new AboutUsFragment(), R.id.rl_container, true, true);
+                break;
+            }
             case R.id.nav_logout_main: {
                 //Test
-                ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rl_container, true, true);
+                handleLogOut();
+                //ScreenManager.openFragment(getSupportFragmentManager(), new DoctorProfileFragment(), R.id.rl_container, true, true);
                 break;
 
             }

@@ -389,9 +389,14 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     }
 
     private void updateBirthDay(Calendar myCalendar) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR , -100 );
+
         if (myCalendar.getTimeInMillis() >= (Calendar.getInstance().getTimeInMillis())) {
             Toast.makeText(getContext(), "Bạn không thể chọn ngày sinh của bạn sau thời gian hiện tại", Toast.LENGTH_LONG).show();
-        } else {
+        }else if(myCalendar.getTimeInMillis() <= calendar.getTimeInMillis()){
+            Toast.makeText(getContext(), "Năm sinh của bạn không hợp lệ", Toast.LENGTH_LONG).show();
+        }else {
             String myFormat = "dd/MM/yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             edBirthday.setText(sdf.format(myCalendar.getTime()));
