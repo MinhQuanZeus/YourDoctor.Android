@@ -195,16 +195,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), 4);
         viewPager.setAdapter(pagerAdapter);
-        viewPager.setCurrentItem(1);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        //tabLayout.setScrollPosition(1,0f,true);
+        tabLayout.getTabAt(1).select();
+        viewPager.setCurrentItem(1);
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
-                tabLayout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.icon_unselected), PorterDuff.Mode.SRC_IN);
+                //tabLayout.getTabAt(1).getIcon().setColorFilter(getResources().getColor(R.color.icon_unselected), PorterDuff.Mode.SRC_IN);
                 tabLayout.getTabAt(tab.getPosition()).getIcon().setColorFilter(getResources().getColor(R.color.icon_selected), PorterDuff.Mode.SRC_IN);
-
-
+                pagerAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -281,10 +284,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         if (item == null) return false;
         switch (item.getItemId()) {
-            case R.id.nav_create_advisory_main: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
-                break;
-            }
+//            case R.id.nav_create_advisory_main: {
+//                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+//                break;
+//            }
             case R.id.nav_favorite_doctor_main: {
                 ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
                 break;
@@ -325,10 +328,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Utils.backToLogin(getApplicationContext());
                         YourDoctorApplication.self().getSocket().close();
-                    }
+                        Utils.backToLogin(getApplicationContext());
 
+                    }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
                     @Override

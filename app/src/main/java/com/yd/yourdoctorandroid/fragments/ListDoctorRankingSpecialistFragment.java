@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorRankingSpecialistAdapter;
@@ -163,6 +164,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                         if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
+                    progressBar.setVisibility(View.GONE);
 
                 }else if(response.code() == 401){
                     Utils.backToLogin(getContext());

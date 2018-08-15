@@ -131,8 +131,8 @@ public class Doctor {
         this.status = status;
     }
 
-    public float getRemainMoney() {
-        return remainMoney;
+    public int getRemainMoney() {
+        return (int) Math.round(remainMoney);
     }
 
     public void setRemainMoney(float remainMoney) {

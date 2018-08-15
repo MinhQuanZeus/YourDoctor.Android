@@ -38,7 +38,7 @@ public class Utils {
         OutputStream os;
         try {
             os = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, os);
             os.flush();
             os.close();
         } catch (Exception e) {
@@ -74,13 +74,9 @@ public class Utils {
         SocketUtils.getInstance().disconnectConnect();
         SharedPrefs.getInstance().remove("JWT_TOKEN");
         SharedPrefs.getInstance().remove("USER_INFO");
-//        Intent intent = new Intent(context, AuthActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(intent);
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(context, AuthActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 

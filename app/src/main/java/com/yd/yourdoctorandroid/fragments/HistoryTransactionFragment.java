@@ -1,6 +1,7 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.models.Specialist;
 
 import java.util.List;
@@ -30,6 +32,7 @@ public class HistoryTransactionFragment extends Fragment {
     @BindView(R.id.vpHistory)
     ViewPager vpHistory;
 
+    private HistoryTransactionFragment.ViewPagerAdapter adapter;
 
     public HistoryTransactionFragment() {
         // Required empty public constructor
@@ -45,13 +48,27 @@ public class HistoryTransactionFragment extends Fragment {
         setUpData();
         return view;
     }
+
+
     private void setUpData(){
+
+        tabHistory.addTab(tabHistory.newTab().setText("Chat"));
+        tabHistory.addTab(tabHistory.newTab().setText("Video call"));
+        tabHistory.addTab(tabHistory.newTab().setText("Thanh Toán"));
+        tabHistory.addTab(tabHistory.newTab().setText("Ngân Hàng"));
+
+
+        adapter = new HistoryTransactionFragment.ViewPagerAdapter(getFragmentManager(),4);
+        vpHistory.setAdapter(adapter);
+        vpHistory.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabHistory));
+        tabHistory.getTabAt(0).select();
         vpHistory.setCurrentItem(0);
-        tabHistory.setupWithViewPager(vpHistory);
+
         tabHistory.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 vpHistory.setCurrentItem(tab.getPosition());
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -61,18 +78,19 @@ public class HistoryTransactionFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
 
-        HistoryTransactionFragment.ViewPagerAdapter adapter = new HistoryTransactionFragment.ViewPagerAdapter(getFragmentManager());
-        vpHistory.setAdapter(adapter);
+
     }
 
     class ViewPagerAdapter extends FragmentStatePagerAdapter {
         //private List typeHistory;
-
-        public ViewPagerAdapter(FragmentManager fm) {
+        private int numberPage;
+        public ViewPagerAdapter(FragmentManager fm,int numberPage) {
             super(fm);
+            this.numberPage = numberPage;
             //this.typeHistory = typeHistory;
         }
 
@@ -84,13 +102,13 @@ public class HistoryTransactionFragment extends Fragment {
                     return new ListChatHistoryFragment();
                 }
                 case 1:{
-                    return new NotifyFragment();
+                    return new VideoCallHistoryFragment();
                 }
                 case 2:{
                     return new ListPaymentHistoryFragment();
                 }
                 case 3:{
-                    return new NotifyFragment();
+                    return new BankingHistoryFragment();
                 }
             }
             return null;
@@ -99,27 +117,9 @@ public class HistoryTransactionFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 4;
+            return numberPage;
         }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position){
-                case 0 :{
-                    return "Chat";
-                }
-                case 1 :{
-                    return "Video Call";
-                }
-                case 2 :{
-                    return "Thanh toán";
-                }
-                case 3 :{
-                    return "Ngân Hàng";
-                }
-            }
-            return "Chat";
-        }
     }
 
 }

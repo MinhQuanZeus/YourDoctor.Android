@@ -123,6 +123,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     private Button btnOkInfoDoctor;
 
+    private TextView tvAddressChat;
+
     private List<Record> recordsChat;
 
     public static final int REQUEST_PERMISSION_CODE = 1;
@@ -410,26 +412,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void showMessageConfirm(String message){
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Thông báo kết thúc")
-                .setMessage(message)
-                .setNegativeButton("Đánh giá bác sĩ", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        DoctorProfileFragment doctorProfileFragment = new DoctorProfileFragment();
-                        doctorProfileFragment.setDoctorID(doctorChoiceId);
-                        ScreenManager.openFragment(getSupportFragmentManager(), doctorProfileFragment, R.id.rl_chat, true, true);
-                    }
-                })
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                }).show();
-    }
 
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
@@ -556,12 +538,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tvContentChat = dialog.findViewById(R.id.tvContentChat);
         btnRateChatDoctor = dialog.findViewById(R.id.btn_rate_chat_doctor);
         btnOkInfoDoctor = dialog.findViewById(R.id.btn_ok_info_doctor);
+        tvAddressChat = dialog.findViewById(R.id.tvAddressChat);
         tvContentChat.setMovementMethod(new ScrollingMovementMethod());
         //set up data
         if(doctorChoice != null){
             ZoomImageViewUtils.loadCircleImage(getApplicationContext(), doctorChoice.getAvatar(),ivDoctorChat);
             tvNameDoctorChat.setText("BS. " +doctorChoice.getFullName());
             tvBirthDayChat.setText("NS: " + doctorChoice.getBirthday());
+            tvAddressChat.setText("Địa chỉ" + doctorChoice.getAddress());
         }
         if(mainObject.getObjConversation() != null){
             tvContentChat.setText("Nội dung câu hỏi là: " + mainObject.getObjConversation().getContentTopic());
@@ -597,7 +581,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(this, "Bạn nên nhập tin nhắn trước", Toast.LENGTH_LONG).show();
                 progressBar.setVisibility(View.GONE);
             } else {
-                SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 1, mEditText.getText().toString());
+                SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 1, mEditText.getText().toString().trim());
                 mEditText.setText("");
             }
 

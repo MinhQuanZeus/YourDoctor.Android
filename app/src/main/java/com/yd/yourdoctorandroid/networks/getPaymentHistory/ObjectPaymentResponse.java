@@ -8,8 +8,8 @@ public class ObjectPaymentResponse {
     @Expose
     private String id;
     private String userID;
-    private long amount;
-    private long remainMoney;
+    private float amount;
+    private float remainMoney;
     private FromUser fromUser;
     private TypeAdvisoryResponse typeAdvisoryID;
     private int status;
@@ -32,19 +32,19 @@ public class ObjectPaymentResponse {
         this.userID = userID;
     }
 
-    public long getAmount() {
-        return amount;
+    public int getAmount() {
+        return (int) Math.round(amount);
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
-    public long getRemainMoney() {
-        return remainMoney;
+    public int getRemainMoney() {
+        return (int) Math.round(remainMoney);
     }
 
-    public void setRemainMoney(long remainMoney) {
+    public void setRemainMoney(float remainMoney) {
         this.remainMoney = remainMoney;
     }
 

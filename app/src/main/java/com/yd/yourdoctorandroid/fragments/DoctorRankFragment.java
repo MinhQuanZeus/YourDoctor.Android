@@ -1,6 +1,7 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -16,12 +17,15 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
+import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.models.Specialist;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
+import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.util.ArrayList;
@@ -55,6 +59,8 @@ public class DoctorRankFragment extends Fragment {
     Unbinder butterKnife;
     private List<Specialist> specialists = new ArrayList<>();
 
+    private ViewPagerAdapter adapter;
+
     public DoctorRankFragment() {
         // Required empty public constructor
     }
@@ -69,7 +75,6 @@ public class DoctorRankFragment extends Fragment {
         setUpSpecialists();
 
 
-
         tbLogoSpecialist.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         tbLogoSpecialist.setTitle(getResources().getString(R.string.ranking_doctor));
         tbLogoSpecialist.setTitleTextColor(getResources().getColor(R.color.primary_text));
@@ -82,73 +87,74 @@ public class DoctorRankFragment extends Fragment {
         });
 
 
-        tabSpecialists.setupWithViewPager(vpDoctorRanking);
-        tabSpecialists.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-
-                vpDoctorRanking.setCurrentItem(tab.getPosition());
-
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-            }
-        });
-
         return view;
     }
 
     private void setUpSpecialists() {
-        specialists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
+        specialists = LoadDefaultModel.getInstance().getSpecialists();
 
-        if(specialists == null){
+        if (specialists == null) {
             GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
             getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
                 @Override
-                public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
+                public void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
 
-                    if(response.code() == 200){
-                        Log.e("AnhLe", "success: " + response.body());
+                    if (response.code() == 200) {
                         MainObjectSpecialist mainObjectSpecialist = response.body();
-                        specialists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
+                        specialists = mainObjectSpecialist.getListSpecialist();
                         LoadDefaultModel.getInstance().setSpecialists(specialists);
-                        setupViewPager(vpDoctorRanking);
-                        vpDoctorRanking.setCurrentItem(0);
                         progessBar.setVisibility(View.GONE);
-                    }else if(response.code() == 401){
+                        setupViewPager();
+                    } else if (response.code() == 401) {
                         Utils.backToLogin(getContext());
                     }
-
                 }
 
                 @Override
                 public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
-                    Log.e("loi mang" ,t.toString());
+                    Log.e("loi mang", t.toString());
                     Toast.makeText(getContext(), "Kết nối mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
                     progessBar.setVisibility(View.GONE);
                 }
             });
 
-        }else {
-            setupViewPager(vpDoctorRanking);
-            vpDoctorRanking.setCurrentItem(0);
+        } else {
             progessBar.setVisibility(View.GONE);
+            setupViewPager();
+
         }
 
     }
 
 
+    private void setupViewPager() {
+        for (Specialist specialist : specialists) {
+            tabSpecialists.addTab(tabSpecialists.newTab().setText(specialist.getName()));
+        }
 
-    private void setupViewPager(ViewPager viewPager) {
+        adapter = new ViewPagerAdapter(getFragmentManager(), specialists);
+        vpDoctorRanking.setAdapter(adapter);
+        vpDoctorRanking.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabSpecialists));
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getFragmentManager(), specialists);
-        viewPager.setAdapter(adapter);
+        tabSpecialists.getTabAt(0).select();
+        vpDoctorRanking.setCurrentItem(0);
+
+        tabSpecialists.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                vpDoctorRanking.setCurrentItem(tab.getPosition());
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
