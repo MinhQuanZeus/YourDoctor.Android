@@ -41,6 +41,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:17.1.0'
     implementation 'com.github.nkzawa:socket.io-client:0.3.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.github.rey5137:material:1.2.2'
+    implementation 'uk.co.chrisjenx:calligraphy:2.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     implementation 'com.microsoft.azure.android:azure-storage-android:2.0.0@aar'
     testImplementation 'junit:junit:4.12'
