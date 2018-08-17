@@ -2,6 +2,7 @@ package com.yd.yourdoctorandroid.fragments;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,8 @@ import com.github.nkzawa.emitter.Emitter;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.YourDoctorApplication;
+import com.yd.yourdoctorandroid.activities.MainActivity;
+import com.yd.yourdoctorandroid.activities.VideoCallActivity;
 import com.yd.yourdoctorandroid.adapters.DoctorCertificationAdapter;
 import com.yd.yourdoctorandroid.adapters.DoctorChoiceAdapter;
 import com.yd.yourdoctorandroid.adapters.SpecialistChoiceAdapter;
@@ -413,13 +416,20 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 break;
             }
             case R.id.ivReportWithDoctor: {
-                reportPatient();
+                reportDoctor();
                 break;
             }
             case R.id.ivVideoCallWithDoctor: {
                 if (!isFromChat) {
                     if (currentDoctor.isOnline()) {
-                        //TODO
+                        Intent intent = new Intent(getContext(), VideoCallActivity.class);
+                        intent.putExtra("idSpecialistChoice", specialistIdChoice);
+                        intent.putExtra("idDoctor", currentDoctor.getDoctorId());
+                        intent.putExtra("idDoctorName", currentDoctor.getFullName());
+                        intent.putExtra("idDoctorAvatar", currentDoctor.getAvatar());
+                        startActivity(intent);
+
+                        //loadSpecialist();
                     } else {
                         Toast.makeText(getContext(), "Hiện Tại bác sĩ không online", Toast.LENGTH_LONG).show();
                     }
@@ -446,6 +456,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     Specialist specialistChoice;
 
     private void loadSpecialist() {
+        if(pbProfileDoctor != null) pbProfileDoctor.setVisibility(View.VISIBLE);
         specialists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
         if (specialists == null) {
             GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
@@ -467,7 +478,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                         setUpTypeAdvisory();
                     } else {
                         Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải được các chuyên khoa!", Toast.LENGTH_LONG).show();
-
+                        if(pbProfileDoctor != null) pbProfileDoctor.setVisibility(View.GONE);
                     }
                 }
 
@@ -506,7 +517,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                         LoadDefaultModel.getInstance().setTypeAdvisories(typeAdvisories);
 
                         for (TypeAdvisory typeAdvisory : typeAdvisories) {
-                            if (typeAdvisory.getDescription().contains("Video")) {
+                            if (typeAdvisory.getName().contains("Video")) {
                                 videoCallType = typeAdvisory;
                                 break;
                             }
@@ -520,6 +531,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                     } else if (response.code() == 401) {
                         Utils.backToLogin(getActivity().getApplicationContext());
                     }
+                    if(pbProfileDoctor != null) pbProfileDoctor.setVisibility(View.GONE);
 
                 }
 
@@ -531,9 +543,9 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 }
             });
         } else {
-
+            if(pbProfileDoctor != null) pbProfileDoctor.setVisibility(View.GONE);
             for (TypeAdvisory typeAdvisory : typeAdvisories) {
-                if (typeAdvisory.getDescription().contains("Video")) {
+                if (typeAdvisory.getName().contains("Video")) {
                     videoCallType = typeAdvisory;
                 }
             }
@@ -563,7 +575,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.rating_dialog, null);
         rbRating = view.findViewById(R.id.rb_rating);
-        if(pbInfoRating != null) pbInfoRating = view.findViewById(R.id.pb_info_rating);
+        pbInfoRating = view.findViewById(R.id.pb_info_rating);
         etCommentRating = view.findViewById(R.id.et_comment_rating);
 
         if(pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
@@ -636,7 +648,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
 
     }
 
-    private void reportPatient() {
+    private void reportDoctor() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.report_user_dialog, null);

@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -79,9 +80,11 @@ import retrofit2.Response;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, NPermission.OnPermissionResult {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int REQUEST_PERMISSION_CODE = 1;
     @BindView(R.id.tab_layout)
     TabLayout tabLayout;
 
@@ -117,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Boolean isFabOpen = false;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
-    private NPermission nPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,10 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setupUI() {
         ButterKnife.bind(this);
         if (!checkPermission()) {
-            Log.d("MAIN", "request checkPermission");
-            nPermission = new NPermission(false);
-            nPermission.requestPermission(this, Manifest.permission.CAMERA);
-            nPermission.requestPermission(this, Manifest.permission.RECORD_AUDIO);
+            requestPermission();
         }
         View headerView = navigationViewMain.inflateHeaderView(R.layout.nav_header_main);
         ivAvaUser = headerView.findViewById(R.id.iv_ava_user);
@@ -464,27 +463,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fabQuestion.setVisibility(View.INVISIBLE);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d("MAIN", "request");
-        nPermission.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onPermissionResult(String s, boolean b) {
-        switch (s) {
-            case Manifest.permission.CAMERA:
-                if (!b) {
-                    nPermission.requestPermission(this, Manifest.permission.CAMERA);
-                }
-                break;
-            default:
-                break;
-        }
-    }
     public boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(),
                 RECORD_AUDIO);
@@ -492,6 +470,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 CAMERA);
         return result == PackageManager.PERMISSION_GRANTED &&
                 result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_PERMISSION_CODE:
+                if (grantResults.length > 0) {
+                    boolean StoragePermission = grantResults[0] ==
+                            PackageManager.PERMISSION_GRANTED;
+                    boolean RecordPermission = grantResults[1] ==
+                            PackageManager.PERMISSION_GRANTED;
+
+                    if (StoragePermission && RecordPermission) {
+                        Toast.makeText(this, "Permission Granted",
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        requestPermission();
+                    }
+                }
+                break;
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this, new
+                String[]{RECORD_AUDIO, CAMERA}, REQUEST_PERMISSION_CODE);
     }
 
     @Override

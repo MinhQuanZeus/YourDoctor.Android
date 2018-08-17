@@ -550,11 +550,11 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     public void startCall() {
         Log.d(TAG, "startCall");
-        if (!(Build.VERSION.SDK_INT < 23 || !checkPermission())) {
-            Log.d(TAG, "request permission");
-            nPermission.requestPermission(getActivity(), Manifest.permission.CAMERA);
-            return;
-        }
+//        if (!(Build.VERSION.SDK_INT < 23 || !checkPermission())) {
+//            Log.d(TAG, "request permission");
+//            nPermission.requestPermission(getActivity(), Manifest.permission.CAMERA);
+//            return;
+//        }
 
         if (rtcClient == null) {
             Log.e(TAG, "AppRTC client is not allocated for a call.");
