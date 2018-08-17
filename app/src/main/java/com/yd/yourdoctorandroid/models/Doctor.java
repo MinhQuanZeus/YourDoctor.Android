@@ -1,10 +1,11 @@
 package com.yd.yourdoctorandroid.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.yd.yourdoctorandroid.networks.getDoctorDetailProfile.SpecialistDetail;
 
 import java.util.ArrayList;
 
-public class Doctor {
+public class Doctor implements Comparable<Doctor> {
     private String id;
     private String phoneNumber;
     private String password;
@@ -19,7 +20,7 @@ public class Doctor {
     private float remainMoney;
     private float currentRating;
     private ArrayList<Certification> certificates;
-    private ArrayList<String> idSpecialist;
+    private ArrayList<SpecialistDetail> idSpecialist;
     private String universityGraduate;
     private String yearGraduate;
     private String placeWorking;
@@ -29,7 +30,7 @@ public class Doctor {
     public Doctor() {
     }
 
-    public Doctor(String id, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, float remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<String> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking, boolean isFavorite, boolean isOnline) {
+    public Doctor(String id, String phoneNumber, String password, String firstName, String middleName, String lastName, String avatar, String birthday, String address, int status, float remainMoney, float currentRating, ArrayList<Certification> certificates, ArrayList<SpecialistDetail> idSpecialist, String universityGraduate, String yearGraduate, String placeWorking, boolean isFavorite, boolean isOnline) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -155,11 +156,11 @@ public class Doctor {
         this.certificates = certificates;
     }
 
-    public ArrayList<String> getIdSpecialist() {
+    public ArrayList<SpecialistDetail> getIdSpecialist() {
         return idSpecialist;
     }
 
-    public void setIdSpecialist(ArrayList<String> idSpecialist) {
+    public void setIdSpecialist(ArrayList<SpecialistDetail> idSpecialist) {
         this.idSpecialist = idSpecialist;
     }
 
@@ -242,5 +243,14 @@ public class Doctor {
                 ", isFavorite=" + isFavorite +
                 ", isOnline=" + isOnline +
                 '}';
+    }
+
+    public int compareTo(Doctor doctor) {
+        if (isOnline && !doctor.isOnline)
+            return -1;
+        else if (isOnline == doctor.isOnline)
+            return 0;
+        else
+            return 1;
     }
 }

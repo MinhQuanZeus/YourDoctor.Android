@@ -109,7 +109,7 @@ public class LoginFragment extends Fragment {
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new InputPhoneNumberFragment(), R.id.fl_auth, true, true);
+                ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new RulesRegisterFragment(), R.id.fl_auth, true, true);
             }
         });
 
@@ -179,7 +179,7 @@ public class LoginFragment extends Fragment {
                         }
                         SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                         FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-                        SocketUtils.getInstance().reConnect();
+                        LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
                         loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
                     }else {
                         Toast.makeText(getContext(),"Tài khoản đang bị khóa, mọi thắc mắc xin liện hệ đến tổng đài!", Toast.LENGTH_LONG).show();
@@ -231,7 +231,7 @@ public class LoginFragment extends Fragment {
                         Patient newPatient = currentPatient;
                         newPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
                         SharedPrefs.getInstance().put("USER_INFO", newPatient);
-                        loadAllChatPending(currentPatient);
+                        //LoadDefaultModel.getInstance().loadAllChatPending(currentPatient.getId());
                         Intent intent = new Intent(getContext(), MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -249,44 +249,6 @@ public class LoginFragment extends Fragment {
         });
 
     }
-
-    public void loadAllChatPending(final Patient currentPatient){
-        GetListPendingChatService getListPendingChatService = RetrofitFactory.getInstance().createService(GetListPendingChatService.class);
-        getListPendingChatService.getListPendingChatService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainPendingResponse>() {
-            @Override
-            public void onResponse(Call<MainPendingResponse> call, Response<MainPendingResponse> response) {
-                if(response.code() == 200){
-                    MainPendingResponse mainObject = response.body();
-                    //check lại time nhe
-                    for (IDPending idPending:mainObject.getListPending()) {
-                        handleChatIsPending(idPending);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MainPendingResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-                btnLogin.revertAnimation();
-            }
-        });
-    }
-
-    public void handleChatIsPending(IDPending idPending){
-
-        if((idPending.getTimeRemain() / 1000) >= Config.TIME_OUT_CHAT_CONVERSATION){
-            Utils.addIdChatToListTimeOut(idPending.getId());
-        }else {
-            Intent intentTimeOut = new Intent(getContext(), TimeOutChatService.class);
-            intentTimeOut.putExtra("idChat", idPending.getId());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 234324243, intentTimeOut, 0);
-            AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                    + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
-        }
-    }
-
-
 
     private void enableAll() {
         this.edPassword.setEnabled(true);

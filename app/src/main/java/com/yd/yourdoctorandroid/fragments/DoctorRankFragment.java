@@ -103,29 +103,35 @@ public class DoctorRankFragment extends Fragment {
                         MainObjectSpecialist mainObjectSpecialist = response.body();
                         specialists = mainObjectSpecialist.getListSpecialist();
                         LoadDefaultModel.getInstance().setSpecialists(specialists);
-                        progessBar.setVisibility(View.GONE);
                         setupViewPager();
                     } else if (response.code() == 401) {
-                        Utils.backToLogin(getContext());
+                        Utils.backToLogin(getActivity().getApplicationContext());
                     }
+                    if(progessBar != null){
+                        progessBar.setVisibility(View.GONE);
+                    }
+                    //progessBar.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
                     Log.e("loi mang", t.toString());
                     Toast.makeText(getContext(), "Kết nối mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-                    progessBar.setVisibility(View.GONE);
+                    if(progessBar != null){
+                        progessBar.setVisibility(View.GONE);
+                    }
                 }
             });
 
         } else {
-            progessBar.setVisibility(View.GONE);
+            if(progessBar != null){
+                progessBar.setVisibility(View.GONE);
+            }
             setupViewPager();
 
         }
 
     }
-
 
     private void setupViewPager() {
         for (Specialist specialist : specialists) {

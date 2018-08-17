@@ -38,7 +38,7 @@ public class Utils {
         OutputStream os;
         try {
             os = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, os);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, os);
             os.flush();
             os.close();
         } catch (Exception e) {
@@ -71,9 +71,10 @@ public class Utils {
 
     public static void backToLogin(Context context){
         FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
-        SocketUtils.getInstance().disconnectConnect();
+        SocketUtils.getInstance().closeConnect();
         SharedPrefs.getInstance().remove("JWT_TOKEN");
         SharedPrefs.getInstance().remove("USER_INFO");
+        LoadDefaultModel.getInstance().unregisterServiceCheckNetwork(context);
         Intent intent = new Intent(context, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

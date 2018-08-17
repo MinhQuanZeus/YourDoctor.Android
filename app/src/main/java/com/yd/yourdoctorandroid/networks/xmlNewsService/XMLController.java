@@ -38,6 +38,7 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
         this.context = context;
         this.recyclerView = recyclerView;
         this.gridLayoutManager = gridLayoutManager;
+        progressDialog = new ProgressDialog(context);
     }
 
     @Override
@@ -45,7 +46,7 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
         super.onPreExecute();
 
         // Hiển thị Dialog khi bắt đầu xử lý.
-        progressDialog = new ProgressDialog(context);
+
         progressDialog.setTitle("Báo sức khỏe VNPress");
         progressDialog.setMessage("Đang xử lý...");
         if(progressDialog != null){
@@ -71,15 +72,10 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
                 mFeedModelList = parseFeed(inputStream);
-            } else {
-                // display error message
             }
 
-
-        } catch (IOException e) {
-            Log.e("RssFeed", "Error", e);
-        } catch (XmlPullParserException e) {
-            Log.e("RssFeed", "Error", e);
+        } catch (Exception e) {
+            Log.e("RssFeed", "Không thể load VnPress");
         }
 
         return (ArrayList<New>) mFeedModelList;

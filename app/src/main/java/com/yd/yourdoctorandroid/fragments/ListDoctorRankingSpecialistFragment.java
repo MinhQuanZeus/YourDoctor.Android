@@ -159,15 +159,20 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
 
                         doctorRankingAdapter.addAll(doctorList);
-                        progressBar.setVisibility(View.GONE);
+
+
 
                         if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    progressBar.setVisibility(View.GONE);
+
+
 
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
+                }
+                if(progressBar != null){
+                    progressBar.setVisibility(View.GONE);
                 }
 
             }
@@ -175,7 +180,9 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectRanking> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                progressBar.setVisibility(View.GONE);
+                if(progressBar != null){
+                    progressBar.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -208,7 +215,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                     if (doctorList.size()==5) doctorRankingAdapter.addLoadingFooter();  // 5
                     else isLastPage = true;
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
 
             }

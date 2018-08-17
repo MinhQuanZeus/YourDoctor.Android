@@ -2,35 +2,46 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="30dp">
-
+    android:layout_margin="30dp"
+    android:gravity="center">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_list_doctor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/btn_cancel_choose_doctor"
         android:layout_alignParentTop="true"
-        android:background="@color/primary_text" />
-
-    <Button
-        android:id="@+id/btn_cancel_choose_doctor"
+        android:background="@color/primary_text"
+        android:layout_above="@id/btn_confirm_choose"/>
+    <RelativeLayout
+        android:id="@+id/btn_confirm_choose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:text="@string/btn_cancel"
-        android:textColor="@color/primary_text"
-        android:theme="@style/PrimaryButton" />
+        android:layout_centerHorizontal="true"
+        >
+        <Button
+            android:id="@+id/btn_cancel_choose_doctor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cancel"
+            android:textColor="@color/primary_text"
+            android:background="@drawable/buttonstyleithgradient" />
 
-    <Button
-        android:id="@+id/btn_ok_choose_doctor"
+        <Button
+            android:id="@+id/btn_ok_choose_doctor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/btn_cancel_choose_doctor"
+            android:layout_marginStart="50dp"
+            android:text="@string/btn_ok"
+            android:textColor="@color/primary_text"
+            android:background="@drawable/buttonstyleithgradient" />
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_choose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"
-        android:text="@string/btn_ok"
-        android:textColor="@color/primary_text"
-        android:theme="@style/PrimaryButton" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 </RelativeLayout>

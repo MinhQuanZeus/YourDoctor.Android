@@ -143,9 +143,12 @@ public class ListPaymentHistoryFragment extends Fragment {
                             paymentHistoryAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    pbListPaymentHistory.setVisibility(View.GONE);
+
                 } else if (response.code() == 401) {
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
+                }
+                if(pbListPaymentHistory != null){
+                    pbListPaymentHistory.setVisibility(View.GONE);
                 }
             }
 
@@ -153,7 +156,9 @@ public class ListPaymentHistoryFragment extends Fragment {
             public void onFailure(Call<MainHistoryPaymentResponse> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
                 Toast.makeText(getContext(),"Không thể tải được lịch sử thanh toán", Toast.LENGTH_LONG).show();
-                pbListPaymentHistory.setVisibility(View.GONE);
+                if(pbListPaymentHistory != null){
+                    pbListPaymentHistory.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -181,9 +186,11 @@ public class ListPaymentHistoryFragment extends Fragment {
                             paymentHistoryAdapter.addLoadingFooter();  // 5
                         else isLastPage = true;
                     }
-                    pbListPaymentHistory.setVisibility(View.GONE);
                 } else if (response.code() == 401) {
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
+                }
+                if(pbListPaymentHistory != null){
+                    pbListPaymentHistory.setVisibility(View.GONE);
                 }
 
             }
@@ -192,7 +199,9 @@ public class ListPaymentHistoryFragment extends Fragment {
             public void onFailure(Call<MainHistoryPaymentResponse> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
                 Toast.makeText(getContext(),"Không thể tải thêm được lịch sử thanh toán", Toast.LENGTH_LONG).show();
-                pbListPaymentHistory.setVisibility(View.GONE);
+                if(pbListPaymentHistory != null){
+                    pbListPaymentHistory.setVisibility(View.GONE);
+                }
             }
         });
 

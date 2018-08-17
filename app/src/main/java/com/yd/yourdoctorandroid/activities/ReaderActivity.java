@@ -45,9 +45,11 @@ public class ReaderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reader);
         ButterKnife.bind(this);
-        progress.setMax(100);
-        progress.getProgressDrawable().setColorFilter(
-                Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+        if(progress != null){
+            progress.setMax(100);
+            progress.getProgressDrawable().setColorFilter(
+                    Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+        }
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setTitleTextColor(getResources().getColor(R.color.primary_text));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -72,6 +74,7 @@ public class ReaderActivity extends AppCompatActivity {
     }
 
     public void setValue(int progress) {
+        if(this.progress != null)
         this.progress.setProgress(progress);
     }
 

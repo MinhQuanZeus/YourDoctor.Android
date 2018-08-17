@@ -66,7 +66,7 @@ public class ConfirmEndChatFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setData(Patient currentPatient,Doctor currentDoctor,String message ){
+    public void setData(Patient currentPatient, Doctor currentDoctor, String message) {
         this.currentDoctor = currentDoctor;
         this.currentPatient = currentPatient;
         this.message = message;
@@ -78,7 +78,7 @@ public class ConfirmEndChatFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_confirm_end_chat, container, false);
         // Inflate the layout for this fragment
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
         setUpUI();
 
         return view;
@@ -97,7 +97,7 @@ public class ConfirmEndChatFragment extends Fragment {
             }
         });
 
-        ZoomImageViewUtils.loadCircleImage(getContext(),currentDoctor.getAvatar(),iv_ava_confirm);
+        ZoomImageViewUtils.loadCircleImage(getContext(), currentDoctor.getAvatar(), iv_ava_confirm);
         tv_logo_confirm.setText(message);
 
         btn_confirm.setOnClickListener(new View.OnClickListener() {
@@ -122,12 +122,13 @@ public class ConfirmEndChatFragment extends Fragment {
         });
 
     }
+
     private RatingBar rbRating;
     private ProgressBar pbInfoRating;
     private EditText etCommentRating;
     private AlertDialog dialogReport;
 
-    private void handleRateConfirm(){
+    private void handleRateConfirm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.rating_dialog, null);
@@ -135,11 +136,10 @@ public class ConfirmEndChatFragment extends Fragment {
         pbInfoRating = view.findViewById(R.id.pb_info_rating);
         etCommentRating = view.findViewById(R.id.et_comment_rating);
 
-
-        pbInfoRating.setVisibility(View.GONE);
+        if (pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
 
         builder.setView(view);
-        if(currentDoctor != null){
+        if (currentDoctor != null) {
             builder.setTitle("Đánh giá BS." + currentDoctor.getFullName());
         }
         builder.setPositiveButton("Đánh Gía", new DialogInterface.OnClickListener() {
@@ -161,39 +161,39 @@ public class ConfirmEndChatFragment extends Fragment {
         dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pbInfoRating.setVisibility(View.VISIBLE);
+                if (pbInfoRating != null) pbInfoRating.setVisibility(View.VISIBLE);
 
-                if(rbRating.getNumStars() == 0 ){
-                    Toast.makeText(getContext(),"Bạn nên đánh giá ít nhất 0.5 sao!", Toast.LENGTH_LONG).show();
-                    pbInfoRating.setVisibility(View.GONE);
-                }else {
+                if (rbRating.getNumStars() == 0) {
+                    Toast.makeText(getContext(), "Bạn nên đánh giá ít nhất 0.5 sao!", Toast.LENGTH_LONG).show();
+                    if (pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
+                } else {
                     //TODO
                     RatingRequest ratingRequest = new RatingRequest();
                     ratingRequest.setComment(etCommentRating.getText().toString());
                     ratingRequest.setDoctorId(currentDoctor.getDoctorId());
                     ratingRequest.setPatientId(currentPatient.getId());
-                    ratingRequest.setRating(rbRating.getRating()+"");
+                    ratingRequest.setRating(rbRating.getRating() + "");
 
                     RatingService ratingService = RetrofitFactory.getInstance().createService(RatingService.class);
-                    ratingService.ratingService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),ratingRequest).enqueue(new Callback<MainResponRating>() {
+                    ratingService.ratingService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), ratingRequest).enqueue(new Callback<MainResponRating>() {
                         @Override
                         public void onResponse(Call<MainResponRating> call, Response<MainResponRating> response) {
-                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
-                            if(response.code() == 200 ) {
-                                Toast.makeText(getContext(),"Đánh giá bác sĩ thành công", Toast.LENGTH_LONG).show();
+
+                            if (response.code() == 200) {
+                                Toast.makeText(getContext(), "Đánh giá bác sĩ thành công", Toast.LENGTH_LONG).show();
                                 etCommentRating.setText("");
                                 rbRating.setRating(0);
                                 dialogReport.dismiss();
-                            }else if(response.code() == 401){
-                                Utils.backToLogin(getContext());
+                            } else if (response.code() == 401) {
+                                Utils.backToLogin(getActivity().getApplicationContext());
                             }
-                            pbInfoRating.setVisibility(View.GONE);
+                            if (pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onFailure(Call<MainResponRating> call, Throwable t) {
-                            Toast.makeText(getContext(),"Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
-                            pbInfoRating.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
+                            if (pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
                         }
                     });
 
@@ -202,18 +202,19 @@ public class ConfirmEndChatFragment extends Fragment {
         });
 
     }
+
     private EditText etReasonReport;
     private ProgressBar pbReport;
 
-    private void handleReportConfirm(){
+    private void handleReportConfirm() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.report_user_dialog, null);
         etReasonReport = view.findViewById(R.id.et_reason_report);
         pbReport = view.findViewById(R.id.pb_report);
-        pbReport.setVisibility(View.GONE);
+        if(pbReport != null) pbReport.setVisibility(View.GONE);
         builder.setView(view);
-        if(currentDoctor != null){
+        if (currentDoctor != null) {
             builder.setTitle("Báo cáo BS." + currentDoctor.getFullName());
         }
         builder.setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
@@ -234,35 +235,35 @@ public class ConfirmEndChatFragment extends Fragment {
         dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pbReport.setVisibility(View.VISIBLE);
-                if(etReasonReport.getText().toString().equals("")){
-                    Toast.makeText(getContext(),"Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
-                    pbReport.setVisibility(View.GONE);
-                }else {
+                if(pbReport != null) pbReport.setVisibility(View.VISIBLE);
+                if (etReasonReport.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
+                    if(pbReport != null) pbReport.setVisibility(View.GONE);
+                } else {
                     ReportRequest reportRequest = new ReportRequest();
                     reportRequest.setIdPersonBeingReported(currentDoctor.getDoctorId());
                     reportRequest.setIdReporter(currentPatient.getId());
                     reportRequest.setReason(etReasonReport.getText().toString());
 
                     ReportService reportService = RetrofitFactory.getInstance().createService(ReportService.class);
-                    reportService.reportService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),reportRequest).enqueue(new Callback<MainResponReport>() {
+                    reportService.reportService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), reportRequest).enqueue(new Callback<MainResponReport>() {
                         @Override
                         public void onResponse(Call<MainResponReport> call, Response<MainResponReport> response) {
                             Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
-                            if(response.code() == 200 && response.body().isSuccess()) {
-                                Toast.makeText(getContext(),"Báo cáo người dùng thành công", Toast.LENGTH_LONG).show();
+                            if (response.code() == 200 && response.body().isSuccess()) {
+                                Toast.makeText(getContext(), "Báo cáo người dùng thành công", Toast.LENGTH_LONG).show();
                                 etReasonReport.setText("");
                                 dialogReport.dismiss();
-                            }else if(response.code() == 401){
-                                Utils.backToLogin(getContext());
+                            } else if (response.code() == 401) {
+                                Utils.backToLogin(getActivity().getApplicationContext());
                             }
-                            pbReport.setVisibility(View.GONE);
+                            if(pbReport != null) pbReport.setVisibility(View.GONE);
                         }
 
                         @Override
                         public void onFailure(Call<MainResponReport> call, Throwable t) {
-                            Toast.makeText(getContext(),"Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
-                            pbReport.setVisibility(View.GONE);
+                            Toast.makeText(getContext(), "Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
+                            if(pbReport != null) pbReport.setVisibility(View.GONE);
                         }
                     });
 

@@ -2,6 +2,7 @@ package com.yd.yourdoctorandroid.activities;
 
 import android.Manifest;
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,12 +21,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -38,6 +42,8 @@ import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.YourDoctorApplication;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
+import com.yd.yourdoctorandroid.adapters.SpecialistAdapter;
+import com.yd.yourdoctorandroid.adapters.SpecialistChoiceAdapter;
 import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.fragments.AboutUsFragment;
 import com.yd.yourdoctorandroid.fragments.AdvisoryMenuFragment;
@@ -47,7 +53,12 @@ import com.yd.yourdoctorandroid.fragments.DoctorRankFragment;
 import com.yd.yourdoctorandroid.fragments.UserProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
+import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
 import com.yd.yourdoctorandroid.services.TimeOutChatService;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
@@ -57,10 +68,14 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.RECORD_AUDIO;
@@ -162,16 +177,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fabChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFAB();
-               ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
+                showDialogChooseSpecialist(true);
+
             }
         });
         fabVideoCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                animateFAB();
-                Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
-                startActivity(intent);
+                showDialogChooseSpecialist(false);
+
             }
         });
 
@@ -221,8 +235,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        pbMain.setVisibility(View.GONE);
+        if(pbMain != null) pbMain.setVisibility(View.GONE);
+
     }
+
+    Dialog dialogChooseSpecialist;
+
+    private Button btnCancelChoose;
+    private Button btnOkChoose;
+    private RecyclerView rvListSpecilist;
+    private ArrayList<Specialist> specialists;
+    private Specialist specialistChoice;
+    private ProgressBar pbChoose;
+    private SpecialistChoiceAdapter specialistChoiceAdapter;
+    public void showDialogChooseSpecialist(Boolean isChat) {
+        dialogChooseSpecialist = new Dialog(MainActivity.this);
+
+        dialogChooseSpecialist.setContentView(R.layout.choose_doctor_dialog);
+        dialogChooseSpecialist.setTitle("Lựa Chọn Chuyên khoa bạn muốn tư vấn");
+
+        // set the custom dialog components - text, image and button
+        btnCancelChoose = dialogChooseSpecialist.findViewById(R.id.btn_cancel_choose_doctor);
+        btnOkChoose = dialogChooseSpecialist.findViewById(R.id.btn_ok_choose_doctor);
+        rvListSpecilist = dialogChooseSpecialist.findViewById(R.id.rv_list_doctor);
+        pbChoose = dialogChooseSpecialist.findViewById(R.id.pb_choose);
+        if(pbChoose != null) pbChoose.setVisibility(View.VISIBLE);
+
+        specialists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
+        if(specialists == null){
+            GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
+            getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
+                @Override
+                public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
+                    if(response.code() == 200){
+                        MainObjectSpecialist mainObjectSpecialist = response.body();
+                        specialists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
+                        specialistChoiceAdapter = new SpecialistChoiceAdapter(specialists,getApplicationContext(),dialogChooseSpecialist);
+                        rvListSpecilist.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+                        rvListSpecilist.setAdapter(specialistChoiceAdapter);
+                        LoadDefaultModel.getInstance().setSpecialists(specialists);
+                        }else{
+                        Toast.makeText(getApplicationContext(), "Kết nốt mạng có vấn đề , không thể tải được các chuyên khoa!", Toast.LENGTH_LONG).show();
+
+                    }
+                    if(pbChoose != null) pbChoose.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
+                    if(pbChoose != null) pbChoose.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), "Kết nốt mạng có vấn đề , không thể tải được các chuyên khoa!", Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }else {
+            specialistChoiceAdapter = new SpecialistChoiceAdapter(specialists,getApplicationContext(),dialogChooseSpecialist);
+            rvListSpecilist.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2));
+            rvListSpecilist.setAdapter(specialistChoiceAdapter);
+            if(pbChoose != null) pbChoose.setVisibility(View.GONE);
+            dialogChooseSpecialist.show();
+        }
+
+
+
+        btnCancelChoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogChooseSpecialist.dismiss();
+            }
+        });
+
+        btnOkChoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                specialistChoice = specialistChoiceAdapter.getSpecialistChoice();
+                if(specialistChoice != null){
+                    if(isChat){
+                        animateFAB();
+                        AdvisoryMenuFragment advisoryMenuFragment = new AdvisoryMenuFragment();
+                        advisoryMenuFragment.setData(specialistChoice);
+                        ScreenManager.openFragment(getSupportFragmentManager(), advisoryMenuFragment, R.id.rl_container, true, true);
+                    }else {
+                        animateFAB();
+                        Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
+                        intent.putExtra("idSpecialistChoice", specialistChoice.getId());
+                        startActivity(intent);
+                    }
+                    dialogChooseSpecialist.dismiss();
+                }else {
+                    Toast.makeText(getApplicationContext(),"Bạn chưa lựa chọn chuyên ngành nào", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        dialogChooseSpecialist.show();
+
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(EventSend eventSend) {
@@ -281,13 +389,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         if (item == null) return false;
         switch (item.getItemId()) {
-//            case R.id.nav_create_advisory_main: {
-//                ScreenManager.openFragment(getSupportFragmentManager(), new AdvisoryMenuFragment(), R.id.rl_container, true, true);
-//                break;
-//            }
             case R.id.nav_favorite_doctor_main: {
                 ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
                 break;
@@ -330,7 +433,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onClick(DialogInterface dialog, int which) {
                         YourDoctorApplication.self().getSocket().close();
                         Utils.backToLogin(getApplicationContext());
-
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {

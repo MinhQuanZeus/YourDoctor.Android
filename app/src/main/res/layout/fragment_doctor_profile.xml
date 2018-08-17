@@ -44,6 +44,17 @@
                     android:layout_height="100dp"
                     android:layout_below="@id/tbBackFromProfileDoctor"
                     android:layout_centerHorizontal="true" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_status_doctor"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignBottom="@+id/ivAvaDoctor"
+                    android:layout_alignEnd="@+id/ivAvaDoctor"
+                    android:src="@drawable/circle_red_line"
+                    android:layout_marginEnd="6dp"
+                    civ_border_width="2dp"
+                    civ_border_color="@color/white"
+                    />
 
                 <TextView
                     android:id="@+id/tvNameDoctor"

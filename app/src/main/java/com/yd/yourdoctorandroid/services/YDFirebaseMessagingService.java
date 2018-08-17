@@ -16,10 +16,13 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.activities.ChatActivity;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.NotificationUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 public class YDFirebaseMessagingService extends FirebaseMessagingService {
@@ -31,6 +34,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     private String storageId;
     private String message;
     private String createTime;
+    private String remainMoney;
 
     private String title;
     private String description;
@@ -41,6 +45,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     private PendingIntent pendingIntent;
     private NotificationCompat.Builder builder;
     private NotificationManager notifManager;
+    private Patient patient;
 
     public YDFirebaseMessagingService() {
         super();
@@ -48,7 +53,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) == null) return;
+        //if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) == null) return;
         if (remoteMessage == null) {
             Log.e(TAG, "Notify is null");
             return;
@@ -60,6 +65,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             storageId = remoteMessage.getData().get("storageId");
             message = remoteMessage.getData().get("message");
             createTime = remoteMessage.getData().get("createTime");
+            remainMoney = remoteMessage.getData().get("remainMoney");
 
             if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
                 showNotification();
@@ -115,7 +121,17 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 case 3: {
+                    if(remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try{
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        }catch (Exception e){
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
 
+                    }
                     builder.setContentTitle("Thông báo Thanh Toán")  // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required
                             .setContentText(message)  // required
@@ -158,6 +174,17 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 case 3: {
+                    if(remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try{
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        }catch (Exception e){
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
 
                     builder.setContentTitle("Thông báo thanh toán")                           // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required

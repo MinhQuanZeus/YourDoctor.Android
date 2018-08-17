@@ -338,7 +338,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                                 et_new_password.setText("");
                                 et_confirm_new_password.setText("");
                             } else if(response.code() == 401) {
-                                Utils.backToLogin(getContext());
+                                Utils.backToLogin(getActivity().getApplicationContext());
 
                             }else {
                                 tv_message_change_password.setTextColor(getResources().getColor(R.color.red));

@@ -211,9 +211,12 @@ public class DoctorFavoriteListFragment extends Fragment {
                         if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    pbFavorite.setVisibility(View.GONE);
+                    if(pbFavorite != null){
+                        pbFavorite.setVisibility(View.GONE);
+                    }
+
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
 
             }
@@ -221,7 +224,9 @@ public class DoctorFavoriteListFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectFavoriteList> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                pbFavorite.setVisibility(View.GONE);
+                if(pbFavorite != null){
+                    pbFavorite.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -256,9 +261,8 @@ public class DoctorFavoriteListFragment extends Fragment {
                         if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();  // 5
                         else isLastPage = true;
                     }
-                    pbFavorite.setVisibility(View.GONE);
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
 
             }
@@ -266,7 +270,6 @@ public class DoctorFavoriteListFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectFavoriteList> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                pbFavorite.setVisibility(View.GONE);
             }
         });
 

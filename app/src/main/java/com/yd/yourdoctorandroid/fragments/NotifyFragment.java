@@ -142,16 +142,20 @@ public class NotifyFragment extends Fragment {
                         if (notifications.size() == 10) notificationAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    pbNotificaton.setVisibility(View.GONE);
+
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
+                }
+                if(pbNotificaton != null){
+                    pbNotificaton.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<MainObjectNotification> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
-                pbNotificaton.setVisibility(View.GONE);
+                if(pbNotificaton != null){
+                    pbNotificaton.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -178,9 +182,8 @@ public class NotifyFragment extends Fragment {
                         if (notifications.size() == 5) notificationAdapter.addLoadingFooter();  // 5
                         else isLastPage = true;
                     }
-                    //pbNotificaton.setVisibility(View.GONE);
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
 
             }
@@ -188,7 +191,6 @@ public class NotifyFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectNotification> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                //pbNotificaton.setVisibility(View.GONE);
             }
         });
 

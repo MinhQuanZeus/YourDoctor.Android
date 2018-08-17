@@ -30,14 +30,18 @@
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
 
-        <Spinner
-            android:id="@+id/sp_speclist"
+        <TextView
+            android:id="@+id/tv_name_specialist_choice"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@id/tb_main"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/tv_speclist"
-            android:textAlignment="center" />
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_toEndOf="@id/tv_speclist" />
 
         <TextView
             android:id="@+id/tv_typeChat"
@@ -57,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
-            android:layout_below="@id/sp_speclist"
+            android:layout_below="@id/tv_name_specialist_choice"
             android:layout_toEndOf="@id/tv_typeChat"
             android:textAlignment="center" />
 

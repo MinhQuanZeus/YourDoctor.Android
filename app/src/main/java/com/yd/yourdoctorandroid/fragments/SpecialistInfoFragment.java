@@ -21,6 +21,7 @@ import com.yd.yourdoctorandroid.models.Specialist;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
 import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
+import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,22 +66,25 @@ public class SpecialistInfoFragment extends Fragment {
         //TODO
 
 
-        specialists= new ArrayList<>();
+        specialists = LoadDefaultModel.getInstance().getSpecialists();
         rvListSpecialist.setLayoutManager(new GridLayoutManager(getContext(), 3));
         rvListSpecialist.setFocusable(false);
-
+        if (specialists == null) {
             GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
             getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
                 @Override
-                public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
-                    if(response.code() == 200){
+                public void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
+                    if (response.code() == 200) {
                         Log.e("specialistInfo", "success: " + response.body());
                         MainObjectSpecialist mainObjectSpecialist = response.body();
                         specialists = mainObjectSpecialist.getListSpecialist();
-
-                        specialistAdapter = new SpecialistAdapter(specialists,getContext());
+                        LoadDefaultModel.getInstance().setSpecialists(specialists);
+                        specialistAdapter = new SpecialistAdapter(specialists, getContext());
                         rvListSpecialist.setAdapter(specialistAdapter);
                         //specialistAdapter.notifyDataSetChanged();
+
+                    }
+                    if(pbSpecialist != null){
                         pbSpecialist.setVisibility(View.GONE);
                     }
                 }
@@ -88,9 +92,19 @@ public class SpecialistInfoFragment extends Fragment {
                 @Override
                 public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
                     Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-                    pbSpecialist.setVisibility(View.GONE);
+                    if(pbSpecialist != null){
+                        pbSpecialist.setVisibility(View.GONE);
+                    }
                 }
             });
+        } else {
+            specialistAdapter = new SpecialistAdapter(specialists, getContext());
+            rvListSpecialist.setAdapter(specialistAdapter);
+            if(pbSpecialist != null){
+                pbSpecialist.setVisibility(View.GONE);
+            }
+        }
+
 
     }
 
