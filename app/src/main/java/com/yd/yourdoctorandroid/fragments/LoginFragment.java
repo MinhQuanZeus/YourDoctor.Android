@@ -174,6 +174,7 @@ public class LoginFragment extends Fragment {
                 if (response.code() == 200 || response.code() == 201) {
                     if(response.body().getPatient().getStatus() != 3){
                         SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+                        Log.e("tokenLogin: ",SharedPrefs.getInstance().get(JWT_TOKEN,String.class));
                         if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
                             FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
                         }
@@ -210,11 +211,13 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                Log.d("LOGIN", t.getMessage());
-                btnLogin.revertAnimation();
+                if(btnLogin != null) btnLogin.revertAnimation();
+
                 enableAll();
                 if (t instanceof SocketTimeoutException) {
                     Toast.makeText(getActivity(), getResources().getText(R.string.error_timeout), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getContext(),"Không có kết nối mạng", Toast.LENGTH_LONG).show();
                 }
             }
         });

@@ -7,6 +7,7 @@
     android:background="@color/white"
     android:orientation="vertical"
     tools:context=".fragments.AboutUsFragment">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/tbAboutUs"
         android:layout_width="match_parent"
@@ -26,14 +27,77 @@
     <TextView
         android:id="@+id/tv_introduce"
         android:layout_marginTop="10dp"
-        android:padding="20dp"
-        android:textSize="17dp"
+        android:padding="5dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16dp"
         android:textStyle="bold"
         android:textAlignment="textStart"
-        android:text="@string/introduce_us"
+        android:text="Ứng dụng được phát triển bởi đội ngũ YDTeam."
         android:scrollbars = "vertical"
         android:layout_below="@+id/iv_introduce"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        android:id="@+id/tv_Contact"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:textSize="14dp"
+        android:layout_marginStart="10dp"
+        android:textStyle="bold"
+        android:textAlignment="textStart"
+        android:text="LIÊN HỆ:"
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/tv_introduce"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tv_Phone"
+        android:padding="5dp"
+        android:textSize="14dp"
+        android:layout_marginStart="10dp"
+        android:textStyle="bold"
+        android:textAlignment="textStart"
+        android:text="Số điện thoại: 01282161996"
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/tv_Contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tv_Email"
+        android:padding="5dp"
+        android:textSize="14dp"
+        android:layout_marginStart="10dp"
+        android:textStyle="bold"
+        android:textAlignment="textStart"
+        android:text="Email: yourdoctorFU@gmail.com"
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/tv_Phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tv_Address"
+        android:padding="5dp"
+        android:textSize="14dp"
+        android:layout_marginStart="10dp"
+        android:textStyle="bold"
+        android:textAlignment="textStart"
+        android:text="Địa chỉ: ĐH FPT, Khu công nghệ cao Hòa Lạc, km29 đại lộ Thăng Long."
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/tv_Email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <TextView
+        android:id="@+id/tv_Version"
+        android:padding="5dp"
+        android:textSize="14dp"
+        android:layout_marginStart="10dp"
+        android:textStyle="bold"
+        android:textAlignment="textStart"
+        android:text="Phiên bản v1.1.0"
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/tv_Address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </RelativeLayout>

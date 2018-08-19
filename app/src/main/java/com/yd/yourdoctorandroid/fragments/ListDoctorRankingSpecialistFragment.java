@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.R;
@@ -52,6 +53,9 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
     @BindView(R.id.pbRanking)
     ProgressBar progressBar;
 
+    @BindView(R.id.tv_error_ranking_list)
+    TextView tvErrorRankingList;
+
     private DoctorRankingSpecialistAdapter doctorRankingAdapter;
 
     LinearLayoutManager linearLayoutManager;
@@ -74,7 +78,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
         butterKnife = ButterKnife.bind(this, view);
         doctorRankingAdapter = new DoctorRankingSpecialistAdapter(getContext());
         setDoctorRankList(specialistId, rvListDoctorRanking);
-
+        tvErrorRankingList.setVisibility(View.GONE);
         return view;
     }
 
@@ -142,7 +146,6 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
                 if(response.code() == 200){
                     MainObjectRanking mainObject = response.body();
-                    Log.e("haha" , response.body().toString());
                     List<DoctorRanking> doctorRankingList = mainObject.getListDoctor();
                     List<Doctor> doctorList = new ArrayList<>();
                     if (doctorRankingList != null && doctorRankingList.size() > 0) {
@@ -156,24 +159,26 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
                             doctor.setDoctorId(doctorRanking.getDoctorId().get_id());
                             doctorList.add(doctor);
                         }
-
-
                         doctorRankingAdapter.addAll(doctorList);
-
-
 
                         if (doctorRankingList.size()==5) doctorRankingAdapter.addLoadingFooter();
                         else isLastPage = true;
+                    }else {
+                        if(tvErrorRankingList != null){
+                            tvErrorRankingList.setVisibility(View.VISIBLE);
+                            tvErrorRankingList.setText("Không có bác sĩ nào thuộc khoa này!");
+                        }
                     }
-
-
 
                 }else if(response.code() == 401){
                     Utils.backToLogin(getActivity().getApplicationContext());
+                }else {
+                    if(tvErrorRankingList != null){
+                        tvErrorRankingList.setVisibility(View.VISIBLE);
+                        tvErrorRankingList.setText("Không tải được dữ liệu từ server!");
+                    }
                 }
-                if(progressBar != null){
-                    progressBar.setVisibility(View.GONE);
-                }
+                if(progressBar != null) progressBar.setVisibility(View.GONE);
 
             }
 

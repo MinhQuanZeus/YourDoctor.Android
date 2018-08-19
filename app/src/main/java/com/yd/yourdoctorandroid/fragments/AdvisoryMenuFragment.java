@@ -450,6 +450,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
     Dialog dialog;
     private ProgressBar pbChoose;
+    private TextView tvErrorChoiceInfo;
+
 
     public void showDialogChooseDoctor() {
         dialog = new Dialog(getContext());
@@ -459,10 +461,11 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         btn_cancel_choose = dialog.findViewById(R.id.btn_cancel_choose_doctor);
         btn_ok_choose = dialog.findViewById(R.id.btn_ok_choose_doctor);
         rv_list_doctor = dialog.findViewById(R.id.rv_list_doctor);
+        tvErrorChoiceInfo = dialog.findViewById(R.id.tv_error_choice_info);
         pbChoose = dialog.findViewById(R.id.pb_choose);
-        if(pbChoose != null){
-            pbChoose.setVisibility(View.VISIBLE);
-        }
+        if(tvErrorChoiceInfo != null) tvErrorChoiceInfo.setVisibility(View.GONE);
+        if(pbChoose != null)pbChoose.setVisibility(View.VISIBLE);
+
         GetListRecommentDoctorService getListRecommentDoctorService = RetrofitFactory.getInstance().createService(GetListRecommentDoctorService.class);
         getListRecommentDoctorService.getListRecommentDoctor(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), specialistChoice.getId(), currentPatient.getId()).enqueue(new Callback<MainObjectRecommend>() {
             @Override
@@ -485,16 +488,23 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             //progressBar.setVisibility(View.GONE);
 
                         }
-                        Log.e("1docchoice", doctorListRecommend.size() + "");
                         SocketUtils.getInstance().getSocket().emit("getDoctorOnline");
-                        //progressBar.setVisibility(View.GONE);
+                    }else {
+                        if(tvErrorChoiceInfo != null){
+                            tvErrorChoiceInfo.setVisibility(View.VISIBLE);
+                            tvErrorChoiceInfo.setText("Không có tìm thấy bác sĩ nào với yêu cầu của bạn!");
+                        }
 
                     }
                 } else if (response.code() == 401) {
                     Utils.backToLogin(getActivity().getApplicationContext());
+                }else {
+                    if(tvErrorChoiceInfo != null){
+                        tvErrorChoiceInfo.setVisibility(View.VISIBLE);
+                        tvErrorChoiceInfo.setText("Không thể tải được dữ liệu!");
+                    }
                 }
-
-
+                if(pbChoose != null) pbChoose.setVisibility(View.GONE);
             }
 
             @Override
@@ -516,7 +526,11 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         btn_ok_choose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                doctorChoice = doctorChoiceAdapter.getdoctorChoice();
+
+                if(doctorChoiceAdapter != null){
+                    doctorChoice = doctorChoiceAdapter.getdoctorChoice();
+                }
+
                 if (doctorChoice != null) {
                     rb_doctorChosen.setVisibility(View.VISIBLE);
                     iv_status_menu.setVisibility(View.VISIBLE);
@@ -526,7 +540,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     if (doctorChoice.isOnline())
                         iv_status_menu.setImageResource(R.drawable.circle_green_line);
                 } else {
-                    Toast.makeText(getContext(), "Bạn chưa chọn bác sĩ nào", Toast.LENGTH_LONG).show();
+                    if(doctorChoiceAdapter != null) Toast.makeText(getContext(), "Bạn chưa chọn bác sĩ nào", Toast.LENGTH_LONG).show();
+
                 }
                 dialog.dismiss();
             }

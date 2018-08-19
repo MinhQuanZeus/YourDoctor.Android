@@ -56,18 +56,19 @@ public class Utils {
     }
 
     public static void backToLogin(Context context){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
-        SocketUtils.getInstance().closeConnect();
-        SharedPrefs.getInstance().remove("JWT_TOKEN");
-        SharedPrefs.getInstance().remove("USER_INFO");
         try{
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
+            SocketUtils.getInstance().closeConnect();
+            SharedPrefs.getInstance().remove("JWT_TOKEN");
+            SharedPrefs.getInstance().remove("USER_INFO");
             LoadDefaultModel.getInstance().unregisterServiceCheckNetwork(context);
+            Intent intent = new Intent(context, AuthActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         }catch (Exception e){
         }
-        Intent intent = new Intent(context, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+
     }
 
     public static String formatStringNumber(int number){
