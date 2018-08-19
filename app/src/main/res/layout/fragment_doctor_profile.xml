@@ -327,7 +327,7 @@
                         android:layout_height="wrap_content"
                         android:drawableLeft="@drawable/ic_book_black_24dp"
                         android:drawablePadding="12dp"
-                        android:hint="Chuyên Khoa"
+                        android:hint="Nơi tốt nghiệp"
                         android:inputType="text"
                         android:padding="16dp"
                         android:textColor="@color/colorText"

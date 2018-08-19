@@ -118,6 +118,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @BindView(R.id.ivReportConversation)
     ImageView ivReportConversation;
 
+    @BindView(R.id.tv_content_question)
+    TextView tvContentQuestion;
+
     //Dialog Info
     private ImageView ivDoctorChat;
 
@@ -192,6 +195,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        tvContentQuestion.setMovementMethod(new ScrollingMovementMethod());
+
         try {
             if(!SocketUtils.getInstance().checkIsConnected()){
                 Toast.makeText(getApplicationContext(),"Không có kết nối mạng",Toast.LENGTH_LONG).show();
@@ -265,6 +270,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     if (mainObject.getObjConversation().getStatus() == 2) {
                         isDone = true;
                     }
+                    tvContentQuestion.setText("Nội dung : " + mainObject.getObjConversation().getContentTopic());
 
                     List<MainRecord> mainRecords = mainObject.getObjConversation().getRecords();
                     if (mainRecords != null) {
@@ -274,7 +280,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             record.setType(mainRecord.getType());
                             record.setValue(mainRecord.getValue());
                             try {
-                                record.setCreatedAt(Utils.convertTimeFromMonggo(mainRecord.getCreated()));
+                                record.setCreatedAt(Utils.convertTime(mainRecord.getCreated()));
                             } catch (Exception e) {
                                 record.setCreatedAt(new Date().toString());
                             }
@@ -294,7 +300,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         if(progressBar != null){
                             progressBar.setVisibility(View.GONE);
                         }
-
                     }
 
                 } else if (response.code() == 401) {
@@ -340,8 +345,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     doctorChoice.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
                     doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
                     doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
+                    if(("Bs." + doctorChoice.getFullName()).length() > 17){
+                        tbMainChat.setTitle(("Bs." + doctorChoice.getFullName()).substring(0,17));
+                    }else {
+                        tbMainChat.setTitle("Bs." + doctorChoice.getFullName());
+                    }
 
-                    tbMainChat.setTitle("Bs." + doctorChoice.getFullName());
                     loadChatDisplay();
 
 
@@ -587,7 +596,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         builder.setView(view);
         if (doctorChoice != null) {
-            builder.setTitle("Báo cáo cuộc tư vấn của BN." + doctorChoice.getFullName());
+            builder.setTitle("Báo cáo cuộc tư vấn của BS." + doctorChoice.getFullName());
         }
         builder.setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
             @Override
@@ -627,10 +636,14 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 Toast.makeText(getApplicationContext(), "Báo cáo cuộc tư vấn thành công", Toast.LENGTH_LONG).show();
                             } else if (response.code() == 401) {
                                 Utils.backToLogin(getApplicationContext());
+                            }else {
+                                Toast.makeText(getApplicationContext(),"Báo cáo không thành công", Toast.LENGTH_LONG).show();
                             }
+
                             if(pbInforChat != null){
                                 pbInforChat.setVisibility(View.GONE);
                             }
+                            dialogReport.dismiss();
                         }
 
                         @Override

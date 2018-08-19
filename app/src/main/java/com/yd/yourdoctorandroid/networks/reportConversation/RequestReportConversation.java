@@ -5,14 +5,14 @@ public class RequestReportConversation {
     private String idReporter;
     private String idPersonBeingReported;
     private String reason;
-    private String idConversationReported;
+    private String idConversation;
     private String type;
 
-    public RequestReportConversation(String idReporter, String idPersonBeingReported, String reason, String idConversationReported, String type) {
+    public RequestReportConversation(String idReporter, String idPersonBeingReported, String reason, String idConversation, String type) {
         this.idReporter = idReporter;
         this.idPersonBeingReported = idPersonBeingReported;
         this.reason = reason;
-        this.idConversationReported = idConversationReported;
+        this.idConversation = idConversation;
         this.type = type;
     }
 
@@ -41,11 +41,11 @@ public class RequestReportConversation {
     }
 
     public String getIdConversationReported() {
-        return idConversationReported;
+        return idConversation;
     }
 
     public void setIdConversationReported(String idConversationReported) {
-        this.idConversationReported = idConversationReported;
+        this.idConversation = idConversationReported;
     }
 
     public String getType() {

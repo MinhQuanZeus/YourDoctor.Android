@@ -14,7 +14,7 @@ public class Notification {
     private int type;
     private String storageId;
     private String message;
-    private String createdAt;
+    private long createdAt;
     private SenderId senderId;
 
     public String getId() {
@@ -73,11 +73,11 @@ public class Notification {
         this.message = message;
     }
 
-    public String getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 }

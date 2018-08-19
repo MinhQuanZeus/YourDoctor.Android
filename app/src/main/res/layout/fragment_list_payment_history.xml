@@ -10,7 +10,9 @@
         android:id="@+id/rvListPaymentHistory"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp" />
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"/>
 
     <ProgressBar
         android:id="@+id/pbListPaymentHistory"

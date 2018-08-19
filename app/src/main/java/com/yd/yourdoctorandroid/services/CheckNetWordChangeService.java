@@ -30,9 +30,7 @@ public class CheckNetWordChangeService extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (NetworkUtils.isOnline(context)) {
             if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
-                if(!SocketUtils.getInstance().checkIsConnected()){
-                    SocketUtils.getInstance().reConnect();
-                }
+                SocketUtils.getInstance().reConnect();
                 LoadDefaultModel.getInstance().loadAllChatPending(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
             }
 

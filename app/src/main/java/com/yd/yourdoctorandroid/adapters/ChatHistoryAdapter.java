@@ -201,8 +201,8 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
                 if (context == null) Log.d("Anhle", "context bi null");
                 ZoomImageViewUtils.loadCircleImage(context, chatHistoryInfoResponse.getDoctorId().getAvatar() ,ivChatHistory);
                 tvTitleNotification.setText("Cuộc chat với BS." + chatHistoryInfoResponse.getDoctorId().getFullName());
-                tvTimeChatHistory.setText("Thời gian tạo: " + Utils.convertTimeFromMonggo(chatHistoryInfoResponse.getCreatedAt())
-                        +", Tin nhắn cuối cùng: " + Utils.convertTimeFromMonggo(chatHistoryInfoResponse.getUpdatedAt())
+                tvTimeChatHistory.setText("Thời gian tạo: " + Utils.convertTime(chatHistoryInfoResponse.getCreatedAt())
+                        +", Tin nhắn cuối cùng: " + Utils.convertTime(chatHistoryInfoResponse.getUpdatedAt())
                 );
                 tvContentHistory.setText("Nội dung: " +chatHistoryInfoResponse.getContentTopic());
                 if(chatHistoryInfoResponse.getStatus() == 1){

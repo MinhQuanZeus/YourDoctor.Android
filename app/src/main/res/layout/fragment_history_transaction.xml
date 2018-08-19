@@ -16,12 +16,22 @@ tools:context=".fragments.HistoryTransactionFragment">
     app:tabMode="scrollable"
     app:tabSelectedTextColor="@color/icon_selected"
     app:tabTextColor="@color/icon_unselected"/>
+    <TextView
+        android:id="@+id/tv_remain_money_history"
+        android:layout_below="@id/tabHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:text="Số dư tài khoản : 30.000đ"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentEnd="true"
+        />
 
 <android.support.v4.view.ViewPager
     android:id="@+id/vpHistory"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@id/tabHistory"
-    android:layout_marginTop="5dp"
+    android:layout_below="@id/tv_remain_money_history"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </RelativeLayout>

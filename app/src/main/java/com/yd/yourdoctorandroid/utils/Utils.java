@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.Format;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,31 +55,23 @@ public class Utils {
         return format.format(date);
     }
 
-    public static String convertTimeFromMonggo(String timeString){
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-        Date date = null;
-        Format  format2;
-        try {
-            date = format.parse(timeString);
-        } catch (Exception e) {
-            date = new Date();
-            Log.e("LoiDat", e.toString());
-        }
-        format2 = new SimpleDateFormat("HH:mm, dd/MM ");
-        return format2.format(date);
-
-    }
-
     public static void backToLogin(Context context){
         FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
         SocketUtils.getInstance().closeConnect();
         SharedPrefs.getInstance().remove("JWT_TOKEN");
         SharedPrefs.getInstance().remove("USER_INFO");
-        LoadDefaultModel.getInstance().unregisterServiceCheckNetwork(context);
+        try{
+            LoadDefaultModel.getInstance().unregisterServiceCheckNetwork(context);
+        }catch (Exception e){
+        }
         Intent intent = new Intent(context, AuthActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static String formatStringNumber(int number){
+        return NumberFormat.getNumberInstance(Locale.GERMAN).format(number);
     }
 
     public static void addIdChatToListTimeOut(String idChat){

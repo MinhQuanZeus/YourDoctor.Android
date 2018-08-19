@@ -115,8 +115,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     Patient currentPatient;
 
     ImageView ivAvaUser;
+    ImageView ivAvaUserBackGroud;
     TextView tvNameUser;
-    TextView tvMoneyUser;
+
 
     private Boolean isFabOpen = false;
     private Animation fab_open,fab_close,rotate_forward,rotate_backward;
@@ -127,9 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         setupUI();
         EventBus.getDefault().register(this);
-        Log.d("MainActivity", "USER_INFO");
-        Log.d("MainActivity", SharedPrefs.getInstance().get("USER_INFO", Patient.class).toString());
-        Log.d("MainActivity", SharedPrefs.getInstance().get("JWT_TOKEN", String.class));
     }
 
     private void setupUI() {
@@ -140,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View headerView = navigationViewMain.inflateHeaderView(R.layout.nav_header_main);
         ivAvaUser = headerView.findViewById(R.id.iv_ava_user);
         tvNameUser = headerView.findViewById(R.id.tv_name_user);
-        tvMoneyUser = headerView.findViewById(R.id.tv_money_user);
+        ivAvaUserBackGroud = headerView.findViewById(R.id.iv_ava_user_back_groud);
         // Animation
         fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
         fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
@@ -155,8 +153,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
         if(currentPatient != null){
             tvNameUser.setText(currentPatient.getFullName());
-            Picasso.with(this).load(currentPatient.getAvatar().toString()).into(ivAvaUser);
-            tvMoneyUser.setText(currentPatient.getRemainMoney() + "" );
+            ZoomImageViewUtils.loadImageManual(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUserBackGroud);
+            ZoomImageViewUtils.loadCircleImage(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser);
+            tvNameUser.setText(currentPatient.getFullName());
         }
 
 
@@ -337,8 +336,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
             if(currentPatient != null){
                 tvNameUser.setText(currentPatient.getFullName());
-                Picasso.with(this).load(currentPatient.getAvatar().toString()).into(ivAvaUser);
-                tvMoneyUser.setText(currentPatient.getRemainMoney() + "" );
+                ZoomImageViewUtils.loadImageManual(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUserBackGroud);
+                ZoomImageViewUtils.loadCircleImage(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser);
+                tvNameUser.setText(currentPatient.getFullName());
             }
         }
     }
@@ -430,7 +430,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setPositiveButton("Đồng ý", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        YourDoctorApplication.self().getSocket().close();
+                        //YourDoctorApplication.self().getSocket().close();
+                        YourDoctorApplication.self().getSocket().disconnect();
                         Utils.backToLogin(getApplicationContext());
                     }
                 })
@@ -445,14 +446,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("MainActivityRe","backTo resume");
-        currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
-        if(currentPatient != null){
-            tvNameUser.setText(currentPatient.getFullName());
-            ZoomImageViewUtils.loadImageManual(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser );
-            //Picasso.with(this).load(currentPatient.getAvatar().toString()).into(ivAvaUser);
-            tvMoneyUser.setText(currentPatient.getRemainMoney() + "" );
-        }
         //setupUI();
         fabQuestion.setVisibility(View.VISIBLE);
     }

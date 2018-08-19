@@ -65,7 +65,7 @@ public class SocketUtils {
 
     public void closeConnect(){
         if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
-            getInstance().getSocket().close();
+            getInstance().getSocket().disconnect();
         }
 
     }

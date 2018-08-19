@@ -8,7 +8,7 @@ public class IDPending {
     @Expose
     private String id;
 
-    private String createdAt;
+    private long createdAt;
 
     private long timeRemain;
 
@@ -20,11 +20,11 @@ public class IDPending {
         this.id = id;
     }
 
-    public String getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 

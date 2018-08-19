@@ -15,6 +15,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.AuthActivity;
 import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.models.Doctor;
@@ -46,6 +47,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     private NotificationCompat.Builder builder;
     private NotificationManager notifManager;
     private Patient patient;
+    private TaskStackBuilder stackBuilder;
 
     public YDFirebaseMessagingService() {
         super();
@@ -68,6 +70,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             remainMoney = remoteMessage.getData().get("remainMoney");
 
             if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                EventBus.getDefault().post(new EventSend(3));
                 showNotification();
             }
 
@@ -102,9 +105,9 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     intent.putExtra("doctorChoiceId",senderId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder = TaskStackBuilder.create(this);
                     stackBuilder.addNextIntent(intent);
-                    PendingIntent pendingIntent =
+                    pendingIntent =
                             stackBuilder.getPendingIntent(
                                     0,
                                     PendingIntent.FLAG_UPDATE_CURRENT
@@ -116,6 +119,8 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setContentText(message)  // required
                             .setDefaults(Notification.DEFAULT_ALL)
                             .setAutoCancel(true)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setContentIntent(pendingIntent)
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     break;
@@ -132,10 +137,25 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         }
 
                     }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
                     builder.setContentTitle("Thông báo Thanh Toán")  // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required
                             .setContentText(message)  // required
+                            .setContentIntent(pendingIntent)
                             .setDefaults(Notification.DEFAULT_ALL)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setAutoCancel(true)
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     break;
@@ -154,9 +174,9 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     intent.putExtra("doctorChoiceId",senderId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder = TaskStackBuilder.create(this);
                     stackBuilder.addNextIntent(intent);
-                    PendingIntent pendingIntent =
+                    pendingIntent =
                             stackBuilder.getPendingIntent(
                                     0,
                                     PendingIntent.FLAG_UPDATE_CURRENT
@@ -169,6 +189,8 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setContentIntent(pendingIntent)
                             .setTicker(message)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
                             .setPriority(Notification.PRIORITY_HIGH);
                     break;
@@ -186,6 +208,17 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
 
                     }
 
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
                     builder.setContentTitle("Thông báo thanh toán")                           // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required
                             .setContentText(message)  // required
@@ -193,6 +226,8 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setContentIntent(pendingIntent)
                             .setTicker(message)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
                             .setPriority(Notification.PRIORITY_HIGH);
                     break;

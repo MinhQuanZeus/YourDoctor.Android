@@ -162,14 +162,14 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
                 try {
                     ZoomImageViewUtils.loadCircleImage(context, objectPaymentResponse.getFromUser().getAvatar(), ivPaymentHistory);
                     //ivNotification.setImageDrawable(context.getResources().getDrawable(R.drawable.your_doctor_logo));
-                    tvTitlePayment.setText("Cuộc tư vấn " + objectPaymentResponse.getTypeAdvisoryID().getName()
-                            + " với BS." + objectPaymentResponse.getFromUser().getFullName());
+                    tvTitlePayment.setText("Tư vấn " + objectPaymentResponse.getTypeAdvisoryID().getName()
+                            + " bởi BS." + objectPaymentResponse.getFromUser().getFullName());
                 } catch (Exception e) {
 
                 }
-                tvContentPayment.setText("Số tiền giao dịch " + objectPaymentResponse.getAmount() + " VND, "
-                        + "số tiền hiện tại " + objectPaymentResponse.getRemainMoney() + " VND");
-                tvTimePayment.setText("Thời gian: " + Utils.convertTimeFromMonggo(objectPaymentResponse.getUpdatedAt()));
+                tvContentPayment.setText("Phí thanh toán: " + Utils.formatStringNumber(objectPaymentResponse.getAmount()) + " VND\n"
+                        + "Số dư hiện tại: " + Utils.formatStringNumber(objectPaymentResponse.getRemainMoney()) + " VND");
+                tvTimePayment.setText("Thời gian: " + Utils.convertTime(objectPaymentResponse.getUpdatedAt()));
 
 
             }
