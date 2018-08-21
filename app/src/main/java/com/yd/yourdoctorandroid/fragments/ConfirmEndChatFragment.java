@@ -27,6 +27,9 @@ import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.ratingService.MainResponRating;
 import com.yd.yourdoctorandroid.networks.ratingService.RatingRequest;
 import com.yd.yourdoctorandroid.networks.ratingService.RatingService;
+import com.yd.yourdoctorandroid.networks.reportConversation.ReportConversation;
+import com.yd.yourdoctorandroid.networks.reportConversation.RequestReportConversation;
+import com.yd.yourdoctorandroid.networks.reportConversation.ResponseReportConversation;
 import com.yd.yourdoctorandroid.networks.reportService.MainResponReport;
 import com.yd.yourdoctorandroid.networks.reportService.ReportRequest;
 import com.yd.yourdoctorandroid.networks.reportService.ReportService;
@@ -61,15 +64,17 @@ public class ConfirmEndChatFragment extends Fragment {
     private Patient currentPatient;
     private Doctor currentDoctor;
     private String message;
+    private String chatHistoryID;
 
     public ConfirmEndChatFragment() {
         // Required empty public constructor
     }
 
-    public void setData(Patient currentPatient, Doctor currentDoctor, String message) {
+    public void setData(Patient currentPatient, Doctor currentDoctor, String message, String chatHistoryID) {
         this.currentDoctor = currentDoctor;
         this.currentPatient = currentPatient;
         this.message = message;
+        this.chatHistoryID = chatHistoryID;
     }
 
 
@@ -117,7 +122,7 @@ public class ConfirmEndChatFragment extends Fragment {
         btn_report.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleReportConfirm();
+                reportConversation();
             }
         });
 
@@ -204,23 +209,25 @@ public class ConfirmEndChatFragment extends Fragment {
     }
 
     private EditText etReasonReport;
-    private ProgressBar pbReport;
+    private ProgressBar pbInforChat;
 
-    private void handleReportConfirm() {
+    private void reportConversation() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = this.getLayoutInflater();
         View view = inflater.inflate(R.layout.report_user_dialog, null);
         etReasonReport = view.findViewById(R.id.et_reason_report);
-        pbReport = view.findViewById(R.id.pb_report);
-        if(pbReport != null) pbReport.setVisibility(View.GONE);
+        pbInforChat = view.findViewById(R.id.pb_report);
+        if (pbInforChat != null) {
+            pbInforChat.setVisibility(View.GONE);
+        }
+
         builder.setView(view);
         if (currentDoctor != null) {
-            builder.setTitle("Báo cáo BS." + currentDoctor.getFullName());
+            builder.setTitle("Báo cáo cuộc tư vấn của BS." + currentDoctor.getFullName());
         }
         builder.setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
 
             }
         });
@@ -235,42 +242,119 @@ public class ConfirmEndChatFragment extends Fragment {
         dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pbReport != null) pbReport.setVisibility(View.VISIBLE);
+                if (pbInforChat != null) {
+                    pbInforChat.setVisibility(View.VISIBLE);
+                }
                 if (etReasonReport.getText().toString().equals("")) {
                     Toast.makeText(getContext(), "Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
-                    if(pbReport != null) pbReport.setVisibility(View.GONE);
+                    if (pbInforChat != null) {
+                        pbInforChat.setVisibility(View.GONE);
+                    }
                 } else {
-                    ReportRequest reportRequest = new ReportRequest();
-                    reportRequest.setIdPersonBeingReported(currentDoctor.getDoctorId());
-                    reportRequest.setIdReporter(currentPatient.getId());
-                    reportRequest.setReason(etReasonReport.getText().toString());
+                    RequestReportConversation reportRequest = new RequestReportConversation(currentPatient.getId(),
+                            currentDoctor.getDoctorId(), etReasonReport.getText().toString().trim(), chatHistoryID, 1);
 
-                    ReportService reportService = RetrofitFactory.getInstance().createService(ReportService.class);
-                    reportService.reportService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), reportRequest).enqueue(new Callback<MainResponReport>() {
+                    ReportConversation reportConversation = RetrofitFactory.getInstance().createService(ReportConversation.class);
+                    reportConversation.reportConversations(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), reportRequest).enqueue(new Callback<ResponseReportConversation>() {
                         @Override
-                        public void onResponse(Call<MainResponReport> call, Response<MainResponReport> response) {
-                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
+                        public void onResponse(Call<ResponseReportConversation> call, Response<ResponseReportConversation> response) {
                             if (response.code() == 200 && response.body().isSuccess()) {
-                                Toast.makeText(getContext(), "Báo cáo người dùng thành công", Toast.LENGTH_LONG).show();
                                 etReasonReport.setText("");
-                                dialogReport.dismiss();
+                                Toast.makeText(getContext(), "Báo cáo cuộc tư vấn thành công", Toast.LENGTH_LONG).show();
                             } else if (response.code() == 401) {
-                                Utils.backToLogin(getActivity().getApplicationContext());
+                                Utils.backToLogin(getContext());
+                            } else {
+                                Toast.makeText(getContext(), "Báo cáo không thành công", Toast.LENGTH_LONG).show();
                             }
-                            if(pbReport != null) pbReport.setVisibility(View.GONE);
+
+                            if (pbInforChat != null) {
+                                pbInforChat.setVisibility(View.GONE);
+                            }
+                            dialogReport.dismiss();
                         }
 
                         @Override
-                        public void onFailure(Call<MainResponReport> call, Throwable t) {
+                        public void onFailure(Call<ResponseReportConversation> call, Throwable t) {
                             Toast.makeText(getContext(), "Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
-                            if(pbReport != null) pbReport.setVisibility(View.GONE);
+                            if (pbInforChat != null) {
+                                pbInforChat.setVisibility(View.GONE);
+                            }
                         }
                     });
 
                 }
             }
         });
+
     }
+
+
+//    private ProgressBar pbReport;
+//    private void handleReportConfirm() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        LayoutInflater inflater = this.getLayoutInflater();
+//        View view = inflater.inflate(R.layout.report_user_dialog, null);
+//        etReasonReport = view.findViewById(R.id.et_reason_report);
+//        pbReport = view.findViewById(R.id.pb_report);
+//        if(pbReport != null) pbReport.setVisibility(View.GONE);
+//        builder.setView(view);
+//        if (currentDoctor != null) {
+//            builder.setTitle("Báo cáo BS." + currentDoctor.getFullName());
+//        }
+//        builder.setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//
+//
+//            }
+//        });
+//        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.dismiss();
+//            }
+//        });
+//        dialogReport = builder.create();
+//        dialogReport.show();
+//        dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(pbReport != null) pbReport.setVisibility(View.VISIBLE);
+//                if (etReasonReport.getText().toString().equals("")) {
+//                    Toast.makeText(getContext(), "Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
+//                    if(pbReport != null) pbReport.setVisibility(View.GONE);
+//                } else {
+//                    ReportRequest reportRequest = new ReportRequest();
+//                    reportRequest.setIdPersonBeingReported(currentDoctor.getDoctorId());
+//                    reportRequest.setIdReporter(currentPatient.getId());
+//                    reportRequest.setReason(etReasonReport.getText().toString());
+//
+//                    ReportService reportService = RetrofitFactory.getInstance().createService(ReportService.class);
+//                    reportService.reportService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), reportRequest).enqueue(new Callback<MainResponReport>() {
+//                        @Override
+//                        public void onResponse(Call<MainResponReport> call, Response<MainResponReport> response) {
+//                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
+//                            if (response.code() == 200 && response.body().isSuccess()) {
+//                                Toast.makeText(getContext(), "Báo cáo người dùng thành công", Toast.LENGTH_LONG).show();
+//                                etReasonReport.setText("");
+//                                dialogReport.dismiss();
+//                            } else if (response.code() == 401) {
+//                                Utils.backToLogin(getActivity().getApplicationContext());
+//                            }
+//                            if(pbReport != null) pbReport.setVisibility(View.GONE);
+//                        }
+//
+//                        @Override
+//                        public void onFailure(Call<MainResponReport> call, Throwable t) {
+//                            Toast.makeText(getContext(), "Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
+//                            if(pbReport != null) pbReport.setVisibility(View.GONE);
+//                        }
+//                    });
+//
+//                }
+//            }
+//        });
+//    }
 
 
 }

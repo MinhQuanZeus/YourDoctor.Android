@@ -84,9 +84,9 @@
             android:layout_centerHorizontal="true">
             <Button
                 android:id="@+id/btn_rate_chat_doctor"
-                android:layout_width="100dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
-                android:text="Đánh giá"
+                android:text="Bác sĩ"
                 android:textColor="@color/white"
                 android:background="@drawable/buttonstyleithgradient"/>
 

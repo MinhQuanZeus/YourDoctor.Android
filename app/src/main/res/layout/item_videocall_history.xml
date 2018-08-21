@@ -40,4 +40,24 @@
         android:layout_toRightOf="@id/iv_video_history"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="5dp"/>
+    <LinearLayout
+        android:id="@+id/ivReportWithDoctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_report_black_24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report" />
+    </LinearLayout>
 </RelativeLayout>

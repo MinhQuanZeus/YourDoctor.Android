@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="140dp"
+    android:layout_height="150dp"
     android:layout_margin="10dp">
     <ImageView
         android:id="@+id/iv_chat_history"
@@ -30,7 +30,7 @@
         android:layout_toRightOf="@id/iv_chat_history"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:minLines="3"
+        android:minLines="2"
        android:layout_marginTop="5dp" />
     <TextView
         android:id="@+id/tv_time_chat_history"
@@ -38,10 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_toRightOf="@id/iv_chat_history"
+        android:layout_toEndOf="@id/iv_chat_history"
+        android:layout_toStartOf="@id/ivReportWithDoctor"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:layout_marginEnd="5dp"
         android:maxLines="2"/>
     <TextView
         android:id="@+id/tv_status_chat_history"
@@ -49,6 +49,26 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_toRightOf="@id/iv_chat_history"
-        android:layout_marginTop="5dp"
         android:layout_alignParentBottom="true"/>
+
+    <LinearLayout
+        android:id="@+id/ivReportWithDoctor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="5dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_report_black_24dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/report" />
+    </LinearLayout>
 </RelativeLayout>

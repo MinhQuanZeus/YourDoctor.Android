@@ -6,9 +6,9 @@ public class RequestReportConversation {
     private String idPersonBeingReported;
     private String reason;
     private String idConversation;
-    private String type;
+    private int type;
 
-    public RequestReportConversation(String idReporter, String idPersonBeingReported, String reason, String idConversation, String type) {
+    public RequestReportConversation(String idReporter, String idPersonBeingReported, String reason, String idConversation, int type) {
         this.idReporter = idReporter;
         this.idPersonBeingReported = idPersonBeingReported;
         this.reason = reason;
@@ -48,11 +48,11 @@ public class RequestReportConversation {
         this.idConversation = idConversationReported;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 }

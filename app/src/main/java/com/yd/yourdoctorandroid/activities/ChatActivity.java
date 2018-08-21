@@ -408,7 +408,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     isDone = true;
                     try {
                         ConfirmEndChatFragment confirmEndChatFragment = new ConfirmEndChatFragment();
-                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message);
+                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message, chatHistoryID);
                         ScreenManager.openFragment(getSupportFragmentManager(), confirmEndChatFragment, R.id.rl_chat, true, true);
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
@@ -440,7 +440,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     //showMessageConfirm(message);
                     try {
                         ConfirmEndChatFragment confirmEndChatFragment = new ConfirmEndChatFragment();
-                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message);
+                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message,chatHistoryID);
                         ScreenManager.openFragment(getSupportFragmentManager(), confirmEndChatFragment, R.id.rl_chat, true, true);
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
@@ -451,7 +451,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             });
         }
     };
-
 
     private Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
@@ -625,7 +624,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     }
                 } else {
                     RequestReportConversation reportRequest = new RequestReportConversation(currentPaitent.getId(),
-                            doctorChoiceId, etReasonReport.getText().toString().trim(), chatHistoryID, "chat");
+                            doctorChoiceId, etReasonReport.getText().toString().trim(), chatHistoryID, 1);
 
                     ReportConversation reportConversation = RetrofitFactory.getInstance().createService(ReportConversation.class);
                     reportConversation.reportConversations(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), reportRequest).enqueue(new Callback<ResponseReportConversation>() {

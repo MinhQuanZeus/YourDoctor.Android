@@ -149,6 +149,8 @@ public class RegisterFragment extends Fragment {
     TextInputLayout tilPassword;
     @BindView(R.id.til_confirm_password)
     TextInputLayout tilConfirmPassword;
+    @BindView(R.id.tb_main)
+    Toolbar toolbar;
 
     private Unbinder unbinder;
 
@@ -167,9 +169,8 @@ public class RegisterFragment extends Fragment {
     }
 
     private void setUp(View view) {
+        ButterKnife.bind(this, view);
         filename = UUID.randomUUID().toString();
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.tb_main);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setTitle(R.string.sign_up);
         toolbar.setTitleTextColor(getResources().getColor(R.color.primary_text));
@@ -226,42 +227,41 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    private String uploadImage() throws Exception {
-        Log.d("UPLOAD", "uploadImage");
-        final String imageName = AzureImageManager.randomString(10);
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            mImageToBeAttached.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            final ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
-            final int imageLength = bs.available();
-
-            final Handler handler = new Handler();
-
-            Thread th = new Thread(new Runnable() {
-                public void run() {
-
-                    try {
-                        final String fileName = AzureImageManager.UploadImage(imageName, bs, imageLength);
-                        Log.d("UPLOAD", "Image");
-                    } catch (Exception e) {
-                        Log.d("UPLOAD", e.getMessage());
-                        try {
-                            throw new Exception("error");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            });
-            th.start();
-        } catch (Exception ex) {
-            Log.d("UPLOAD", ex.toString());
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        return imageName;
-    }
+//    private String uploadImage() throws Exception {
+//        final String imageName = AzureImageManager.randomString(10);
+//        try {
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            mImageToBeAttached.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+//            byte[] bitmapdata = bos.toByteArray();
+//            final ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+//            final int imageLength = bs.available();
+//
+//            final Handler handler = new Handler();
+//
+//            Thread th = new Thread(new Runnable() {
+//                public void run() {
+//
+//                    try {
+//                        final String fileName = AzureImageManager.UploadImage(imageName, bs, imageLength);
+//                        Log.d("UPLOAD", "Image");
+//                    } catch (Exception e) {
+//                        Log.d("UPLOAD", e.getMessage());
+//                        try {
+//                            throw new Exception("error");
+//                        } catch (Exception e1) {
+//                            e1.printStackTrace();
+//                        }
+//                    }
+//                }
+//            });
+//            th.start();
+//        } catch (Exception ex) {
+//            Log.d("UPLOAD", ex.toString());
+//            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+//            return null;
+//        }
+//        return imageName;
+//    }
 
     private void updateBirthDay(Calendar myCalendar) {
 
@@ -333,12 +333,13 @@ public class RegisterFragment extends Fragment {
 
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-                            SocketUtils.getInstance().reConnect();
+                            LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
                             Intent intent = new Intent(getContext(), MainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             getContext().startActivity(intent);
-                            btnSignUp.revertAnimation();
+
+                            if(btnSignUp != null) btnSignUp.revertAnimation();
                         } else {
                             CommonErrorResponse commonErrorResponse = parseToCommonError(response);
                             if (commonErrorResponse.getError() != null) {

@@ -118,8 +118,8 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     @BindView(R.id.ivVideoCallWithDoctor)
     LinearLayout ivVideoCallWithDoctor;
 
-    @BindView(R.id.ivReportWithDoctor)
-    LinearLayout ivReportWithDoctor;
+//    @BindView(R.id.ivReportWithDoctor)
+//    LinearLayout ivReportWithDoctor;
 
     @BindView(R.id.rlCertificationDoctor)
     RecyclerView rlCertificationDoctor;
@@ -209,7 +209,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         actionbar.setTitle("Trang cá nhân bác sĩ");
 
         ivChatWithDoctor.setOnClickListener(this);
-        ivReportWithDoctor.setOnClickListener(this);
+       // ivReportWithDoctor.setOnClickListener(this);
         ivVideoCallWithDoctor.setOnClickListener(this);
         fabFavorite.setOnClickListener(this);
         ivRatingDoctor.setOnClickListener(this);
@@ -415,10 +415,10 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                 }
                 break;
             }
-            case R.id.ivReportWithDoctor: {
-                reportDoctor();
-                break;
-            }
+//            case R.id.ivReportWithDoctor: {
+//                reportDoctor();
+//                break;
+//            }
             case R.id.ivVideoCallWithDoctor: {
                 if (!isFromChat) {
                     if (currentDoctor.isOnline()) {
@@ -645,72 +645,6 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
             }
         });
 
-
-    }
-
-    private void reportDoctor() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        LayoutInflater inflater = this.getLayoutInflater();
-        View view = inflater.inflate(R.layout.report_user_dialog, null);
-        etReasonReport = view.findViewById(R.id.et_reason_report);
-        pbReport = view.findViewById(R.id.pb_report);
-        pbReport.setVisibility(View.GONE);
-        builder.setView(view);
-        if (currentDoctor != null) {
-            builder.setTitle("Báo cáo BS." + currentDoctor.getFullName());
-        }
-        builder.setPositiveButton("Báo cáo", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-
-            }
-        });
-        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialogReport = builder.create();
-        dialogReport.show();
-        dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pbReport.setVisibility(View.VISIBLE);
-                if (etReasonReport.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), "Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
-                    pbReport.setVisibility(View.GONE);
-                } else {
-                    ReportRequest reportRequest = new ReportRequest();
-                    reportRequest.setIdPersonBeingReported(currentDoctor.getDoctorId());
-                    reportRequest.setIdReporter(currentPatient.getId());
-                    reportRequest.setReason(etReasonReport.getText().toString());
-
-                    ReportService reportService = RetrofitFactory.getInstance().createService(ReportService.class);
-                    reportService.reportService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), reportRequest).enqueue(new Callback<MainResponReport>() {
-                        @Override
-                        public void onResponse(Call<MainResponReport> call, Response<MainResponReport> response) {
-                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
-                            if (response.code() == 200 && response.body().isSuccess()) {
-                                Toast.makeText(getContext(), "Báo cáo người dùng thành công", Toast.LENGTH_LONG).show();
-                                etReasonReport.setText("");
-                            } else if (response.code() == 401) {
-                                Utils.backToLogin(getActivity().getApplicationContext());
-                            }
-                            pbReport.setVisibility(View.GONE);
-                        }
-
-                        @Override
-                        public void onFailure(Call<MainResponReport> call, Throwable t) {
-                            Toast.makeText(getContext(), "Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
-                            pbReport.setVisibility(View.GONE);
-                        }
-                    });
-
-                }
-            }
-        });
 
     }
 
