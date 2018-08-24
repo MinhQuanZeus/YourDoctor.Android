@@ -75,8 +75,9 @@ public class HistoryTransactionFragment extends Fragment {
         tabHistory.addTab(tabHistory.newTab().setText("Video call"));
         tabHistory.addTab(tabHistory.newTab().setText("Thanh Toán"));
 
-        adapter = new HistoryTransactionFragment.ViewPagerAdapter(getFragmentManager(),3);
+        adapter = new HistoryTransactionFragment.ViewPagerAdapter(this.getChildFragmentManager(),3);
         vpHistory.setAdapter(adapter);
+        vpHistory.setOffscreenPageLimit(1);
         vpHistory.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabHistory));
         tabHistory.getTabAt(0).select();
         vpHistory.setCurrentItem(0);

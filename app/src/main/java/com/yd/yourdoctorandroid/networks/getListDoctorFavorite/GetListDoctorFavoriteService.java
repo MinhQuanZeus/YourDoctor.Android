@@ -11,6 +11,6 @@ import retrofit2.http.Query;
 public interface GetListDoctorFavoriteService {
     //10.22.116.199
     @GET("patients/getListFavoriteDoctor/{patientId}?")
-    Call<MainObjectFavoriteList> getMainObjectFavoriteList(@Header("Authorization") String jwt, @Path("patientId") String patientId, @Query("skip") String skip,
-                                                           @Query("pageSize") String pageSize);
+    Call<MainObjectFavoriteList> getMainObjectFavoriteList(@Header("Authorization") String jwt, @Path("patientId") String patientId, @Query("start") String start,
+                                                           @Query("end") String end);
 }

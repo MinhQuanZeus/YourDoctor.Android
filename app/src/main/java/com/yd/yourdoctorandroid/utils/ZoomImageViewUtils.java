@@ -36,10 +36,14 @@ public class ZoomImageViewUtils {
     }
 
     public static void loadImageManual(Context context , String url, ImageView imageView){
-        Picasso.with(context).load(url).into(imageView);
+        if(url != null && !url.isEmpty()){
+            Picasso.with(context).load(url).into(imageView);
+        }
     }
 
     public static void loadCircleImage(Context context , String url, ImageView imageView){
-        Picasso.with(context).load(url).transform(new CropCircleTransformation()).into(imageView);
+        if(url != null && !url.isEmpty()){
+            Picasso.with(context).load(url).transform(new CropCircleTransformation()).into(imageView);
+        }
     }
 }

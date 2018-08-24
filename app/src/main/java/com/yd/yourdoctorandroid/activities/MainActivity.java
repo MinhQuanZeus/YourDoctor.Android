@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         PagerAdapter pagerAdapter = new PagerAdapter(getSupportFragmentManager(), 4);
         viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(1);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         //tabLayout.setScrollPosition(1,0f,true);

@@ -141,7 +141,7 @@ public class ListDoctorRankingSpecialistFragment extends Fragment {
 
     private void loadFirstPage() {
         GetDoctorRankingSpecialist getDoctorRankingSpecialist = RetrofitFactory.getInstance().createService(GetDoctorRankingSpecialist.class);
-        getDoctorRankingSpecialist.getDoctorRankingSpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "5", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
+        getDoctorRankingSpecialist.getDoctorRankingSpecialist(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),specialistId, "10", currentPage + "").enqueue(new Callback<MainObjectRanking>() {
             @Override
             public void onResponse(Call<MainObjectRanking> call, Response<MainObjectRanking> response) {
                 if(response.code() == 200){
