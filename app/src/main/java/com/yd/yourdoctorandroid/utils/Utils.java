@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class Utils {
     public static String getStringResourceByString(Context context, String name) {
@@ -67,12 +68,21 @@ public class Utils {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }catch (Exception e){
+            Log.e("LogoutFailed " , e.toString());
         }
 
     }
 
     public static String formatStringNumber(int number){
         return NumberFormat.getNumberInstance(Locale.GERMAN).format(number);
+    }
+
+    public static boolean verifyVietnameesName(String name){
+
+        return name.matches("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ"+
+                "ẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+$");
+
     }
 
     public static void addIdChatToListTimeOut(String idChat){

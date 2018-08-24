@@ -172,7 +172,7 @@ public class LoginFragment extends Fragment {
             public void onResponse(Call<AuthResponse> call, final Response<AuthResponse> response) {
 
                 if (response.code() == 200 || response.code() == 201) {
-                    if(response.body().getPatient().getStatus() != 3){
+                    if(response.body().getPatient().getRole() == 1 && response.body().getPatient().getStatus() == 1){
                         SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
                         Log.e("tokenLogin: ",SharedPrefs.getInstance().get(JWT_TOKEN,String.class));
                         if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
@@ -182,8 +182,13 @@ public class LoginFragment extends Fragment {
                         FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
                         LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
                         loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
-                    }else {
-                        Toast.makeText(getContext(),"Tài khoản đang bị khóa, mọi thắc mắc xin liện hệ đến tổng đài!", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        if(response.body().getPatient().getRole() != 1){
+                            Toast.makeText(getContext(),"Tài khoản của bạn không phải là tài khoản bệnh nhân!", Toast.LENGTH_LONG).show();
+                        }else {
+                            Toast.makeText(getContext(),"Tài khoản đang bị khóa, mọi thắc mắc xin liện hệ đến tổng đài!", Toast.LENGTH_LONG).show();
+                        }
                         btnLogin.revertAnimation();
                     }
 

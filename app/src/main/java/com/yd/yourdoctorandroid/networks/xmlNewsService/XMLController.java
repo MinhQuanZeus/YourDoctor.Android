@@ -64,7 +64,6 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
             if (!urlLink.startsWith("http://") && !urlLink.startsWith("https://"))
                 urlLink = "http://" + urlLink;
 
-
             URL url = new URL(urlLink);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

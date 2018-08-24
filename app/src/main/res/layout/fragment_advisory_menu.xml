@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_below="@id/tb_main"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/specialist"
@@ -36,6 +36,7 @@
             android:layout_height="40dp"
             android:layout_below="@id/tb_main"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:textColor="@color/black"
@@ -48,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_below="@id/tv_speclist"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/long_question"
@@ -61,6 +62,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
             android:layout_below="@id/tv_name_specialist_choice"
             android:layout_toEndOf="@id/tv_typeChat"
             android:textAlignment="center" />
@@ -70,7 +72,7 @@
             android:id="@+id/tv_logo_chooseDoctor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
             android:layout_toStartOf="@id/btn_choose_Doctor"
             android:text="@string/choose_doctor" />
@@ -81,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/sp_typeChat"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true"
             android:background="@drawable/buttonborder"
@@ -117,6 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
                 android:layout_toEndOf="@id/iv_item_doctor_chosen"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -138,7 +142,7 @@
 
         <EditText
             android:id="@+id/et_question"
-            android:layout_margin="10dp"
+            android:layout_margin="16dp"
             android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

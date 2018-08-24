@@ -155,7 +155,7 @@ public class VideoCallHistoryFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectHistoryVideo> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                Toast.makeText(getContext(), "Không thể tải được lịch sử thanh toán", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Không thể tải được lịch sử video call!", Toast.LENGTH_LONG).show();
                 if(pbVideoCallHistory != null){
                     pbVideoCallHistory.setVisibility(View.GONE);
                 }

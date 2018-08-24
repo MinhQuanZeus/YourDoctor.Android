@@ -330,8 +330,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             case R.id.btn_post: {
                 if (doctorChoice == null) {
                     Toast.makeText(getContext(), "Bạn cần chọn bác sĩ trước !!!", Toast.LENGTH_LONG).show();
-                } else if (et_question.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), "Bạn cần nhập nội dung câu hỏi !!!", Toast.LENGTH_LONG).show();
+                } else if (et_question.getText().toString().equals("") || et_question.getText().toString().length() < 20) {
+                    Toast.makeText(getContext(), "Bạn cần nhập nội dung câu hỏi rõ hơn để bác sĩ có thể hiểu được vấn đề của bạn !!!", Toast.LENGTH_LONG).show();
                 } else if (typeAdvisoryChoice.getPrice() > currentPatient.getRemainMoney()) {
                     Toast.makeText(getContext(), "Số tiền của bạn không đủ để thực hiện cuộc tư vấn !", Toast.LENGTH_LONG).show();
                 } else {
@@ -379,7 +379,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
         postPaymentHistoryService.addPaymentHistory(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), paymentHistoryPatient).enqueue(new Callback<PaymentResponse>() {
             @Override
             public void onResponse(Call<PaymentResponse> call, Response<PaymentResponse> response) {
-                Toast.makeText(getContext(), "code la" + response.code(), Toast.LENGTH_LONG).show();
                 if (response.code() == 200) {
                     PaymentResponse paymentResponse = (PaymentResponse) response.body();
                     ChatHistory chatHistory = new ChatHistory();
@@ -486,7 +485,6 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             doctor.setOnline(false);
                             doctorListRecommend.add(doctor);
                             //progressBar.setVisibility(View.GONE);
-
                         }
                         SocketUtils.getInstance().getSocket().emit("getDoctorOnline");
                     }else {
@@ -494,7 +492,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             tvErrorChoiceInfo.setVisibility(View.VISIBLE);
                             tvErrorChoiceInfo.setText("Không có tìm thấy bác sĩ nào với yêu cầu của bạn!");
                         }
-
+                        if(pbChoose != null) pbChoose.setVisibility(View.GONE);
                     }
                 } else if (response.code() == 401) {
                     Utils.backToLogin(getActivity().getApplicationContext());
@@ -503,13 +501,12 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                         tvErrorChoiceInfo.setVisibility(View.VISIBLE);
                         tvErrorChoiceInfo.setText("Không thể tải được dữ liệu!");
                     }
+                    if(pbChoose != null) pbChoose.setVisibility(View.GONE);
                 }
-                if(pbChoose != null) pbChoose.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<MainObjectRecommend> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
                 if(pbChoose != null){
                     pbChoose.setVisibility(View.GONE);
                 }
@@ -561,11 +558,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
             }
 
             // here you check the value of getActivity() and break up if needed
-            if (getActivity() == null) {
-                if(pbChoose != null){
-                    pbChoose.setVisibility(View.GONE);
-                }
-            } else {
+            if (getActivity() != null){
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -595,22 +588,16 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
                                 rv_list_doctor.addItemDecoration(dividerItemDecoration);
                             }
-                            if(pbChoose != null){
-                                pbChoose.setVisibility(View.GONE);
-                            }
-
-                            //dialog.show();
-
+                            if(pbChoose != null) pbChoose.setVisibility(View.GONE);
 
                         } catch (Exception e) {
-                            Log.e("loiListOnlone : ", e.toString());
-                            if(pbChoose != null){
-                                pbChoose.setVisibility(View.GONE);
-                            }
+                            if(pbChoose != null) pbChoose.setVisibility(View.GONE);
                             //dialog.show();
                         }
                     }
                 });
+            }else {
+                if(pbChoose != null) pbChoose.setVisibility(View.GONE);
             }
 
 

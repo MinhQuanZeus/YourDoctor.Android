@@ -274,8 +274,8 @@ public class VideoCallHistoryAdapter extends RecyclerView.Adapter<VideoCallHisto
                 }
                 tvContentVideoHistory.setText("Cuộc tư vấn video call"
                         + " với BS." + objectHistoryVideo.getDoctorId().getFullName() + " đã kết thúc");
-                tvTimeVideoCall.setText("Thời gian: " + Utils.convertTime(objectHistoryVideo.getTimeStart())
-                        + " --- " + Utils.convertTime(objectHistoryVideo.getTimeEnd()));
+                tvTimeVideoCall.setText("Bắt đầu: " + Utils.convertTime(objectHistoryVideo.getTimeStart()) +"\n"
+                        + "Kết thúc: " + Utils.convertTime(objectHistoryVideo.getTimeEnd()));
 
 
             }

@@ -74,10 +74,8 @@ public class HistoryTransactionFragment extends Fragment {
         tabHistory.addTab(tabHistory.newTab().setText("Chat"));
         tabHistory.addTab(tabHistory.newTab().setText("Video call"));
         tabHistory.addTab(tabHistory.newTab().setText("Thanh Toán"));
-        tabHistory.addTab(tabHistory.newTab().setText("Ngân Hàng"));
 
-
-        adapter = new HistoryTransactionFragment.ViewPagerAdapter(getFragmentManager(),4);
+        adapter = new HistoryTransactionFragment.ViewPagerAdapter(getFragmentManager(),3);
         vpHistory.setAdapter(adapter);
         vpHistory.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabHistory));
         tabHistory.getTabAt(0).select();
@@ -137,9 +135,7 @@ public class HistoryTransactionFragment extends Fragment {
                 case 2:{
                     return new ListPaymentHistoryFragment();
                 }
-                case 3:{
-                    return new BankingHistoryFragment();
-                }
+
             }
             return null;
 

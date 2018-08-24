@@ -178,8 +178,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = getIntent();
         chatHistoryID = intent.getStringExtra("chatHistoryId");
         doctorChoiceId = intent.getStringExtra("doctorChoiceId");
-        Log.e("chat activity ", chatHistoryID);
-        Log.e("Doctor Choice ", doctorChoiceId);
 
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -198,11 +196,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         tvContentQuestion.setMovementMethod(new ScrollingMovementMethod());
 
         try {
-            if(!SocketUtils.getInstance().checkIsConnected()){
-                Toast.makeText(getApplicationContext(),"Không có kết nối mạng",Toast.LENGTH_LONG).show();
+            if (!SocketUtils.getInstance().checkIsConnected()) {
+                Toast.makeText(getApplicationContext(), "Không có kết nối mạng", Toast.LENGTH_LONG).show();
                 return;
             }
             SocketUtils.getInstance().getSocket().emit("joinRoom", chatHistoryID);
+
             SocketUtils.getInstance().setRoomId(chatHistoryID);
 
             SocketUtils.getInstance().getSocket().on("newMessage", onNewMessage);
@@ -214,7 +213,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             SocketUtils.getInstance().getSocket().on("conversationDone", onConversationDone);
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Không thể kết nối với máy chủ", Toast.LENGTH_LONG).show();
-            if(progressBar != null){
+            if (progressBar != null) {
                 progressBar.setVisibility(View.GONE);
             }
 
@@ -225,9 +224,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(chatApapter);
         loadDoctorChoice(doctorChoiceId);
 
-
     }
-
 
     @Override
     protected void onStop() {
@@ -238,7 +235,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEventMainThread(EventSend eventSend) {
         if (eventSend.getType() == 2) {
-            if(progressBar != null){
+            if (progressBar != null) {
                 progressBar.setVisibility(View.VISIBLE);
             }
             recordsChat = new ArrayList<>();
@@ -251,8 +248,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("ChatAc", "Back from profile");
-
     }
 
     @Override
@@ -297,7 +292,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         chatApapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(getApplicationContext(), "Không thể tải được cuộc chat", Toast.LENGTH_LONG).show();
-                        if(progressBar != null){
+                        if (progressBar != null) {
                             progressBar.setVisibility(View.GONE);
                         }
                     }
@@ -306,17 +301,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     Utils.backToLogin(getApplicationContext());
                 }
 
-                if(progressBar != null){
-                    progressBar.setVisibility(View.GONE);
-                }
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Call<MainObjectChatHistory> call, Throwable t) {
                 Toast.makeText(getApplicationContext(), "Không thể tải được cuộc trò chuyện", Toast.LENGTH_LONG).show();
-                if(progressBar != null){
-                    progressBar.setVisibility(View.GONE);
-                }
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
             }
         });
     }
@@ -345,9 +336,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     doctorChoice.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
                     doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
                     doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
-                    if(("Bs." + doctorChoice.getFullName()).length() > 17){
-                        tbMainChat.setTitle(("Bs." + doctorChoice.getFullName()).substring(0,17));
-                    }else {
+                    if (("Bs." + doctorChoice.getFullName()).length() > 17) {
+                        tbMainChat.setTitle(("Bs." + doctorChoice.getFullName()).substring(0, 17));
+                    } else {
                         tbMainChat.setTitle("Bs." + doctorChoice.getFullName());
                     }
 
@@ -356,6 +347,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                 } else if (response.code() == 401) {
                     Utils.backToLogin(getApplicationContext());
+                } else {
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                 }
 
             }
@@ -363,9 +356,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<MainObjectDetailDoctor> call, Throwable t) {
                 Log.e("Anhle P error ", t.toString());
-                if(progressBar != null){
-                    progressBar.setVisibility(View.GONE);
-                }
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
+
             }
         });
     }
@@ -376,12 +368,9 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    // chi hien tin nhắn
                     String message = (String) args[0];
                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                    if(progressBar != null){
-                        progressBar.setVisibility(View.GONE);
-                    }
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     isDone = true;
                 }
             });
@@ -401,9 +390,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
 
-                    if(progressBar != null){
-                        progressBar.setVisibility(View.GONE);
-                    }
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     String message = (String) args[0];
                     isDone = true;
                     try {
@@ -431,22 +418,17 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 @Override
                 public void run() {
 
-                    if(progressBar != null){
-                        progressBar.setVisibility(View.GONE);
-                    }
+                    if (progressBar != null) progressBar.setVisibility(View.GONE);
                     String message = (String) args[0];
-                    Log.e("emitt anh le", message);
                     isDone = true;
-                    //showMessageConfirm(message);
                     try {
                         ConfirmEndChatFragment confirmEndChatFragment = new ConfirmEndChatFragment();
-                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message,chatHistoryID);
+                        confirmEndChatFragment.setData(currentPaitent, doctorChoice, message, chatHistoryID);
                         ScreenManager.openFragment(getSupportFragmentManager(), confirmEndChatFragment, R.id.rl_chat, true, true);
                     } catch (Exception e) {
                         Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                     }
 
-                    //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                 }
             });
         }
@@ -486,14 +468,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             recyclerView.smoothScrollToPosition(recordsChat.size() - 1);
                         }
                         chatApapter.notifyDataSetChanged();
-                        if(progressBar != null){
-                            progressBar.setVisibility(View.GONE);
-                        }
+                        if (progressBar != null) progressBar.setVisibility(View.GONE);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        if(progressBar != null){
-                            progressBar.setVisibility(View.GONE);
-                        }
+                        if (progressBar != null) progressBar.setVisibility(View.GONE);
                     }
 
                 }
@@ -502,8 +480,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     private void backToMainActivity() {
-        // mSocket.emit("disconnect");
-        //mSocket.disconnect();
         SocketUtils.getInstance().setRoomId(null);
         SocketUtils.getInstance().getSocket().emit("leaveRoom", chatHistoryID);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -521,16 +497,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!isDone) {
-                            if(!SocketUtils.getInstance().checkIsConnected()){
-                                Toast.makeText(getApplicationContext(),"Không thể kết nối máy chủ",Toast.LENGTH_LONG).show();
-                                if(progressBar != null){
-                                    progressBar.setVisibility(View.GONE);
-                                }
-                            }else {
-                                if(progressBar != null){
-                                    progressBar.setVisibility(View.VISIBLE);
-                                }
-
+                            if (!SocketUtils.getInstance().checkIsConnected()) {
+                                Toast.makeText(getApplicationContext(), "Không thể kết nối máy chủ", Toast.LENGTH_LONG).show();
+                                if (progressBar != null) progressBar.setVisibility(View.GONE);
+                            } else {
+                                if (progressBar != null) progressBar.setVisibility(View.VISIBLE);
                                 SocketUtils.getInstance().getSocket().emit("doneConversation", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID);
                             }
                         } else {
@@ -589,7 +560,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         View view = inflater.inflate(R.layout.report_user_dialog, null);
         etReasonReport = view.findViewById(R.id.et_reason_report);
         pbInforChat = view.findViewById(R.id.pb_report);
-        if(pbInforChat != null){
+        if (pbInforChat != null) {
             pbInforChat.setVisibility(View.GONE);
         }
 
@@ -614,12 +585,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         dialogReport.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pbInforChat != null){
+                if (pbInforChat != null) {
                     pbInforChat.setVisibility(View.VISIBLE);
                 }
-                if (etReasonReport.getText().toString().equals("")){
+                if (etReasonReport.getText().toString().equals("")) {
                     Toast.makeText(getApplicationContext(), "Bạn phải nhập lý do", Toast.LENGTH_LONG).show();
-                    if(pbInforChat != null){
+                    if (pbInforChat != null) {
                         pbInforChat.setVisibility(View.GONE);
                     }
                 } else {
@@ -635,11 +606,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                                 Toast.makeText(getApplicationContext(), "Báo cáo cuộc tư vấn thành công", Toast.LENGTH_LONG).show();
                             } else if (response.code() == 401) {
                                 Utils.backToLogin(getApplicationContext());
-                            }else {
-                                Toast.makeText(getApplicationContext(),"Báo cáo không thành công", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Báo cáo không thành công", Toast.LENGTH_LONG).show();
                             }
 
-                            if(pbInforChat != null){
+                            if (pbInforChat != null) {
                                 pbInforChat.setVisibility(View.GONE);
                             }
                             dialogReport.dismiss();
@@ -648,7 +619,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onFailure(Call<ResponseReportConversation> call, Throwable t) {
                             Toast.makeText(getApplicationContext(), "Lỗi kết máy chủ", Toast.LENGTH_LONG).show();
-                            if(pbInforChat != null){
+                            if (pbInforChat != null) {
                                 pbInforChat.setVisibility(View.GONE);
                             }
                         }
@@ -710,22 +681,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void handleSendMessageChat() {
-        if(progressBar != null){
+        if (progressBar != null) {
             progressBar.setVisibility(View.VISIBLE);
         }
         if (typeChatCurrent == 1) {
-            if (mEditText.getText().equals("")) {
+            if (mEditText.getText().toString().isEmpty()) {
                 Toast.makeText(this, "Bạn nên nhập tin nhắn trước", Toast.LENGTH_LONG).show();
-                if(progressBar != null){
-                    progressBar.setVisibility(View.GONE);
-                }
+                if (progressBar != null) progressBar.setVisibility(View.GONE);
             } else {
-                if(!SocketUtils.getInstance().checkIsConnected()){
-                    Toast.makeText(getApplicationContext(),"Không thể kết nối máy chủ",Toast.LENGTH_LONG).show();
-                    if(progressBar != null){
+                if (!SocketUtils.getInstance().checkIsConnected()) {
+                    Toast.makeText(getApplicationContext(), "Không thể kết nối máy chủ", Toast.LENGTH_LONG).show();
+                    if (progressBar != null) {
                         progressBar.setVisibility(View.GONE);
                     }
-                }else {
+                } else {
                     SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 1, mEditText.getText().toString().trim());
                     mEditText.setText("");
                 }
@@ -734,7 +703,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         } else {
             if (imageUtils.getImageUpload() == null) {
-                if(progressBar != null){
+                if (progressBar != null) {
                     progressBar.setVisibility(View.GONE);
                 }
                 return;
@@ -744,17 +713,16 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             getLinkeImageService.uploadImageToGetLink(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), imageUtils.getImageUpload()).enqueue(new Callback<MainGetLink>() {
                 @Override
                 public void onResponse(Call<MainGetLink> call, Response<MainGetLink> response) {
-                    Log.e("linkImage", response.body().getFilePath());
 
                     if (response.code() == 200) {
                         Log.e("linkSuccess", response.body().getFilePath());
                         MainGetLink mainObject = response.body();
-                        if(!SocketUtils.getInstance().checkIsConnected()){
-                            Toast.makeText(getApplicationContext(),"Không thể kết nối máy chủ",Toast.LENGTH_LONG).show();
-                            if(progressBar != null){
+                        if (!SocketUtils.getInstance().checkIsConnected()) {
+                            Toast.makeText(getApplicationContext(), "Không thể kết nối máy chủ", Toast.LENGTH_LONG).show();
+                            if (progressBar != null) {
                                 progressBar.setVisibility(View.GONE);
                             }
-                        }else {
+                        } else {
                             SocketUtils.getInstance().getSocket().emit("sendMessage", currentPaitent.getId(), doctorChoice.getDoctorId(), chatHistoryID, 2, mainObject.getFilePath());
                             setTypeChat(1);
                         }
@@ -762,8 +730,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     } else if (response.code() == 401) {
                         Utils.backToLogin(getApplicationContext());
                     } else {
-                        Log.e("not200", "anhle");
-                        if(progressBar != null){
+                        if (progressBar != null) {
                             progressBar.setVisibility(View.GONE);
                         }
                     }
@@ -771,8 +738,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                 @Override
                 public void onFailure(Call<MainGetLink> call, Throwable t) {
-                    Log.e("Anhlelink", t.toString());
-                    if(progressBar != null){
+                    if (progressBar != null) {
                         progressBar.setVisibility(View.GONE);
                     }
                 }
@@ -861,7 +827,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 matrix.setRotate(rotationAngle, (float) imageUtils.getmImageToBeAttached().getWidth() / 2, (float) imageUtils.getmImageToBeAttached().getHeight() / 2);
                 imageUtils.setmImageToBeAttached(Bitmap.createBitmap(imageUtils.getmImageToBeAttached(), 0, 0, imageUtils.getmImageToBeAttached().getWidth(), imageUtils.getmImageToBeAttached().getHeight(), matrix, true));
             } catch (IOException e) {
-                Log.e("loiAnhLe", "Cannot get a selected photo from the gallery.", e);
             }
         }
         updateUI();

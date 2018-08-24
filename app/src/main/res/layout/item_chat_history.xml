@@ -25,12 +25,12 @@
         android:id="@+id/tv_content_history"
         android:layout_below="@id/tv_title_notification"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="57dp"
         android:layout_marginStart="10dp"
         android:layout_toRightOf="@id/iv_chat_history"
         android:textSize="14sp"
         android:textStyle="bold"
-        android:minLines="2"
+        android:minLines="3"
        android:layout_marginTop="5dp" />
     <TextView
         android:id="@+id/tv_time_chat_history"

@@ -227,7 +227,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             edPhone.setText(currentPatient.getPhoneNumber());
             edAddress.setText(currentPatient.getAddress());
             edBirthday.setText(currentPatient.getBirthday());
-            tv_remainMoney.setText(currentPatient.getRemainMoney() + " đ");
+            tv_remainMoney.setText("Số dư : " + Utils.formatStringNumber(currentPatient.getRemainMoney()) + " đ");
             switch (currentPatient.getGender()) {
                 case 1: {
                     rbMale.setChecked(true);
@@ -316,7 +316,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         dialogChangePassword.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onValidatePassword(et_new_password.getText().toString(), et_confirm_new_password.getText().toString(), tv_message_change_password)) {
+                if (onValidatePassword(et_old_password.getText().toString(),et_new_password.getText().toString(), et_confirm_new_password.getText().toString(), tv_message_change_password)) {
                     pbProfilePatient.setVisibility(View.VISIBLE);
                     PasswordRequest passwordRequest = new PasswordRequest();
                     passwordRequest.setId(currentPatient.getId());
@@ -332,7 +332,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                             tv_message_change_password.setVisibility(View.VISIBLE);
                             PasswordResponse passwordResponse = response.body();
                             if (response.code() == 200 && passwordResponse.isChangePasswordSuccess()) {
-                                tv_message_change_password.setText(passwordResponse.getMessage().toString());
+                                tv_message_change_password.setText("Thay đổi mật khẩu thành công");
                                 tv_message_change_password.setTextColor(getResources().getColor(R.color.colorPrimary));
                                 et_old_password.setText("");
                                 et_new_password.setText("");
@@ -342,7 +342,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
                             }else {
                                 tv_message_change_password.setTextColor(getResources().getColor(R.color.red));
-                                tv_message_change_password.setText("Không thể thay đổi mật khẩu do lỗi máy chủ!");
+                                tv_message_change_password.setText("Mật khẩu cũ không đúng!");
                             }
                             pbProfilePatient.setVisibility(View.GONE);
 
@@ -568,15 +568,34 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         String fname = edFname.getText().toString();
         String lname = edLname.getText().toString();
+        String mName = edMname.getText().toString();
 
         if (fname == null || fname.trim().length() == 0) {
             tilFullname.setError(getResources().getString(R.string.fname_required));
             return false;
+        }else {
+            if(!Utils.verifyVietnameesName(fname)){
+                tilFullname.setError("Họ không hợp lệ");
+                return false;
+            }
         }
+
+        if(mName != null && mName.trim().length() != 0){
+            if(!Utils.verifyVietnameesName(mName)){
+                tilFullname.setError("Tên đệm không hợp lệ");
+                return false;
+            }
+        }
+
 
         if (lname == null || lname.trim().length() == 0) {
             tilFullname.setError(getResources().getString(R.string.lname_required));
             return false;
+        }else {
+            if(!Utils.verifyVietnameesName(lname)){
+                tilFullname.setError("Tên không hợp lệ");
+                return false;
+            }
         }
 
         tilFullname.setError(null);
@@ -584,11 +603,21 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         return true;
     }
 
-    private boolean onValidatePassword(String newPassword, String confirmPassword, TextView tv_message_change_password) {
+    private boolean onValidatePassword(String oldPassword, String newPassword, String confirmPassword, TextView tv_message_change_password) {
 
         boolean isValidate = true;
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
-        if (!pattern.matcher(newPassword).matches()) {
+
+        if(oldPassword.equals("") || newPassword.equals("") || confirmPassword.equals("")){
+            tv_message_change_password.setText("Bạn phải nhập đầy đủ các ô mật khẩu!");
+            tv_message_change_password.setVisibility(View.VISIBLE);
+            isValidate = false;
+        }
+        else if(oldPassword.equals(newPassword)){
+            tv_message_change_password.setText("Mật khẩu mới và mật khẩu cũ không thể giống nhau!");
+            tv_message_change_password.setVisibility(View.VISIBLE);
+            isValidate = false;
+        } else if(!pattern.matcher(newPassword).matches()) {
             tv_message_change_password.setText(getResources().getString(R.string.password_rule));
             tv_message_change_password.setVisibility(View.VISIBLE);
             isValidate = false;

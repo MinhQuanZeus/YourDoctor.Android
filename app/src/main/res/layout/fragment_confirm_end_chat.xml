@@ -61,7 +61,7 @@
 
             <Button
                 android:id="@+id/btn_rate_confirm"
-                android:layout_width="100dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/buttonstyleithgradient"
                 android:text="Đánh giá"

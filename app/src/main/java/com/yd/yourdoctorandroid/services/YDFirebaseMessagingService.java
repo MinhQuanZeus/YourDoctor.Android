@@ -12,6 +12,7 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.yd.yourdoctorandroid.R;
@@ -69,7 +70,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             createTime = remoteMessage.getData().get("createTime");
             remainMoney = remoteMessage.getData().get("remainMoney");
 
-            if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+            if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
                 EventBus.getDefault().post(new EventSend(3));
                 showNotification();
             }
@@ -99,10 +100,10 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                 case 1: {
                     intent = new Intent(getApplicationContext(), ChatActivity.class);
                     Log.e("Notify is here", "Notify is here");
-                    Log.e("sender id " , senderId);
-                    Log.e("storageId" , storageId);
-                    intent.putExtra("chatHistoryId",storageId);
-                    intent.putExtra("doctorChoiceId",senderId);
+                    Log.e("sender id ", senderId);
+                    Log.e("storageId", storageId);
+                    intent.putExtra("chatHistoryId", storageId);
+                    intent.putExtra("doctorChoiceId", senderId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     stackBuilder = TaskStackBuilder.create(this);
@@ -126,13 +127,13 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 case 3: {
-                    if(remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
                         patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
-                        try{
+                        try {
                             patient.setRemainMoney(Float.parseFloat(remainMoney));
                             SharedPrefs.getInstance().put("USER_INFO", patient);
                             EventBus.getDefault().post(new EventSend(1));
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
 
@@ -170,8 +171,8 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             switch (type) {
                 case 1: {
                     intent = new Intent(getApplicationContext(), ChatActivity.class);
-                    intent.putExtra("chatHistoryId",storageId);
-                    intent.putExtra("doctorChoiceId",senderId);
+                    intent.putExtra("chatHistoryId", storageId);
+                    intent.putExtra("doctorChoiceId", senderId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     stackBuilder = TaskStackBuilder.create(this);
@@ -196,13 +197,13 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                     break;
                 }
                 case 3: {
-                    if(remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
                         patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
-                        try{
+                        try {
                             patient.setRemainMoney(Float.parseFloat(remainMoney));
                             SharedPrefs.getInstance().put("USER_INFO", patient);
                             EventBus.getDefault().post(new EventSend(1));
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
 

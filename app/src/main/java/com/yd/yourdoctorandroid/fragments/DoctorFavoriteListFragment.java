@@ -184,14 +184,12 @@ public class DoctorFavoriteListFragment extends Fragment {
     }
 
     private void loadFirstPage() {
-        Log.e("haha", currentPatient.getId());
         GetListDoctorFavoriteService getListDoctorFavoriteService = RetrofitFactory.getInstance().createService(GetListDoctorFavoriteService.class);
         getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
             @Override
             public void onResponse(Call<MainObjectFavoriteList> call, Response<MainObjectFavoriteList> response) {
                 if(response.code() == 200){
                     MainObjectFavoriteList mainObject = response.body();
-                    Log.e("haha", response.body().toString());
                     List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
                     List<Doctor> doctorList = new ArrayList<>();
                     if (favoriteDoctors != null && favoriteDoctors.size() > 0) {

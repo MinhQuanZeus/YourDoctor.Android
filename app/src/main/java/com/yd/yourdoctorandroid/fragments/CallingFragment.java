@@ -594,6 +594,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         client.emit("connectedCall", "stop");
         rlCalling.setVisibility(View.GONE);
         rlTimer.setVisibility(View.VISIBLE);
+        if(videoCallSession != null) tvCalleeName.setText(videoCallSession.getCalleeName());
         countTime();
         timerTask.run();
 
@@ -853,4 +854,5 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         return result == PackageManager.PERMISSION_GRANTED &&
                 result1 == PackageManager.PERMISSION_GRANTED;
     }
+
 }

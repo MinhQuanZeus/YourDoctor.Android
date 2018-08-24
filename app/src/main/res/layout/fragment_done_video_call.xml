@@ -20,11 +20,12 @@
     <RatingBar
         android:id="@+id/rb_rate_doctor"
         android:layout_below="@+id/tv_done"
-        style="?android:attr/ratingBarStyleIndicator"
         android:layout_width="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:numStars="5"
+        android:stepSize="0.5"
         android:progressTint="@color/duskYellow"/>
     <EditText
         android:id="@+id/et_comment"

@@ -620,7 +620,6 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                     ratingService.ratingService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class), ratingRequest).enqueue(new Callback<MainResponRating>() {
                         @Override
                         public void onResponse(Call<MainResponRating> call, Response<MainResponRating> response) {
-                            Log.e("Anh le doctor  ", "post submitted to API." + response.body().toString());
                             if (response.code() == 200) {
                                 Toast.makeText(getContext(), "Đánh giá bác sĩ thành công", Toast.LENGTH_LONG).show();
                                 etCommentRating.setText("");
@@ -631,7 +630,9 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
                             } else if (response.code() == 401) {
                                 Utils.backToLogin(getActivity().getApplicationContext());
                             }
+
                             if(pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
+                            dialogReport.dismiss();
                         }
 
                         @Override

@@ -423,16 +423,32 @@ public class RegisterFragment extends Fragment {
         if (fname == null || fname.trim().length() == 0) {
             isValidate = false;
             tilFname.setError(getResources().getString(R.string.fname_required));
-        } else {
+        }else if(!Utils.verifyVietnameesName(fname)){
+            isValidate = false;
+            tilFname.setError("Họ Không hợp lệ");
+        }
+        else {
             tilFname.setError(null);
         }
 
         if (lname == null || lname.trim().length() == 0) {
             isValidate = false;
             tillname.setError(getResources().getString(R.string.lname_required));
-        } else {
+        }else if(!Utils.verifyVietnameesName(lname)){
+            isValidate = false;
+            tillname.setError("Tên Không hợp lệ");
+        }
+        else {
             tillname.setError(null);
         }
+
+        if(mname != null && mname.length() > 0){
+            if(!Utils.verifyVietnameesName(mname)){
+                isValidate = false;
+                tilMname.setError("Tên đệm Không hợp lệ");
+            }
+        }
+
 
         if (!pattern.matcher(password).matches()) {
             isValidate = false;

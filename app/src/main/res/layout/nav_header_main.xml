@@ -7,7 +7,7 @@
         android:id="@+id/iv_ava_user_back_groud"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:alpha="0.4"
+        android:tint="#6F000000"
         android:scaleType="centerCrop" />
     <ImageView
         android:id="@+id/iv_ava_user"

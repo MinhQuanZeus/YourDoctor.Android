@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.ChatHistoryAdapter;
@@ -153,7 +154,8 @@ public class ListChatHistoryFragment extends Fragment {
 
             @Override
             public void onFailure(Call<MainObjectHistoryChat> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
+                Toast.makeText(getContext(), "Không tart được dữ liệu", Toast.LENGTH_LONG).show();
+                Log.e("Anhle", "Fail: " + t.getMessage());
                 if(pbListChatHistory != null){
                     pbListChatHistory.setVisibility(View.GONE);
                 }
