@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragments.DoneVideoCallFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/tv_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="160dp"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:text="Done video call" />
+    <RatingBar
+        android:id="@+id/rb_rate_doctor"
+        android:layout_below="@+id/tv_done"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:isIndicator="true"
+        android:progressTint="@color/duskYellow"/>
+    <EditText
+        android:id="@+id/et_comment"
+        android:layout_below="@+id/rb_rate_doctor"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:inputType="text|textMultiLine"
+        android:gravity="top"/>
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/btn_ok"
+        android:layout_width="120dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:text="@string/ok"
+        android:textColor="@color/primary_text"
+        android:textSize="20sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="36dp"
+        app:spinning_bar_color="#FFF"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+</RelativeLayout>

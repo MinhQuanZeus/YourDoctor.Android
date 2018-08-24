@@ -1,3 +1,103 @@
 <resources>
-    <string name="app_name">YourDoctor.Android</string>
+    <string name="app_name">Your Doctor</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="bottom_button_post_advisory">Gửi</string>
+    <string name="chat">Chat</string>
+    <string name="videocall">Video Call</string>
+
+    <string name="logo_text_menu_advisory">Tạo cuộc tư vấn</string>
+    <string name="specialist">Chuyên môn</string>
+    <string name="long_question">Độ dài câu hỏi</string>
+    <string name="content_question">Nội dung câu hỏi...</string>
+    <string name="dateline_reply">Hạn trả lời câu hỏi</string>
+    <string name="date_reply">Ngày Trả lời:</string>
+    <string name="btn_Date">Ngày</string>
+    <string name="time_reply">Giờ trả lời:</string>
+    <string name="btn_time">Giờ</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="btn_ok">OK</string>
+    <string name="favorite_doctor">Bác sĩ yêu thích</string>
+    <string name="ranking_doctor">Bảng xếp hạng bác sĩ</string>
+    <string name="exchange_money">Nạp tiền vào hệ thống</string>
+    <string name="profile_page">Trang Cá nhân</string>
+    <string name="log_out">Đăng xuất</string>
+
+
+    <!--Login-->
+    <string name="sign_in">Đăng nhập</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="dont_have_account">Chưa có tài khoản?</string>
+    <string name="phone">Số điện thoại</string>
+    <string name="password">Mật khẩu</string>
+    <string name="remember_me">Nhớ mật khẩu</string>
+    <string name="for_got_password">Quên mật khẩu?</string>
+    <string name="choose_sign_up">Kết nối với bác sĩ/bệnh nhân</string>
+    <string name="doctor_sign_up">Bác sĩ/ Dược sĩ đăng ký</string>
+    <string name="patient_sign_up">Bệnh nhân đăng ký</string>
+    <string name="str_continue">Tiếp tục</string>
+    <string name="verify_phone_number">Xác minh số điện thoại</string>
+    <string name="verify_phone_number_message">Vui lòng nhập số điện thoại của bạn để nhận mã code.</string>
+    <string name="verify_code_message">Chúng tôi đã gửi mã code thông qua SMS cho bạn. Hãy nhập code đó vào dưới.</string>
+    <string name="first_name">Họ</string>
+    <string name="mid_name">Tên đệm</string>
+    <string name="last_name">Tên</string>
+    <string name="confirm_password">Nhập lại mật khẩu</string>
+    <string name="birthday">Ngày sinh</string>
+    <string name="address">Địa chỉ</string>
+    <string name="gender">Giới tính:</string>
+    <string name="male">Nam</string>
+    <string name="female">Nữ</string>
+    <string name="other">Khác</string>
+    <string name="password_rule">Mật khẩu chứa ít nhất 6 lý tự, gồm 1 chứ viết thường, 1 chữ viết hoa và 1 ký tự đặc biệt</string>
+    <string name="empty_password">Vui lòng nhập mật khẩu</string>
+    <string name="fname_required">Vui lòng nhập họ</string>
+    <string name="lname_required">Vui lòng nhập tên</string>
+    <string name="confirm_password_error">Mật khẩu không khớp</string>
+    <string name="url_newPaper">https://vnexpress.net/rss/suc-khoe.rss</string>
+
+
+    <!--Error mesage-->
+    <string name="error_timeout">Không kết nối được máy chủ, vui lòng thử lại sau</string>
+    <string name="error_upload">Lỗi khi upload file</string>
+    <string name="ERROR0001">Vui lòng nhập 1 số điện thoại di động tại Việt Nam</string>
+    <string name="ERROR0002">Mã code gồm 4 ký tự</string>
+    <string name="ERROR0003">Vui lòng nhập số điện thoại để xác nhận</string>
+    <string name="ERROR0004">Vui lòng nhập số điện thoại và code để xác nhận</string>
+    <string name="ERROR0005">Mã code đã hết hạn</string>
+    <string name="ERROR0006">Mã code không chính xác</string>
+    <string name="ERROR0007">Gửi SMS không thành công</string>
+    <string name="ERROR0020">Số điện thoại chưa được đăng ký</string>
+    <string name="ERROR0021">Vui lòng nhập số điện thoại và mật khẩu để đăng nhập</string>
+    <string name="ERROR0022">Mật khẩu không chính xác</string>
+    <string name="ERROR0023">Số điện thoại đã được đăng ký</string>
+    <string name="ERROR0024">Vui lòng nhập mật khẩu</string>
+    <string name="ERROR0025">Vui lòng nhập Họ và Tên</string>
+    <string name="ERROR0026">Vui lòng nhập Role của User</string>
+    <string name="ERROR0027">Vui lòng nhập số điện thoại</string>
+    <string name="about_us_page">Thông tin về ứng dụng</string>
+    <string name="introduce_us">
+        "Ứng dụng được phát triển bởi đội ngũ YDTeam.\n"
+        "LIÊN HỆ:\n"
+        "Số điện thoại: 01282161996\n"
+        "Email: yourdoctorFU@gmail.com\n"
+        "Địa chỉ: ĐH FPT, Khu công nghệ cao Hòa Lạc, km29 đại lộ Thăng Long.\n"
+        "Phiên bản v1.1.0\n"
+    </string>
+    <string name="action_settings">Settings</string>
+    <string name="back">Trở về</string>
+    <string name="old_password">Mật khẩu cũ</string>
+    <string name="new_password">Mật khẩu mới</string>
+    <string name="enter_password">Nhập lại mật khẩu mới</string>
+    <string name="choose_doctor">Hãy chọn bác sĩ cho bạn</string>
+    <string name="report">Báo cáo</string>
+    <string name="info_doctor">Thông tin về bác sĩ</string>
+    <string name="change_password">Đổi Mật Khẩu</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="incoming_call">Đanh gọi bạn...</string>
+    <string name="calling">Đang gọi</string>
+    <string name="blank_doctor_online">Hiện tại không có bác sĩ nào online. \n Vui lòng quay lại sau</string>
+    <string name="ok">Ok</string>
+
 </resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@color/white"
+android:clickable="true"
+tools:context=".fragments.HistoryTransactionFragment">
+<android.support.design.widget.TabLayout
+    android:id="@+id/tabHistory"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    app:layout_anchorGravity="bottom"
+    app:tabMode="scrollable"
+    app:tabSelectedTextColor="@color/icon_selected"
+    app:tabTextColor="@color/icon_unselected"/>
+
+<android.support.v4.view.ViewPager
+    android:id="@+id/vpHistory"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@id/tabHistory"
+    android:layout_marginTop="5dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+</RelativeLayout>

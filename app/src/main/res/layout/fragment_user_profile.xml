@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?><!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--xmlns:tools="http://schemas.android.com/tools"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:background="@color/primary_text"--><!--android:clickable="true"--><!--android:orientation="vertical"--><!--tools:context=".fragments.UserProfileFragment">-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".fragments.UserProfileFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tb_main"
+            android:padding="16dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_avatar"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/patient_avatar"
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_border_width="2dp" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_upload_avatar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignBottom="@+id/iv_avatar"
+                android:layout_alignEnd="@+id/iv_avatar"
+                android:src="@drawable/camera"
+                app:civ_border_color="@color/colorPrimary"
+                app:civ_border_width="2dp" />
+
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_full_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv_avatar"
+                android:textAlignment="gravity"
+                android:textColor="@color/colorText">
+
+                <RelativeLayout
+                    android:id="@+id/rl_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_avatar"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal">
+
+                    <EditText
+                        android:id="@+id/ed_fname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="12dp"
+                        android:inputType="text"
+                        android:maxLength="12"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint"
+                        android:textSize="16dp" />
+
+                    <EditText
+                        android:id="@+id/ed_mname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/ed_fname"
+                        android:drawablePadding="12dp"
+                        android:gravity="center"
+                        android:inputType="text"
+                        android:maxLength="12"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint"
+                        android:textSize="16dp" />
+
+                    <EditText
+                        android:id="@+id/ed_lname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/ed_mname"
+                        android:drawablePadding="12dp"
+                        android:inputType="text"
+                        android:maxLength="12"
+                        android:padding="16dp"
+                        android:textColor="@color/colorText"
+                        android:textColorHint="@color/colorHint"
+                        android:textSize="16dp" />
+                </RelativeLayout>
+            </android.support.design.widget.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_remainMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/til_full_name"
+                android:layout_centerHorizontal="true"
+                android:drawablePadding="12dp"
+                android:gravity="left"
+                android:inputType="text"
+                android:maxLength="12"
+                android:padding="5dp"
+                android:textColor="@color/colorText"
+                android:textColorHint="@color/colorHint"
+                android:textSize="16dp" />
+
+
+            <!--phone-->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_remainMoney"
+                android:textColor="@color/colorText">
+
+                <com.yd.yourdoctorandroid.custormviews.MyEditText
+                    android:id="@+id/ed_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_phone_black_24dp"
+                    android:drawablePadding="12dp"
+                    android:gravity="left"
+                    android:hint="@string/phone"
+                    android:inputType="text"
+                    android:maxLength="12"
+                    android:padding="16dp"
+                    android:textColor="@color/colorText"
+                    android:textSize="16dp" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/tv_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/til_phone"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/gender"
+                android:textSize="16dp"
+                app:srcCompat="@drawable/ic_gender_symbols" />
+
+            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/rg_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/til_phone"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="16dp"
+                android:layout_toEndOf="@+id/tv_gender"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radio_male"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/male" />
+
+                <RadioButton
+                    android:id="@+id/radio_female"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/female" />
+
+                <RadioButton
+                    android:id="@+id/radio_other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/other" />
+            </RadioGroup>
+
+            <View
+                android:id="@+id/view8"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/tv_gender"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorHint" />
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_birthday"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/view8"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/colorText">
+
+                <com.yd.yourdoctorandroid.custormviews.MyEditText
+                    android:id="@+id/ed_birthday"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_birthday_calendar"
+                    android:drawablePadding="12dp"
+                    android:focusable="false"
+                    android:hint="@string/birthday"
+                    android:inputType="date"
+                    android:padding="16dp"
+                    android:textColor="@color/colorText"
+                    android:textSize="16dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!--address-->
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/til_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/til_birthday"
+                android:textColor="@color/colorText">
+
+                <com.yd.yourdoctorandroid.custormviews.MyEditText
+                    android:id="@+id/ed_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_direction_signs"
+                    android:drawablePadding="12dp"
+                    android:hint="@string/address"
+                    android:inputType="text"
+                    android:padding="16dp"
+                    android:textColor="@color/colorText"
+                    android:textSize="16dp" />
+            </android.support.design.widget.TextInputLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_mainButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/til_address"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_change_password"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/buttonborder"
+                    android:text="@string/change_password"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/btn_edit_profile"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_toEndOf="@id/btn_change_password"
+                    android:background="@drawable/buttonborder"
+                    android:text="@string/edit"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_YesNoButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/til_address"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_no"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/buttonborder"
+                    android:text="@string/btn_cancel"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:id="@+id/btn_yes"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_toEndOf="@id/btn_no"
+                    android:background="@drawable/buttonborder"
+                    android:text="@string/btn_ok"
+                    android:textColor="@color/white"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/pbProfilePatient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+</ScrollView>

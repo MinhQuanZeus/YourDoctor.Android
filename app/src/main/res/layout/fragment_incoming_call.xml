@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
+    tools:context=".fragments.IncomingCallFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/iv_avatar_back_ground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        app:srcCompat="@drawable/ronaldo" />
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:alpha="0.5"
+        android:background="@color/black"/>
+    <TextView
+        android:id="@+id/tv_username"
+        android:text="Ronaldo"
+        android:layout_centerInParent="true"
+        android:textColor="@color/primary_text"
+        android:layout_width="wrap_content"
+        android:textSize="25dp"
+        android:layout_height="wrap_content" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/tv_username"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/ronaldo" />
+    <TextView
+        android:id="@+id/tv_incoming"
+        android:layout_below="@+id/tv_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
+        android:text="@string/incoming_call"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp">
+        <ImageView
+            android:id="@+id/iv_decline"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:srcCompat="@drawable/decline_phone"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="48dp"/>
+        <ImageView
+            android:id="@+id/iv_accept"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:srcCompat="@drawable/accept_video_call"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="150dp"/>
+    </RelativeLayout>
+
+</RelativeLayout>

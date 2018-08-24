@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    tools:context=".fragments.DoctorRankFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tbLogoSpecialist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:titleTextColor="@color/white" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabSpecialists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tbLogoSpecialist"
+        android:layout_margin="10dp"
+        app:layout_anchorGravity="bottom"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="@color/icon_selected"
+        app:tabTextColor="@color/icon_unselected" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vpDoctorRanking"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tabSpecialists"
+        android:layout_marginTop="5dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+    <ProgressBar
+        android:id="@+id/progessBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>
