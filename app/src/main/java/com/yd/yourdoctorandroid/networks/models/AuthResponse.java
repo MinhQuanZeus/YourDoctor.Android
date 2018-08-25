@@ -6,7 +6,7 @@ import com.yd.yourdoctorandroid.models.Patient;
 
 public class AuthResponse {
     private String message;
-    @SerializedName("token")
+    @SerializedName("jwt_token")
     @Expose
     private String jwtToken;
     @SerializedName("user")

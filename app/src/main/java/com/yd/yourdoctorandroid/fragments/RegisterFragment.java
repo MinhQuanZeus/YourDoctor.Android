@@ -43,6 +43,8 @@ import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.AzureImageManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.models.Patient;
@@ -325,6 +327,7 @@ public class RegisterFragment extends Fragment {
                             }
                         }
                         if (response.code() == 200 || response.code() == 201) {
+                            Log.e("RegisterPatient",response.body().getJwtToken());
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
 
                             if (SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null) {
@@ -334,12 +337,7 @@ public class RegisterFragment extends Fragment {
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
                             LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
-                            Intent intent = new Intent(getContext(), MainActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            getContext().startActivity(intent);
-
-                            if(btnSignUp != null) btnSignUp.revertAnimation();
+                            loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
                         } else {
                             CommonErrorResponse commonErrorResponse = parseToCommonError(response);
                             if (commonErrorResponse.getError() != null) {
@@ -365,6 +363,35 @@ public class RegisterFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void loadFavoriteDoctor(final Patient currentPatient) {
+        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
+        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+            @Override
+            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
+                if(response.code() == 200){
+                    MainObjectIDFavorite mainObject = response.body();
+                    if (mainObject != null) {
+                        Patient newPatient = currentPatient;
+                        newPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                        SharedPrefs.getInstance().put("USER_INFO", newPatient);
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(intent);
+                    }
+                }
+                if(btnSignUp != null) btnSignUp.revertAnimation();
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
+                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                if(btnSignUp != null) btnSignUp.revertAnimation();
+            }
+        });
+
     }
 
     private void enableAll() {
