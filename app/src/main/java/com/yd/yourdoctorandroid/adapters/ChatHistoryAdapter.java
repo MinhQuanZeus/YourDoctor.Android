@@ -253,7 +253,7 @@ public class ChatHistoryAdapter extends RecyclerView.Adapter<ChatHistoryAdapter.
                             } else if (response.code() == 401) {
                                 Utils.backToLogin(context.getApplicationContext());
                             } else {
-                                Toast.makeText(context.getApplicationContext(), "Báo cáo không thành công", Toast.LENGTH_LONG).show();
+                                Toast.makeText(context.getApplicationContext(), "Bạn đã báo cáo trước đó!", Toast.LENGTH_LONG).show();
                             }
 
                             if (pbInforChat != null) {

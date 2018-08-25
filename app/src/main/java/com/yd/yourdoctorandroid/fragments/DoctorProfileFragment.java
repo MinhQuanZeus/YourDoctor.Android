@@ -422,6 +422,18 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
             case R.id.ivVideoCallWithDoctor: {
                 if (!isFromChat) {
                     if (currentDoctor.isOnline()) {
+                        YourDoctorApplication.self().getSocket().connect();
+                        JSONObject obj = new JSONObject();
+                        try {
+                            obj.put("id", "register");
+                            obj.put("userId", this.currentPatient.getId());
+                            obj.put("name", this.currentPatient.getFullName());
+                            obj.put("avatar", this.currentPatient.getAvatar());
+                            obj.put("type", 1);
+                            YourDoctorApplication.self().getSocket().emit("register", obj);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Intent intent = new Intent(getContext(), VideoCallActivity.class);
                         intent.putExtra("idSpecialistChoice", specialistIdChoice);
                         intent.putExtra("idDoctor", currentDoctor.getDoctorId());

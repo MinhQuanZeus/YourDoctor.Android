@@ -264,7 +264,7 @@ public class ConfirmEndChatFragment extends Fragment {
                             } else if (response.code() == 401) {
                                 Utils.backToLogin(getContext());
                             } else {
-                                Toast.makeText(getContext(), "Báo cáo không thành công", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "Bạn đã báo cáo trước đó!", Toast.LENGTH_LONG).show();
                             }
 
                             if (pbInforChat != null) {

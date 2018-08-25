@@ -607,7 +607,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             } else if (response.code() == 401) {
                                 Utils.backToLogin(getApplicationContext());
                             } else {
-                                Toast.makeText(getApplicationContext(), "Báo cáo không thành công", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Bạn đã báo cáo trước đó!", Toast.LENGTH_LONG).show();
                             }
 
                             if (pbInforChat != null) {
