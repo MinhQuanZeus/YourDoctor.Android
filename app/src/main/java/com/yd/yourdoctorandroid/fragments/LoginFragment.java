@@ -189,6 +189,7 @@ public class LoginFragment extends Fragment {
                         }else {
                             Toast.makeText(getContext(),"Tài khoản đang bị khóa, mọi thắc mắc xin liện hệ đến tổng đài!", Toast.LENGTH_LONG).show();
                         }
+                        enableAll();
                         btnLogin.revertAnimation();
                     }
 

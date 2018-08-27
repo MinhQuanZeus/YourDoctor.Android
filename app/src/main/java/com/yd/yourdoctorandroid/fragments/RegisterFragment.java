@@ -339,12 +339,7 @@ public class RegisterFragment extends Fragment {
                             LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
                             loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
                         } else {
-                            CommonErrorResponse commonErrorResponse = parseToCommonError(response);
-                            if (commonErrorResponse.getError() != null) {
-                                String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
-                                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                                Log.d("RESPONSE", error);
-                            }
+                            Toast.makeText(getActivity(), "Đăng ký không thành công", Toast.LENGTH_LONG).show();
                             btnSignUp.revertAnimation();
                         }
                     }
@@ -381,13 +376,15 @@ public class RegisterFragment extends Fragment {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         getContext().startActivity(intent);
                     }
+                }else {
+                    Toast.makeText(getContext(), "Đăng ký không thành công!", Toast.LENGTH_LONG).show();
                 }
                 if(btnSignUp != null) btnSignUp.revertAnimation();
             }
 
             @Override
             public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
-                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề, không thể tải dữ liệu", Toast.LENGTH_LONG).show();
                 if(btnSignUp != null) btnSignUp.revertAnimation();
             }
         });
@@ -473,7 +470,11 @@ public class RegisterFragment extends Fragment {
             if(!Utils.verifyVietnameesName(mname)){
                 isValidate = false;
                 tilMname.setError("Tên đệm Không hợp lệ");
+            }else {
+                tilMname.setError(null);
             }
+        }else {
+            tilMname.setError(null);
         }
 
 

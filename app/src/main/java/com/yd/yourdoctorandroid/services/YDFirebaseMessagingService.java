@@ -160,6 +160,40 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     break;
+                }case 5:{
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try {
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        } catch (Exception e) {
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
+                    builder.setContentTitle("Thông báo Báo cáo người dùng")  // required
+                            .setSmallIcon(R.drawable.your_doctor_logo) // required
+                            .setContentText(message)  // required
+                            .setContentIntent(pendingIntent)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
+                            .setAutoCancel(true)
+                            .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    break;
                 }
             }
 
@@ -221,6 +255,43 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             );
 
                     builder.setContentTitle("Thông báo thanh toán")                           // required
+                            .setSmallIcon(R.drawable.your_doctor_logo) // required
+                            .setContentText(message)  // required
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setTicker(message)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
+                            .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                            .setPriority(Notification.PRIORITY_HIGH);
+                    break;
+                }
+                case 5:{
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try {
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        } catch (Exception e) {
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
+                    builder.setContentTitle("Thông báo báo cáo người dùng")                           // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required
                             .setContentText(message)  // required
                             .setDefaults(Notification.DEFAULT_ALL)
