@@ -219,7 +219,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         tbBackFromProfileDoctor.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().post(new EventSend(2));
+                EventBus.getDefault().postSticky(new EventSend(2));
                 ScreenManager.backFragment(getFragmentManager());
             }
         });

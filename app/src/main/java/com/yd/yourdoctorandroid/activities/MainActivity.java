@@ -337,6 +337,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
             if(currentPatient != null){
                 tvNameUser.setText(currentPatient.getFullName());
+                ivAvaUserBackGroud.setImageResource(R.drawable.your_doctor_logo);
+                ivAvaUser.setImageResource(R.drawable.your_doctor_logo);
                 ZoomImageViewUtils.loadImageManual(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUserBackGroud);
                 ZoomImageViewUtils.loadCircleImage(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser);
                 tvNameUser.setText(currentPatient.getFullName());

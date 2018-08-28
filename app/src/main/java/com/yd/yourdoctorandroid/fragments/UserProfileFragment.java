@@ -491,7 +491,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         currentPatient.setAvatar(patientResponse.getUpdateSuccess().getAvatar());
                         currentPatient.setBirthday(patientResponse.getUpdateSuccess().getBirthday());
                         SharedPrefs.getInstance().put(USER_INFO, currentPatient);
-                        EventBus.getDefault().post(new EventSend(1));
+                        EventBus.getDefault().postSticky(new EventSend(1));
                         Toast.makeText(getContext(), "Chỉnh sửa thành công", Toast.LENGTH_LONG).show();
                         setScreenFunction(TYPE_CANCEL);
                     }
