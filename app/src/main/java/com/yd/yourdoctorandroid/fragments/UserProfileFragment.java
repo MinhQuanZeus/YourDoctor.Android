@@ -42,7 +42,6 @@ import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.BuildConfig;
 import com.yd.yourdoctorandroid.R;
-import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
 import com.yd.yourdoctorandroid.networks.changePassword.ChangePasswordService;
