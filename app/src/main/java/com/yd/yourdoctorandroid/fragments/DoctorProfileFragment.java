@@ -368,7 +368,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         public void call(final Object... args) {
 
             try {
-                Thread.sleep(1000);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
