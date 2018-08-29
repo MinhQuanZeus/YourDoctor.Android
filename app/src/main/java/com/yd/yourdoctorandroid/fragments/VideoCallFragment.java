@@ -1,6 +1,7 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,6 +21,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.YourDoctorApplication;
+import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.adapters.DoctorVideoCallAdapter;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Doctor;
@@ -181,7 +183,11 @@ public class VideoCallFragment extends Fragment {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().onBackPressed();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                //getActivity().onBackPressed();
             }
         });
         toolbar.setTitle(this.specialist.getName());

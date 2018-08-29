@@ -127,8 +127,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EventBus.getDefault().register(this);
         setupUI();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     private void setupUI() {
@@ -319,6 +324,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         animateFAB();
                         Intent intent = new Intent(MainActivity.this, VideoCallActivity.class);
                         intent.putExtra("idSpecialistChoice", specialistChoice.getId());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }
                     dialogChooseSpecialist.dismiss();
@@ -396,9 +403,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.nav_favorite_doctor_main: {
                 ScreenManager.openFragment(getSupportFragmentManager(), new DoctorFavoriteListFragment(), R.id.rl_container, true, true);
-                break;
-            }
-            case R.id.nav_exchange_money_main: {
                 break;
             }
             case R.id.nav_profile_main: {
@@ -502,8 +506,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
+        EventBus.getDefault().unregister(this);
 
     }
 }

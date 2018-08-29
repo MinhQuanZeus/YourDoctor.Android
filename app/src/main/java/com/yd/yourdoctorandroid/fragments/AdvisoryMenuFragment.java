@@ -418,7 +418,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                     ChatHistoryResponse chatHistoryResponse = response.body();
                     currentPatient.setRemainMoney(currentPatient.getRemainMoney() - typeAdvisoryChoice.getPrice());
                     SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                    EventBus.getDefault().postSticky(new EventSend(1));
+                    EventBus.getDefault().post(new EventSend(1));
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.putExtra("chatHistoryId", chatHistoryResponse.getChatHistory().get_id());

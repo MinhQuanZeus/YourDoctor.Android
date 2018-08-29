@@ -168,7 +168,7 @@ public class ConfirmEndChatFragment extends Fragment {
             public void onClick(View v) {
                 if (pbInfoRating != null) pbInfoRating.setVisibility(View.VISIBLE);
 
-                if (rbRating.getNumStars() == 0) {
+                if (rbRating.getRating() == 0) {
                     Toast.makeText(getContext(), "Bạn nên đánh giá ít nhất 0.5 sao!", Toast.LENGTH_LONG).show();
                     if (pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
                 } else {

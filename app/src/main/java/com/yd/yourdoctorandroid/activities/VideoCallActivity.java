@@ -98,7 +98,7 @@ public class VideoCallActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(getApplicationContext(), "Kết nốt mạng có vấn đề , không thể tải được các chuyên khoa!", Toast.LENGTH_LONG).show();
                         if(pbVideoCallMain != null) pbVideoCallMain.setVisibility(View.GONE);
-                        onBackPressed();
+                        backToMain();
                     }
                 }
 
@@ -106,7 +106,7 @@ public class VideoCallActivity extends AppCompatActivity {
                 public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
                     if(pbVideoCallMain != null) pbVideoCallMain.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Kết nốt mạng có vấn đề , không thể tải được các chuyên khoa!", Toast.LENGTH_LONG).show();
-                    onBackPressed();
+                    backToMain();
                 }
             });
 
@@ -121,12 +121,24 @@ public class VideoCallActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+    private void backToMain(){
+        Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        try{
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(intent);
+//        }catch (Exception e){
+//
+//        }
+
     }
 
     private void setUpTypeAdvisory() {
@@ -158,7 +170,7 @@ public class VideoCallActivity extends AppCompatActivity {
                     } else if (response.code() == 401) {
                         Utils.backToLogin(getApplicationContext());
                     }else {
-                        onBackPressed();
+                        backToMain();
                     }
                     if(pbVideoCallMain != null) pbVideoCallMain.setVisibility(View.GONE);
 
@@ -168,7 +180,7 @@ public class VideoCallActivity extends AppCompatActivity {
                 public void onFailure(Call<MainObjectTypeAdivosry> call, Throwable t) {
                     if(pbVideoCallMain != null) pbVideoCallMain.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-                    onBackPressed();
+                    backToMain();
                 }
             });
         } else {
@@ -189,7 +201,7 @@ public class VideoCallActivity extends AppCompatActivity {
     }
 
     public void makeCall() {
-        if(currentPatient == null) onBackPressed();
+        if(currentPatient == null) backToMain();
         VideoCallSession videoCallSession = new VideoCallSession(currentPatient.getId(), currentPatient.getFullName(), idDoctor, idDoctorName, idDoctorAvatar, TypeCall.CALL);
         ScreenManager.openFragment(getSupportFragmentManager(), new CallingFragment().setVideoCallSession(videoCallSession, specialistChoice, remainTime, videoCallType), R.id.fl_video_call, false, true);
     }

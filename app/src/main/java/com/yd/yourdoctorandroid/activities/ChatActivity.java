@@ -163,7 +163,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_chat);
 
         ButterKnife.bind(this);
-        EventBus.getDefault().register(this);
         ivDone.setOnClickListener(this);
         ivInfo.setOnClickListener(this);
         btnImage.setOnClickListener(this);
@@ -224,6 +223,12 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(chatApapter);
         loadDoctorChoice(doctorChoiceId);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -320,34 +325,30 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                 if (response.code() == 200) {
                     MainObjectDetailDoctor mainObject = response.body();
+                    if(mainObject != null){
+                        doctorChoice = new Doctor();
 
-                    doctorChoice = new Doctor();
-
-                    doctorChoice.setDoctorId(mainObject.getInformationDoctor().get(0).getDoctorId().get_id());
-                    doctorChoice.setFirstName(mainObject.getInformationDoctor().get(0).getDoctorId().getFirstName());
-                    doctorChoice.setMiddleName(mainObject.getInformationDoctor().get(0).getDoctorId().getMiddleName());
-                    doctorChoice.setLastName(mainObject.getInformationDoctor().get(0).getDoctorId().getLastName());
-                    doctorChoice.setAddress(mainObject.getInformationDoctor().get(0).getDoctorId().getAddress());
-                    doctorChoice.setAvatar(mainObject.getInformationDoctor().get(0).getDoctorId().getAvatar());
-                    doctorChoice.setBirthday(mainObject.getInformationDoctor().get(0).getDoctorId().getBirthday());
-                    doctorChoice.setPhoneNumber(mainObject.getInformationDoctor().get(0).getDoctorId().getPhoneNumber());
-                    doctorChoice.setPlaceWorking(mainObject.getInformationDoctor().get(0).getPlaceWorking());
-                    doctorChoice.setUniversityGraduate(mainObject.getInformationDoctor().get(0).getUniversityGraduate());
-                    doctorChoice.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
-                    doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
-                    doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
-                    if (("Bs." + doctorChoice.getFullName()).length() > 17) {
-                        tbMainChat.setTitle(("Bs." + doctorChoice.getFullName()).substring(0, 17));
-                    } else {
-                        tbMainChat.setTitle("Bs." + doctorChoice.getFullName());
+                        doctorChoice.setDoctorId(mainObject.getInformationDoctor().get(0).getDoctorId().get_id());
+                        doctorChoice.setFirstName(mainObject.getInformationDoctor().get(0).getDoctorId().getFirstName());
+                        doctorChoice.setMiddleName(mainObject.getInformationDoctor().get(0).getDoctorId().getMiddleName());
+                        doctorChoice.setLastName(mainObject.getInformationDoctor().get(0).getDoctorId().getLastName());
+                        doctorChoice.setAddress(mainObject.getInformationDoctor().get(0).getDoctorId().getAddress());
+                        doctorChoice.setAvatar(mainObject.getInformationDoctor().get(0).getDoctorId().getAvatar());
+                        doctorChoice.setBirthday(mainObject.getInformationDoctor().get(0).getDoctorId().getBirthday());
+                        doctorChoice.setPhoneNumber(mainObject.getInformationDoctor().get(0).getDoctorId().getPhoneNumber());
+                        doctorChoice.setPlaceWorking(mainObject.getInformationDoctor().get(0).getPlaceWorking());
+                        doctorChoice.setUniversityGraduate(mainObject.getInformationDoctor().get(0).getUniversityGraduate());
+                        doctorChoice.setYearGraduate(mainObject.getInformationDoctor().get(0).getYearGraduate());
+                        doctorChoice.setCurrentRating(mainObject.getInformationDoctor().get(0).getCurrentRating());
+                        doctorChoice.setCertificates((ArrayList<Certification>) mainObject.getInformationDoctor().get(0).getCertificates());
+                        tbMainChat.setTitle("Bs." + doctorChoice.getLastName());
+                        loadChatDisplay();
                     }
-
-                    loadChatDisplay();
-
 
                 } else if (response.code() == 401) {
                     Utils.backToLogin(getApplicationContext());
                 } else {
+                    Toast.makeText(getApplicationContext(), "Lỗi khi tải thông tin bác sĩ", Toast.LENGTH_LONG).show();
                     if (progressBar != null) progressBar.setVisibility(View.GONE);
                 }
 
@@ -355,7 +356,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onFailure(Call<MainObjectDetailDoctor> call, Throwable t) {
-                Log.e("Anhle P error ", t.toString());
+                Toast.makeText(getApplicationContext(), "Lỗi khi tải thông tin bác sĩ", Toast.LENGTH_LONG).show();
                 if (progressBar != null) progressBar.setVisibility(View.GONE);
 
             }

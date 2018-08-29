@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
+    android:clickable="true"
     tools:context=".fragments.DoctorFavoriteListFragment">
 
     <android.support.v7.widget.Toolbar

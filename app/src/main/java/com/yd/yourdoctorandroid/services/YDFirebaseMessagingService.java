@@ -71,7 +71,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             remainMoney = remoteMessage.getData().get("remainMoney");
 
             if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
-                EventBus.getDefault().postSticky(new EventSend(3));
+                EventBus.getDefault().post(new EventSend(3));
                 showNotification();
             }
 
@@ -132,7 +132,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         try {
                             patient.setRemainMoney(Float.parseFloat(remainMoney));
                             SharedPrefs.getInstance().put("USER_INFO", patient);
-                            EventBus.getDefault().postSticky(new EventSend(1));
+                            EventBus.getDefault().post(new EventSend(1));
                         } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
@@ -166,7 +166,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         try {
                             patient.setRemainMoney(Float.parseFloat(remainMoney));
                             SharedPrefs.getInstance().put("USER_INFO", patient);
-                            EventBus.getDefault().postSticky(new EventSend(1));
+                            EventBus.getDefault().post(new EventSend(1));
                         } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
@@ -236,7 +236,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         try {
                             patient.setRemainMoney(Float.parseFloat(remainMoney));
                             SharedPrefs.getInstance().put("USER_INFO", patient);
-                            EventBus.getDefault().postSticky(new EventSend(1));
+                            EventBus.getDefault().post(new EventSend(1));
                         } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
@@ -273,7 +273,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         try {
                             patient.setRemainMoney(Float.parseFloat(remainMoney));
                             SharedPrefs.getInstance().put("USER_INFO", patient);
-                            EventBus.getDefault().postSticky(new EventSend(1));
+                            EventBus.getDefault().post(new EventSend(1));
                         } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }

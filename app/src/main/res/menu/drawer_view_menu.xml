@@ -14,10 +14,6 @@
             android:icon="@drawable/ic_people_black_24dp"
             android:title="@string/ranking_doctor" />
         <item
-            android:id="@+id/nav_exchange_money_main"
-            android:icon="@drawable/ic_attach_money_black_24dp"
-            android:title="@string/exchange_money" />
-        <item
             android:id="@+id/nav_profile_main"
             android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/profile_page" />

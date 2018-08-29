@@ -219,7 +219,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
         tbBackFromProfileDoctor.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EventBus.getDefault().postSticky(new EventSend(2));
+                EventBus.getDefault().post(new EventSend(2));
                 ScreenManager.backFragment(getFragmentManager());
             }
         });
@@ -408,44 +408,52 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ivChatWithDoctor: {
-                if (!isFromChat) {
-                    AdvisoryMenuFragment advisoryMenuFragment = new AdvisoryMenuFragment();
-                    advisoryMenuFragment.setDoctorChoice(currentDoctor);
-                    ScreenManager.openFragment(getFragmentManager(), advisoryMenuFragment, R.id.rl_container, true, true);
+                try{
+                    if (!isFromChat) {
+                        AdvisoryMenuFragment advisoryMenuFragment = new AdvisoryMenuFragment();
+                        advisoryMenuFragment.setDoctorChoice(currentDoctor);
+                        ScreenManager.openFragment(getFragmentManager(), advisoryMenuFragment, R.id.rl_container, true, true);
+                    }
+                }catch (Exception e){
+
                 }
+
                 break;
             }
-//            case R.id.ivReportWithDoctor: {
-//                reportDoctor();
-//                break;
-//            }
             case R.id.ivVideoCallWithDoctor: {
-                if (!isFromChat) {
-                    if (currentDoctor.isOnline()) {
-                        YourDoctorApplication.self().getSocket().connect();
-                        JSONObject obj = new JSONObject();
-                        try {
-                            obj.put("id", "register");
-                            obj.put("userId", this.currentPatient.getId());
-                            obj.put("name", this.currentPatient.getFullName());
-                            obj.put("avatar", this.currentPatient.getAvatar());
-                            obj.put("type", 1);
-                            YourDoctorApplication.self().getSocket().emit("register", obj);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Intent intent = new Intent(getContext(), VideoCallActivity.class);
-                        intent.putExtra("idSpecialistChoice", specialistIdChoice);
-                        intent.putExtra("idDoctor", currentDoctor.getDoctorId());
-                        intent.putExtra("idDoctorName", currentDoctor.getFullName());
-                        intent.putExtra("idDoctorAvatar", currentDoctor.getAvatar());
-                        startActivity(intent);
+                try{
+                    if (!isFromChat) {
+                        if (currentDoctor.isOnline()) {
+                            YourDoctorApplication.self().getSocket().connect();
+                            JSONObject obj = new JSONObject();
+                            try {
+                                obj.put("id", "register");
+                                obj.put("userId", this.currentPatient.getId());
+                                obj.put("name", this.currentPatient.getFullName());
+                                obj.put("avatar", this.currentPatient.getAvatar());
+                                obj.put("type", 1);
+                                YourDoctorApplication.self().getSocket().emit("register", obj);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            Intent intent = new Intent(getContext(), VideoCallActivity.class);
+                            intent.putExtra("idSpecialistChoice", specialistIdChoice);
+                            intent.putExtra("idDoctor", currentDoctor.getDoctorId());
+                            intent.putExtra("idDoctorName", currentDoctor.getFullName());
+                            intent.putExtra("idDoctorAvatar", currentDoctor.getAvatar());
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
 
-                        //loadSpecialist();
-                    } else {
-                        Toast.makeText(getContext(), "Hiện Tại bác sĩ không online", Toast.LENGTH_LONG).show();
+                            //loadSpecialist();
+                        } else {
+                            Toast.makeText(getContext(), "Hiện Tại bác sĩ không online", Toast.LENGTH_LONG).show();
+                        }
                     }
+                }catch (Exception e){
+
                 }
+
 
                 break;
             }
@@ -617,7 +625,7 @@ public class DoctorProfileFragment extends Fragment implements View.OnClickListe
             public void onClick(View v) {
                 if(pbInfoRating != null) pbInfoRating.setVisibility(View.VISIBLE);
 
-                if (rbRating.getNumStars() == 0) {
+                if (rbRating.getRating() == 0) {
                     Toast.makeText(getContext(), "Bạn nên đánh giá ít nhất 0.5 sao!", Toast.LENGTH_LONG).show();
                     if(pbInfoRating != null) pbInfoRating.setVisibility(View.GONE);
                 } else {

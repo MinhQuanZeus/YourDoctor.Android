@@ -28,13 +28,18 @@ import retrofit2.Response;
 public class CheckNetWordChangeService extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (NetworkUtils.isOnline(context)) {
-            if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
-                SocketUtils.getInstance().reConnect();
-                LoadDefaultModel.getInstance().loadAllChatPending(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
+        try{
+            if (NetworkUtils.isOnline(context)) {
+                if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                    SocketUtils.getInstance().reConnect();
+                    LoadDefaultModel.getInstance().loadAllChatPending(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
+                }
+
             }
+        }catch (Exception e){
 
         }
+
     }
 
 }

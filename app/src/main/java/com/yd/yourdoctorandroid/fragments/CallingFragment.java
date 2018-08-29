@@ -806,7 +806,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
             Patient patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
             patient.setRemainMoney(patient.getRemainMoney() - money);
             SharedPrefs.getInstance().put("USER_INFO", patient);
-            EventBus.getDefault().postSticky(new EventSend(1));
+            EventBus.getDefault().post(new EventSend(1));
         }
 
     }
