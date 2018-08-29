@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -56,8 +57,6 @@ import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -169,6 +168,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
     //Current Patient
     Patient currentPatient;
+
+
+    //Update data
+    TextView tvNameUser;
+    ImageView ivAvaUser;
+    ImageView ivAvaUserBackGroud;
+    public void setData(TextView tvNameUser, ImageView ivAvaUser, ImageView ivAvaUserBackGroud){
+        this.tvNameUser = tvNameUser;
+        this.ivAvaUser = ivAvaUser;
+        this.ivAvaUserBackGroud = ivAvaUserBackGroud;
+    }
 
 
     public UserProfileFragment() {
@@ -491,8 +501,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         currentPatient.setAvatar(patientResponse.getUpdateSuccess().getAvatar());
                         currentPatient.setBirthday(patientResponse.getUpdateSuccess().getBirthday());
                         SharedPrefs.getInstance().put(USER_INFO, currentPatient);
-                        EventBus.getDefault().postSticky(new EventSend(1));
                         Toast.makeText(getContext(), "Chỉnh sửa thành công", Toast.LENGTH_LONG).show();
+
+                        if(tvNameUser != null && ivAvaUser != null &&  ivAvaUserBackGroud != null){
+                            tvNameUser.setText(currentPatient.getFullName());
+                            ivAvaUserBackGroud.setImageResource(R.drawable.your_doctor_logo);
+                            ivAvaUser.setImageResource(R.drawable.your_doctor_logo);
+                            ZoomImageViewUtils.loadImageManual(getActivity().getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUserBackGroud);
+                            ZoomImageViewUtils.loadCircleImage(getActivity().getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser);
+                        }
+
+
                         setScreenFunction(TYPE_CANCEL);
                     }
                 } else {

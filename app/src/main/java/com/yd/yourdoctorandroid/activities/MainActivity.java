@@ -42,6 +42,7 @@ import com.nhancv.npermission.NPermission;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.YourDoctorApplication;
+import com.yd.yourdoctorandroid.adapters.ChatAdapter;
 import com.yd.yourdoctorandroid.adapters.PagerAdapter;
 import com.yd.yourdoctorandroid.adapters.SpecialistAdapter;
 import com.yd.yourdoctorandroid.adapters.SpecialistChoiceAdapter;
@@ -126,8 +127,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setupUI();
         EventBus.getDefault().register(this);
+        setupUI();
     }
 
     private void setupUI() {
@@ -341,10 +342,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ivAvaUser.setImageResource(R.drawable.your_doctor_logo);
                 ZoomImageViewUtils.loadImageManual(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUserBackGroud);
                 ZoomImageViewUtils.loadCircleImage(getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser);
-                tvNameUser.setText(currentPatient.getFullName());
             }
         }
     }
+
 
     public void animateFAB(){
 
@@ -401,7 +402,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_profile_main: {
-                ScreenManager.openFragment(getSupportFragmentManager(), new UserProfileFragment(), R.id.rl_container, true, true);
+
+                UserProfileFragment userProfileFragment = new UserProfileFragment();
+                userProfileFragment.setData(tvNameUser,ivAvaUser,ivAvaUserBackGroud);
+
+                ScreenManager.openFragment(getSupportFragmentManager(), userProfileFragment, R.id.rl_container, true, true);
                 break;
             }
             case R.id.nav_ranking_doctor_main: {
@@ -497,8 +502,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onStop() {
-        super.onStop();
         EventBus.getDefault().unregister(this);
+        super.onStop();
+
     }
 }
 
