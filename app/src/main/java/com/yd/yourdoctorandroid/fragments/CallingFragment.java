@@ -664,7 +664,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
             try {
                 JSONObject data = new JSONObject(args[0].toString());
                 Log.d(TAG, data.toString());
-                if (data.getString("response").equalsIgnoreCase("rejected")) {
+                if (data.getString("response").contains("rejected")) {
                     RxScheduler.runOnUi(o -> {
                         logAndToast("Bác sĩ không thể nghe máy lúc này, vui lòng gọi lại sau");
                         disconnect();
