@@ -486,7 +486,17 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                             doctorListRecommend.add(doctor);
                             //progressBar.setVisibility(View.GONE);
                         }
-                        SocketUtils.getInstance().getSocket().emit("getDoctorOnline");
+                        if(!SocketUtils.getInstance().checkIsConnected()){
+                            Toast.makeText(getContext(),"Không có kết nối đến server, Thử lại!", Toast.LENGTH_LONG).show();
+                            if(tvErrorChoiceInfo != null){
+                                tvErrorChoiceInfo.setVisibility(View.VISIBLE);
+                                tvErrorChoiceInfo.setText("Không có tìm thấy bác sĩ nào với yêu cầu của bạn!");
+                            }
+                            if(pbChoose != null) pbChoose.setVisibility(View.GONE);
+                        }else {
+                            SocketUtils.getInstance().getSocket().emit("getDoctorOnline");
+                        }
+
                     }else {
                         if(tvErrorChoiceInfo != null){
                             tvErrorChoiceInfo.setVisibility(View.VISIBLE);
