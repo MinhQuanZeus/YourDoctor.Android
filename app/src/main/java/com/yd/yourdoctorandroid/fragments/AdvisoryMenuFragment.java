@@ -70,6 +70,7 @@ import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.SocketUtils;
 import com.yd.yourdoctorandroid.utils.Utils;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -209,7 +210,8 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
 
             rb_doctorChosen.setVisibility(View.VISIBLE);
             iv_status_menu.setVisibility(View.VISIBLE);
-            Picasso.with(getContext()).load(doctorChoice.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
+            ZoomImageViewUtils.loadCircleImage(getContext(),doctorChoice.getAvatar(),iv_item_doctor_chosen);
+            //Picasso.with(getContext()).load(doctorChoice.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
             tv_name_doctor_chosen.setText(doctorChoice.getFullName());
             rb_doctorChosen.setRating(doctorChoice.getCurrentRating());
             if (doctorChoice.isOnline())
@@ -541,7 +543,7 @@ public class AdvisoryMenuFragment extends Fragment implements View.OnClickListen
                 if (doctorChoice != null) {
                     rb_doctorChosen.setVisibility(View.VISIBLE);
                     iv_status_menu.setVisibility(View.VISIBLE);
-                    Picasso.with(getContext()).load(doctorChoice.getAvatar()).transform(new CropCircleTransformation()).into(iv_item_doctor_chosen);
+                    ZoomImageViewUtils.loadCircleImage(getContext(),doctorChoice.getAvatar(),iv_item_doctor_chosen);
                     tv_name_doctor_chosen.setText(doctorChoice.getFullName());
                     rb_doctorChosen.setRating(doctorChoice.getCurrentRating());
                     if (doctorChoice.isOnline())

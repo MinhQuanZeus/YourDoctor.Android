@@ -46,6 +46,7 @@ import com.yd.yourdoctorandroid.models.TypeCall;
 import com.yd.yourdoctorandroid.models.VideoCallSession;
 import com.yd.yourdoctorandroid.utils.RxScheduler;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -198,7 +199,8 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         } else {
             transactionToCalling(videoCallSession.getCalleeId(), videoCallSession.getCallerId(), false);
         }
-        Picasso.with(getContext()).load(videoCallSession.getCalleeAvatar()).transform(new CropCircleTransformation()).into(ivCalleeAvatar);
+        ZoomImageViewUtils.loadCircleImage(getContext(), videoCallSession.getCalleeAvatar(), ivCalleeAvatar);
+
         tvCalleeName.setText(videoCallSession.getCalleeName());
 
         ivDecline.setOnClickListener(new View.OnClickListener() {
@@ -594,7 +596,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         client.emit("connectedCall", "stop");
         rlCalling.setVisibility(View.GONE);
         rlTimer.setVisibility(View.VISIBLE);
-        if(videoCallSession != null) tvCalleeName.setText(videoCallSession.getCalleeName());
+        if (videoCallSession != null) tvCalleeName.setText(videoCallSession.getCalleeName());
         countTime();
         timerTask.run();
 
@@ -816,10 +818,11 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
             @Override
             public void run() {
-                if (!isNetworkConnected()){
+                if (!isNetworkConnected()) {
                     logAndToast("Mất kết nối mạng");
                     stopCalling();
-                };
+                }
+                ;
                 handler.postDelayed(this, 5000);
             }
         }, 5000);

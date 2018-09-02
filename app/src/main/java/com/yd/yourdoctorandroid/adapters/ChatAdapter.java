@@ -237,7 +237,7 @@ public class ChatAdapter extends RecyclerView.Adapter {
         void bind(Record message) {
             ZoomImageViewUtils.loadImageManual(mContext, message.getValue(), ivMessageBody);
             timeText.setText(message.getCreatedAt());
-            Picasso.with(mContext).load(message.getAvatar()).transform(new CropCircleTransformation()).into(profileImage);
+            ZoomImageViewUtils.loadCircleImage(mContext,message.getAvatar(),profileImage);
 
             // Insert the profile image from the URL into the ImageView.
 

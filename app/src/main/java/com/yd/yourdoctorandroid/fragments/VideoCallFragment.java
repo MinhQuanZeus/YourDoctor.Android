@@ -38,6 +38,7 @@ import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisory
 import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.MainObjectTypeAdivosry;
 import com.yd.yourdoctorandroid.utils.RxScheduler;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -191,7 +192,7 @@ public class VideoCallFragment extends Fragment {
             }
         });
         toolbar.setTitle(this.specialist.getName());
-        Picasso.with(getContext()).load(specialist.getImage()).into(ivSpecialist);
+        ZoomImageViewUtils.loadImageManual(getContext(),specialist.getImage(),ivSpecialist);
         setUpDoctorList();
     }
 
