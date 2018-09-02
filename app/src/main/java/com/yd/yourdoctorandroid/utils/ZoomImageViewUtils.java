@@ -37,7 +37,7 @@ public class ZoomImageViewUtils {
         dialog.show();
     }
 
-    public static void loadImageManual(Context context , String url, ImageView imageView){
+    public static void loadImageManual(Context context, String url, ImageView imageView){
         if(url != null && !url.isEmpty() && imageView != null){
             Picasso.with(context).load(url).into(imageView);
         }
