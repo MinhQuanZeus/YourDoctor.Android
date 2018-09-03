@@ -634,6 +634,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void showDialogInfo() {
+        if(doctorChoice == null || mainObject == null) return;
+
         final Dialog dialog = new Dialog(ChatActivity.this);
         dialog.setContentView(R.layout.info_chat_dialog);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
@@ -654,6 +656,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             tvBirthDayChat.setText("NS: " + doctorChoice.getBirthday());
             tvAddressChat.setText("Địa chỉ" + doctorChoice.getAddress());
         }
+
         if (mainObject.getObjConversation() != null) {
             tvContentChat.setText("Nội dung câu hỏi là: " + mainObject.getObjConversation().getContentTopic());
         }

@@ -2,6 +2,7 @@ package com.yd.yourdoctorandroid.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -76,6 +77,14 @@ public class ReaderActivity extends AppCompatActivity {
     public void setValue(int progress) {
         if(this.progress != null)
         this.progress.setProgress(progress);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
 
