@@ -67,7 +67,11 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             senderId = remoteMessage.getData().get("senderId");
             nameSender = remoteMessage.getData().get("nameSender");
             receiveId = remoteMessage.getData().get("receiveId");
-            type = Integer.parseInt(remoteMessage.getData().get("type"));
+            try{
+                type = Integer.parseInt(remoteMessage.getData().get("type"));
+            }catch (Exception e){
+
+            }
             storageId = remoteMessage.getData().get("storageId");
             message = remoteMessage.getData().get("message");
             createTime = remoteMessage.getData().get("createTime");
@@ -75,8 +79,13 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             levelReport = remoteMessage.getData().get("levelReport");
 
             if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
-                EventBus.getDefault().post(new EventSend(3));
-                showNotification();
+                if(type == 5 && levelReport != null && levelReport.equals("5")){
+                    showNotification();
+                }else {
+                    showNotification();
+                    EventBus.getDefault().post(new EventSend(3));
+                }
+
             }
 
         }
