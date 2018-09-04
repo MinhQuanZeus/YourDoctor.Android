@@ -16,6 +16,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.YourDoctorApplication;
 import com.yd.yourdoctorandroid.activities.AuthActivity;
 import com.yd.yourdoctorandroid.activities.ChatActivity;
 import com.yd.yourdoctorandroid.events.EventSend;
@@ -23,6 +24,7 @@ import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.NotificationUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -37,6 +39,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     private String message;
     private String createTime;
     private String remainMoney;
+    private String levelReport;
 
     private String title;
     private String description;
@@ -69,6 +72,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             message = remoteMessage.getData().get("message");
             createTime = remoteMessage.getData().get("createTime");
             remainMoney = remoteMessage.getData().get("remainMoney");
+            levelReport = remoteMessage.getData().get("levelReport");
 
             if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
                 EventBus.getDefault().post(new EventSend(3));
@@ -170,6 +174,15 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
+
+                    }
+
+                    try{
+                        if(levelReport != null && levelReport.equals("5")){
+                            YourDoctorApplication.self().getSocket().disconnect();
+                            Utils.backToLogin(getApplicationContext());
+                        }
+                    }catch (Exception e){
 
                     }
 
@@ -277,6 +290,15 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                         } catch (Exception e) {
                             Log.e("LoiMessageFirebase :", "remainMoney");
                         }
+
+                    }
+
+                    try{
+                        if(levelReport != null && levelReport.equals("5")){
+                            YourDoctorApplication.self().getSocket().disconnect();
+                            Utils.backToLogin(getApplicationContext());
+                        }
+                    }catch (Exception e){
 
                     }
 

@@ -445,6 +445,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         //YourDoctorApplication.self().getSocket().close();
                         YourDoctorApplication.self().getSocket().disconnect();
                         Utils.backToLogin(getApplicationContext());
+                        finish();
                     }
                 })
                 .setNegativeButton("Hủy", new DialogInterface.OnClickListener() {

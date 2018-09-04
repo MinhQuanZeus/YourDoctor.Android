@@ -596,7 +596,12 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         client.emit("connectedCall", "stop");
         rlCalling.setVisibility(View.GONE);
         rlTimer.setVisibility(View.VISIBLE);
-        if (videoCallSession != null) tvCalleeName.setText(videoCallSession.getCalleeName());
+
+        if (videoCallSession != null){
+            //if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null)
+            tvCallingDoctor.setText(videoCallSession.getCalleeName());
+            //tvCalleeName.setText(videoCallSession.getCalleeName());
+        }
         countTime();
         timerTask.run();
 

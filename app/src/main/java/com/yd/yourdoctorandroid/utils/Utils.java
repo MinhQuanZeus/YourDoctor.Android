@@ -66,7 +66,11 @@ public class Utils {
 //                SharedPrefs.getInstance().remove("USER_INFO");
                 FirebaseMessaging.getInstance().unsubscribeFromTopic(idUser);
                 LoadDefaultModel.getInstance().unregisterServiceCheckNetwork(context);
-                System.exit(0);
+                //System.exit(0);
+                Intent intent = new Intent(context, AuthActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
             }catch (Exception e){
                 Log.e("Logout1 " , e.toString());
             }

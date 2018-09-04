@@ -81,7 +81,7 @@ public class RulesRegisterFragment extends Fragment {
                     MainObjectRule mainObjectSpecialist = response.body();
                     if(mainObjectSpecialist != null){
                         for (RuleObject ruleObject:mainObjectSpecialist.getObjIntroAndRuleReturn()) {
-                            if(ruleObject.getType().equals("rulePatient")){
+                            if(ruleObject.getType().equals("patient")){
                                 currentRuleObject = ruleObject;
                                 tvContentRule.setText(ruleObject.getContent());
                                 break;

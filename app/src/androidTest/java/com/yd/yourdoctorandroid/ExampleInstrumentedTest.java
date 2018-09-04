@@ -83,21 +83,6 @@ public class ExampleInstrumentedTest {
         assertEquals("Chuyên môn", Utils.getStringResourceByString(appContext,"specialist"));
     }
 
-    public static void addIdChatToListTimeOut(String idChat){
-        if(idChat == null || idChat.isEmpty()) return;
-        List<String> listChatTimeOut = SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
-        if(listChatTimeOut == null){
-            listChatTimeOut = new ArrayList<>();
-            listChatTimeOut.add(idChat);
-            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-        }else {
-            if(!listChatTimeOut.contains(idChat)){
-                listChatTimeOut.add(idChat);
-                SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-            }
-        }
-    }
-
     @Test
     public void addIdChatToListTimeOutWrong2() {
         Utils.addIdChatToListTimeOut(null);
