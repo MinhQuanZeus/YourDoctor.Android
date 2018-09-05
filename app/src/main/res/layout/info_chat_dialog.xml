@@ -2,15 +2,16 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="350dp"
+    android:layout_height="380dp"
     android:background="@color/white"
+    android:clickable="true"
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="30dp"
+        android:layout_margin="10dp"
         android:background="@color/white">
         <TextView
             android:layout_alignParentTop="true"
@@ -19,13 +20,15 @@
             android:layout_height="wrap_content"
             android:text="Thông tin cuộc chat"
             android:textSize="20dp"
+            android:textStyle="bold"
             android:textAlignment="center"/>
 
         <RelativeLayout
+            android:id="@+id/rl_content_info_chat"
             android:layout_below="@id/tv_logo_chat_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/btn_ok_info_doctor"
+            android:layout_above="@id/rl_btn_chat_info"
             >
             <ImageView
                 android:layout_alignParentStart="true"
@@ -52,38 +55,54 @@
                 android:layout_below="@id/tvNameDoctorChat"
                 android:layout_toEndOf="@id/ivDoctorChat"/>
             <TextView
+                android:id="@+id/tvAddressChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:padding="5dp"
+                android:maxLines="2"
+                android:textSize="17dp"
+                android:layout_below="@id/tvBirthDayChat" />
+            <TextView
                 android:layout_marginTop="20dp"
                 android:padding="5dp"
                 android:id="@+id/tvContentChat"
                 android:scrollbars = "vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:maxLines="5"
                 android:textSize="18dp"
-                android:layout_below="@id/ivDoctorChat" />
+                android:layout_below="@id/tvAddressChat" />
 
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/btn_rate_chat_doctor"
-            android:layout_width="100dp"
+        <RelativeLayout
+            android:id="@+id/rl_btn_chat_info"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:text="Đánh giá"
-            android:textColor="@color/white"
-            android:background="@drawable/buttonborder"/>
+            android:layout_centerHorizontal="true">
+            <Button
+                android:id="@+id/btn_rate_chat_doctor"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:text="Bác sĩ"
+                android:textColor="@color/white"
+                android:background="@drawable/buttonstyleithgradient"/>
 
-        <Button
-            android:id="@+id/btn_ok_info_doctor"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:text="@string/btn_ok"
-            android:textColor="@color/white"
-            android:background="@drawable/buttonborder"/>
+            <Button
+                android:id="@+id/btn_ok_info_doctor"
+                android:layout_width="100dp"
+                android:layout_toEndOf="@id/btn_rate_chat_doctor"
+                android:layout_marginStart="50dp"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_ok"
+                android:textColor="@color/white"
+                android:background="@drawable/buttonstyleithgradient"/>
+
+        </RelativeLayout>
+
     </RelativeLayout>
-
 
 </RelativeLayout>

@@ -107,6 +107,8 @@ public class DoneVideoCallFragment extends Fragment {
                 public void onResponse(Call<MainResponRating> call, Response<MainResponRating> response) {
                     btnOk.revertAnimation();
                     Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getActivity().startActivity(intent);
                 }
 
@@ -114,11 +116,15 @@ public class DoneVideoCallFragment extends Fragment {
                 public void onFailure(Call<MainResponRating> call, Throwable t) {
                     btnOk.revertAnimation();
                     Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     getActivity().startActivity(intent);
                 }
             });
         }else {
             Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getActivity().startActivity(intent);
         }
     }

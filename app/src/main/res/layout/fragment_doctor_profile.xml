@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="@color/white"
+    android:clickable="true"
     tools:context=".fragments.DoctorProfileFragment">
 
     <android.support.design.widget.AppBarLayout
@@ -44,6 +45,17 @@
                     android:layout_height="100dp"
                     android:layout_below="@id/tbBackFromProfileDoctor"
                     android:layout_centerHorizontal="true" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_status_doctor"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignBottom="@+id/ivAvaDoctor"
+                    android:layout_alignEnd="@+id/ivAvaDoctor"
+                    android:src="@drawable/circle_red_line"
+                    android:layout_marginEnd="6dp"
+                    civ_border_width="2dp"
+                    civ_border_color="@color/white"
+                    />
 
                 <TextView
                     android:id="@+id/tvNameDoctor"
@@ -127,7 +139,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_video_call_black_24dp" />
+                        app:srcCompat="@drawable/ic_videocam_black_24dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -135,24 +147,6 @@
                         android:text="@string/videocall" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/ivReportWithDoctor"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:srcCompat="@drawable/ic_report_black_24dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/report" />
-                </LinearLayout>
                 <LinearLayout
                     android:id="@+id/ivRatingDoctor"
                     android:layout_width="0dp"
@@ -316,7 +310,7 @@
                         android:layout_height="wrap_content"
                         android:drawableLeft="@drawable/ic_book_black_24dp"
                         android:drawablePadding="12dp"
-                        android:hint="Chuyên Khoa"
+                        android:hint="Nơi tốt nghiệp"
                         android:inputType="text"
                         android:padding="16dp"
                         android:textColor="@color/colorText"

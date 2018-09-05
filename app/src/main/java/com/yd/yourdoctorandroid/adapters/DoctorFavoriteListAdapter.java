@@ -19,6 +19,7 @@ import com.yd.yourdoctorandroid.fragments.DoctorProfileFragment;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Specialist;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.FavoriteDoctor;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
@@ -28,7 +29,7 @@ import java.util.List;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavoriteListAdapter.DoctorFavoriteListViewHolder> {
-    private List<Doctor> favoriteDoctorList;
+    private List<FavoriteDoctor> favoriteDoctors;
     private Context context;
     private View.OnClickListener onClickListener;
     private boolean isLoadingAdded = false;
@@ -44,16 +45,9 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
     public DoctorFavoriteListAdapter(Context context) {
 
         this.context = context;
-        this.favoriteDoctorList = new ArrayList<>();
+        this.favoriteDoctors = new ArrayList<>();
     }
 
-    public List<Doctor> getDoctors() {
-        return favoriteDoctorList;
-    }
-
-    public void setDoctors(List<Doctor> doctors) {
-        this.favoriteDoctorList = doctors;
-    }
 
 
     @NonNull
@@ -92,7 +86,7 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
         switch (getItemViewType(position)) {
             case ITEM:
 
-                holder.setData(favoriteDoctorList.get(position), position);
+                holder.setData(favoriteDoctors.get(position), position);
 
                 holder.setItemClickListener(new ItemClickListener() {
                     @Override
@@ -110,25 +104,25 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
 
     @Override
     public int getItemViewType(int position) {
-        return (position == favoriteDoctorList.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
+        return (position == favoriteDoctors.size() - 1 && isLoadingAdded) ? LOADING : ITEM;
     }
 
 
-    public void add(Doctor mc) {
-        favoriteDoctorList.add(mc);
-        notifyItemInserted(favoriteDoctorList.size() - 1);
+    public void add(FavoriteDoctor mc) {
+        favoriteDoctors.add(mc);
+        notifyItemInserted(favoriteDoctors.size() - 1);
     }
 
-    public void addAll(List<Doctor> mcList) {
-        for (Doctor mc : mcList) {
+    public void addAll(List<FavoriteDoctor> mcList) {
+        for (FavoriteDoctor mc : mcList) {
             add(mc);
         }
     }
 
-    public void remove(Doctor city) {
-        int position = favoriteDoctorList.indexOf(city);
+    public void remove(FavoriteDoctor favoriteDoctor) {
+        int position = favoriteDoctors.indexOf(favoriteDoctor);
         if (position > -1) {
-            favoriteDoctorList.remove(position);
+            favoriteDoctors.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -146,28 +140,28 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
 
     public void addLoadingFooter() {
         isLoadingAdded = true;
-        add(new Doctor());
+        add(new FavoriteDoctor());
     }
 
     public void removeLoadingFooter() {
         isLoadingAdded = false;
 
-        int position = favoriteDoctorList.size() - 1;
-        Doctor item = getItem(position);
+        int position = favoriteDoctors.size() - 1;
+        FavoriteDoctor item = getItem(position);
 
         if (item != null) {
-            favoriteDoctorList.remove(position);
+            favoriteDoctors.remove(position);
             notifyItemRemoved(position);
         }
     }
 
-    public Doctor getItem(int position) {
-        return favoriteDoctorList.get(position);
+    public FavoriteDoctor getItem(int position) {
+        return favoriteDoctors.get(position);
     }
 
     @Override
     public int getItemCount() {
-        return favoriteDoctorList == null ? 0 : favoriteDoctorList.size();
+        return favoriteDoctors == null ? 0 : favoriteDoctors.size();
     }
 
     public class DoctorFavoriteListViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
@@ -177,7 +171,7 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
         RatingBar rbDoctorFavorite;
         TextView tvNameDoctorSpecialist;
         private ItemClickListener itemClickListener;
-        private Doctor doctorModel;
+        private FavoriteDoctor favoriteDoctor;
 
         public DoctorFavoriteListViewHolder(View itemView) {
             super(itemView);
@@ -192,33 +186,23 @@ public class DoctorFavoriteListAdapter extends RecyclerView.Adapter<DoctorFavori
             itemView.setOnLongClickListener(this);
         }
 
-        public void setData(Doctor doctorModel, int positon) {
+        public void setData(FavoriteDoctor favoriteDoctor, int positon) {
 
-            this.doctorModel = doctorModel;
+            this.favoriteDoctor = favoriteDoctor;
 
-            if (doctorModel != null) {
-                if (context == null) Log.d("Anhle", "context bi null");
-                ZoomImageViewUtils.loadCircleImage(context,doctorModel.getAvatar(),ivItemDoctorFavorite);
-                tvNameDoctorFavorite.setText(doctorModel.getFullName());
-                rbDoctorFavorite.setRating(doctorModel.getCurrentRating());
+            if (favoriteDoctor != null) {
+                ZoomImageViewUtils.loadCircleImage(context,favoriteDoctor.getAvatar(),ivItemDoctorFavorite);
+                tvNameDoctorFavorite.setText(favoriteDoctor.getFullName());
+                rbDoctorFavorite.setRating(favoriteDoctor.getCurrentRating());
                 tvNumberRank.setText((positon + 1) + "");
-                String specialistText = "";
                 //TODO
-//                ArrayList<Specialist> specialists = (ArrayList<Specialist>) LoadDefaultModel.getInstance().getSpecialists();
-//                for(String idSpecialist : doctorModel.getIdSpecialist()){
-//                    for(Specialist specialist : specialists){
-//                        if(specialist.getId().equals(idSpecialist)){
-//                            specialistText = specialistText + specialist.getName() + ", ";
-//                        }
-//                    }
-//                }
-                tvNameDoctorSpecialist.setText(specialistText);
+                tvNameDoctorSpecialist.setText(favoriteDoctor.getSpecialist());
             }
         }
 
 
-        public Doctor getdoctorModel() {
-            return doctorModel;
+        public FavoriteDoctor getdoctorModel() {
+            return favoriteDoctor;
         }
 
         public void setItemClickListener(ItemClickListener itemClickListener) {

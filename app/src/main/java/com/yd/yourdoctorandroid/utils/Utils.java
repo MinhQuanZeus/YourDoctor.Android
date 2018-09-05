@@ -15,9 +15,13 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.Format;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class Utils {
     public static String getStringResourceByString(Context context, String name) {
@@ -36,7 +40,7 @@ public class Utils {
         OutputStream os;
         try {
             os = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, os);
             os.flush();
             os.close();
         } catch (Exception e) {
@@ -48,37 +52,101 @@ public class Utils {
     public static String convertTime(long time){
         Date date = new Date(time);
         //yyyy MM dd HH:mm:ss
-        Format format = new SimpleDateFormat("HH:mm, dd/MM ");
+        Format format = new SimpleDateFormat("HH:mm, dd/MM");
         return format.format(date);
     }
 
-    public static String convertTimeFromMonggo(String timeString){
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH);
-        Date date = null;
-        Format  format2;
-        try {
-            date = format.parse(timeString);
-        } catch (Exception e) {
-            date = new Date();
-            Log.e("LoiDat", e.toString());
+    public static void backToLogin(Context context){
+        String idUser = SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId();
+        if(idUser != null){
+            try{
+                SocketUtils.getInstance().closeConnect();
+                SharedPrefs.getInstance().clear();
+//                SharedPrefs.getInstance().remove("JWT_TOKEN");
+//                SharedPrefs.getInstance().remove("USER_INFO");
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(idUser);
+                LoadDefaultModel.getInstance().unregisterServiceCheckNetwork(context);
+                //System.exit(0);
+                Intent intent = new Intent(context, AuthActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+            }catch (Exception e){
+                Log.e("Logout1 " , e.toString());
+            }
         }
-        format2 = new SimpleDateFormat("HH:mm, dd/MM ");
-        return format2.format(date);
 
     }
 
-    public static void backToLogin(Context context){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get("USER_INFO", Patient.class).getId());
-        //context.stopService(new Intent(context, YDFirebaseMessagingService.class));
-        //context.stopService(new Intent(context, CheckNetWordChangeService.class));
-        //context.stopService(new Intent(context, TimeOutChatService.class));
-        SocketUtils.getInstance().disconnectConnect();
-        SharedPrefs.getInstance().remove("JWT_TOKEN");
-        SharedPrefs.getInstance().remove("USER_INFO");
-        SharedPrefs.getInstance().remove("listChatTimeOutNot");
-        Intent intent = new Intent(context, AuthActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public static String formatStringNumber(int number){
+        return NumberFormat.getNumberInstance(Locale.GERMAN).format(number);
+    }
+
+    public static boolean verifyVietnameesName(String name){
+
+        return name.matches("^[a-zA-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ"+
+                "ẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+                "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+$");
+
+    }
+
+    public static void addIdChatToListTimeOut(String idChat){
+        if(idChat == null || idChat.isEmpty()) return;
+        List<String> listChatTimeOut =SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
+        if(listChatTimeOut == null){
+            listChatTimeOut = new ArrayList<>();
+            listChatTimeOut.add(idChat);
+            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
+        }else {
+            if(!listChatTimeOut.contains(idChat)){
+                listChatTimeOut.add(idChat);
+                SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
+            }
+        }
+    }
+
+    public static String handleStringDescription(String theStrDes) {
+        if(theStrDes == null) return "";
+        int startString;
+        if (theStrDes.contains("</br>")) {
+            startString = theStrDes.lastIndexOf("</br>");
+
+            return theStrDes.substring(startString + 5);
+        }
+        return theStrDes;
+    }
+
+    public static String hanleStringImage(String theStrImage) {
+        if(theStrImage == null) return "";
+        try {
+            int startString;
+            int endString;
+            if (theStrImage.contains("<img")) {
+                if (theStrImage.contains("data-original=")) {
+                    startString = theStrImage.lastIndexOf("data-original=");
+
+                    if (theStrImage.contains("png")) {
+                        endString = theStrImage.lastIndexOf(".png");
+                    } else {
+                        endString = theStrImage.lastIndexOf(".jpg");
+                    }
+
+                    return theStrImage.substring(startString + 15, endString + 4);
+                } else if (theStrImage.contains("src=")) {
+                    startString = theStrImage.lastIndexOf("src=");
+
+                    if (theStrImage.contains("png")) {
+                        endString = theStrImage.lastIndexOf(".png");
+                    } else {
+                        endString = theStrImage.lastIndexOf(".jpg");
+                    }
+
+                    return theStrImage.substring(startString + 5, endString + 4);
+                }
+            }
+            return theStrImage;
+        } catch (Exception e) {
+            return "";
+        }
     }
 }

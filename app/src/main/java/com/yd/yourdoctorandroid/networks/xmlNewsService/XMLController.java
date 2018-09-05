@@ -10,6 +10,8 @@ import android.util.Xml;
 
 import com.yd.yourdoctorandroid.adapters.NewsAdapter;
 import com.yd.yourdoctorandroid.models.New;
+import com.yd.yourdoctorandroid.networks.changeProfile.UpdateSuccess;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -38,6 +40,7 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
         this.context = context;
         this.recyclerView = recyclerView;
         this.gridLayoutManager = gridLayoutManager;
+        progressDialog = new ProgressDialog(context);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
         super.onPreExecute();
 
         // Hiển thị Dialog khi bắt đầu xử lý.
-        progressDialog = new ProgressDialog(context);
+
         progressDialog.setTitle("Báo sức khỏe VNPress");
         progressDialog.setMessage("Đang xử lý...");
         if(progressDialog != null){
@@ -63,7 +66,6 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
             if (!urlLink.startsWith("http://") && !urlLink.startsWith("https://"))
                 urlLink = "http://" + urlLink;
 
-
             URL url = new URL(urlLink);
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -71,15 +73,10 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
                 mFeedModelList = parseFeed(inputStream);
-            } else {
-                // display error message
             }
 
-
-        } catch (IOException e) {
-            Log.e("RssFeed", "Error", e);
-        } catch (XmlPullParserException e) {
-            Log.e("RssFeed", "Error", e);
+        } catch (Exception e) {
+            Log.e("RssFeed", "Không thể load VnPress");
         }
 
         return (ArrayList<New>) mFeedModelList;
@@ -91,9 +88,12 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
     protected void onPostExecute(ArrayList<New> listItem) {
         super.onPostExecute(listItem);
         // Hủy dialog đi.
+        try{
+            if(progressDialog != null){
+                progressDialog.dismiss();
+            }
+        }catch (Exception e){
 
-        if(progressDialog != null){
-            progressDialog.dismiss();
         }
 
         if (listItem != null) {
@@ -160,8 +160,8 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
 
                 } else if (name.equalsIgnoreCase("description")) {
                     //  description = handleStringDescription(result);
-                    description = handleStringDescription(result.toString());
-                    image = hanleStringImage(result.toString());
+                    description = Utils.handleStringDescription(result.toString());
+                    image = Utils.hanleStringImage(result.toString());
                 } else if (name.equalsIgnoreCase("pubDate")) {
                     pubDate = result;
                 }
@@ -186,46 +186,5 @@ public class XMLController extends AsyncTask<String, Void, ArrayList<New>> {
         }
     }
 
-    private String handleStringDescription(String theStrDes) {
-        int startString;
-        if (theStrDes.contains("</br>")) {
-            startString = theStrDes.lastIndexOf("</br>");
 
-            return theStrDes.substring(startString + 5);
-        }
-        return theStrDes;
-    }
-
-    private String hanleStringImage(String theStrImage) {
-        try {
-            int startString;
-            int endString;
-            if (theStrImage.contains("<img")) {
-                if (theStrImage.contains("data-original=")) {
-                    startString = theStrImage.lastIndexOf("data-original=");
-
-                    if (theStrImage.contains("png")) {
-                        endString = theStrImage.lastIndexOf(".png");
-                    } else {
-                        endString = theStrImage.lastIndexOf(".jpg");
-                    }
-
-                    return theStrImage.substring(startString + 15, endString + 4);
-                } else if (theStrImage.contains("src=")) {
-                    startString = theStrImage.lastIndexOf("src=");
-
-                    if (theStrImage.contains("png")) {
-                        endString = theStrImage.lastIndexOf(".png");
-                    } else {
-                        endString = theStrImage.lastIndexOf(".jpg");
-                    }
-
-                    return theStrImage.substring(startString + 5, endString + 4);
-                }
-            }
-            return theStrImage;
-        } catch (Exception e) {
-            return "";
-        }
-    }
 }

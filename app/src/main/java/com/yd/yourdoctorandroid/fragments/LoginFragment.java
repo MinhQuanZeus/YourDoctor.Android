@@ -1,11 +1,15 @@
 package com.yd.yourdoctorandroid.fragments;
 
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +23,21 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.ScreenManager;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.GetListPendingChatService;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.IDPending;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.MainPendingResponse;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.networks.models.Login;
 import com.yd.yourdoctorandroid.networks.services.LoginService;
+import com.yd.yourdoctorandroid.services.TimeOutChatService;
+import com.yd.yourdoctorandroid.utils.Config;
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.SocketUtils;
@@ -33,6 +45,7 @@ import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.List;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import butterknife.BindView;
@@ -58,6 +71,10 @@ public class LoginFragment extends Fragment {
     EditText edPhone;
     @BindView(R.id.ed_password)
     EditText edPassword;
+
+    @BindView(R.id.forgotpass)
+    com.yd.yourdoctorandroid.custormviews.MyTextView forgotPass;
+
     @BindView(R.id.til_phone)
     TextInputLayout tilPhone;
     @BindView(R.id.til_password)
@@ -87,12 +104,12 @@ public class LoginFragment extends Fragment {
     private void setUp(View view) {
         unbinder = ButterKnife.bind(this, view);
         tvSignUp = (TextView) view.findViewById(R.id.tv_signup);
-        LoadDefaultModel.getInstance();
+        //LoadDefaultModel.getInstance();
         countSuccessInitialization = 0;
         tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new InputPhoneNumberFragment(), R.id.fl_auth, true, true);
+                ScreenManager.openFragment(getActivity().getSupportFragmentManager(), new RulesRegisterFragment(), R.id.fl_auth, true, true);
             }
         });
 
@@ -100,6 +117,16 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 onLogin();
+            }
+        });
+
+        forgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputPhoneNumberFragment inputPhoneNumberFragment = new InputPhoneNumberFragment();
+                inputPhoneNumberFragment.setIsForgetPassword(true);
+                ScreenManager.openFragment(getActivity().getSupportFragmentManager(), inputPhoneNumberFragment, R.id.fl_auth, true, true);
+
             }
         });
     }
@@ -145,42 +172,92 @@ public class LoginFragment extends Fragment {
             public void onResponse(Call<AuthResponse> call, final Response<AuthResponse> response) {
 
                 if (response.code() == 200 || response.code() == 201) {
-                    Log.e("Login ", response.body().getJwtToken());
-                    SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
-
-                    if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
-                        FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                    if(response.body().getPatient().getRole() == 1 && response.body().getPatient().getStatus() == 1){
+                        SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
+                        Log.e("tokenLogin: ",SharedPrefs.getInstance().get(JWT_TOKEN,String.class));
+                        if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
+                        }
+                        SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
+                        FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
+                        LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
+                        loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
                     }
-                    SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
-                    Log.e("idPatient", response.body().getPatient().getId());
-                    FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-                    SocketUtils.getInstance().reConnect();
-                    LoadDefaultModel.getInstance().loadFavoriteDoctor(response.body().getPatient(), getActivity(), btnLogin);
+                    else {
+                        if(response.body().getPatient().getRole() != 1){
+                            Toast.makeText(getContext(),"Tài khoản của bạn không phải là tài khoản bệnh nhân!", Toast.LENGTH_LONG).show();
+                        }else {
+                            Toast.makeText(getContext(),"Tài khoản đang bị khóa, mọi thắc mắc xin liện hệ đến tổng đài!", Toast.LENGTH_LONG).show();
+                        }
+                        enableAll();
+                        btnLogin.revertAnimation();
+                    }
 
-                } else {
+                }else if(response.code() == 404){
                     enableAll();
-                    CommonErrorResponse commonErrorResponse = parseToCommonError(response);
-                    if (commonErrorResponse.getError() != null) {
-                        String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                        Log.d("RESPONSE", error);
+                        Toast.makeText(getActivity(), "Không tìm thấy", Toast.LENGTH_SHORT).show();
+                    btnLogin.revertAnimation();
+                }
+                else {
+                    enableAll();
+                    try{
+                        CommonErrorResponse commonErrorResponse = parseToCommonError(response);
+                        if (commonErrorResponse.getError() != null) {
+                            String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
+                            Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
+                            Log.d("RESPONSE", error);
+                        }
+                    }catch (Exception e){
+                        Toast.makeText(getActivity(), "Lỗi Đăng nhập!", Toast.LENGTH_SHORT).show();
                     }
+
                     btnLogin.revertAnimation();
                 }
             }
 
             @Override
             public void onFailure(Call<AuthResponse> call, Throwable t) {
-                Log.d("LOGIN", t.getMessage());
-                btnLogin.revertAnimation();
+                if(btnLogin != null) btnLogin.revertAnimation();
+
                 enableAll();
                 if (t instanceof SocketTimeoutException) {
                     Toast.makeText(getActivity(), getResources().getText(R.string.error_timeout), Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getContext(),"Không có kết nối mạng", Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
 
+    public void loadFavoriteDoctor(final Patient currentPatient) {
+        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
+        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+            @Override
+            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
+                if(response.code() == 200){
+                    MainObjectIDFavorite mainObject = response.body();
+                    if (mainObject != null) {
+                        Patient newPatient = currentPatient;
+                        newPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                        SharedPrefs.getInstance().put("USER_INFO", newPatient);
+                        //LoadDefaultModel.getInstance().loadAllChatPending(currentPatient.getId());
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(intent);
+                    }
+                }
+                btnLogin.revertAnimation();
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
+                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                btnLogin.revertAnimation();
+            }
+        });
+
+    }
 
     private void enableAll() {
         this.edPassword.setEnabled(true);

@@ -5,14 +5,14 @@ public class MainRecord {
     private String recorderID;
     private int type;
     private String value;
-    private String created;
+    private long createdAt;;
 
-    public MainRecord(String _id, String recorderID, int type, String value, String created) {
+    public MainRecord(String _id, String recorderID, int type, String value, long createdAt) {
         this._id = _id;
         this.recorderID = recorderID;
         this.type = type;
         this.value = value;
-        this.created = created;
+        this.createdAt = createdAt;
     }
 
     public String get_id() {
@@ -47,11 +47,11 @@ public class MainRecord {
         this.value = value;
     }
 
-    public String getCreated() {
-        return created;
+    public long getCreated() {
+        return createdAt;
     }
 
-    public void setCreated(String created) {
-        this.created = created;
+    public void setCreated(long createdAt) {
+        this.createdAt = createdAt;
     }
 }

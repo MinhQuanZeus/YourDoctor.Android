@@ -8,13 +8,13 @@ public class ObjectPaymentResponse {
     @Expose
     private String id;
     private String userID;
-    private long amount;
-    private long remainMoney;
+    private float amount;
+    private float remainMoney;
     private FromUser fromUser;
     private TypeAdvisoryResponse typeAdvisoryID;
     private int status;
-    private String updatedAt;
-    private String createdAt;
+    private long updatedAt;
+    private long createdAt;
 
     public String getId() {
         return id;
@@ -32,19 +32,19 @@ public class ObjectPaymentResponse {
         this.userID = userID;
     }
 
-    public long getAmount() {
-        return amount;
+    public int getAmount() {
+        return (int) Math.round(amount);
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
-    public long getRemainMoney() {
-        return remainMoney;
+    public int getRemainMoney() {
+        return (int) Math.round(remainMoney);
     }
 
-    public void setRemainMoney(long remainMoney) {
+    public void setRemainMoney(float remainMoney) {
         this.remainMoney = remainMoney;
     }
 
@@ -72,19 +72,19 @@ public class ObjectPaymentResponse {
         this.status = status;
     }
 
-    public String getUpdatedAt() {
+    public long getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public String getCreatedAt() {
+    public long getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
     }
 }

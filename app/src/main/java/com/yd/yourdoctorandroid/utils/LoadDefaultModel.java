@@ -1,29 +1,23 @@
 package com.yd.yourdoctorandroid.utils;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.util.Log;
-
-import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
-import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.GetAllTypesAdvisoryService;
-import com.yd.yourdoctorandroid.networks.getAllTypesAdvisory.MainObjectTypeAdivosry;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
-import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.GetSpecialistService;
-import com.yd.yourdoctorandroid.networks.getSpecialistService.MainObjectSpecialist;
-import com.yd.yourdoctorandroid.models.Patient;
+import com.yd.yourdoctorandroid.networks.checkStatusChatService.CheckStatusChatService;
+import com.yd.yourdoctorandroid.networks.checkStatusChatService.ListNotDoneResponse;
+import com.yd.yourdoctorandroid.networks.checkStatusChatService.ListRequest;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.GetListPendingChatService;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.IDPending;
+import com.yd.yourdoctorandroid.networks.getListPendingChatService.MainPendingResponse;
 import com.yd.yourdoctorandroid.models.Specialist;
 import com.yd.yourdoctorandroid.models.TypeAdvisory;
-import com.yd.yourdoctorandroid.services.TimeOutChatService;
+import com.yd.yourdoctorandroid.networks.sendListChatToCheck.ResponDoneChat;
+import com.yd.yourdoctorandroid.networks.sendListChatToCheck.SendListChatToCheckDoneService;
+import com.yd.yourdoctorandroid.services.CheckNetWordChangeService;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,9 +29,13 @@ public class LoadDefaultModel {
 
     private static LoadDefaultModel loadDefaultModel;
 
+    private CheckNetWordChangeService checkNetWordChangeService;
+    private IntentFilter intentFilter;
+
     public LoadDefaultModel() {
-        loadSpecialist();
-        loadTypeAdvisory();
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        checkNetWordChangeService = new CheckNetWordChangeService();
     }
 
     public void setSpecialists(List<Specialist> specialists) {
@@ -58,45 +56,6 @@ public class LoadDefaultModel {
         return typeAdvisories;
     }
 
-    public void loadSpecialist() {
-        GetSpecialistService getSpecialistService = RetrofitFactory.getInstance().createService(GetSpecialistService.class);
-        getSpecialistService.getMainObjectSpecialist().enqueue(new Callback<MainObjectSpecialist>() {
-            @Override
-            public  void onResponse(Call<MainObjectSpecialist> call, Response<MainObjectSpecialist> response) {
-                if(response.code() == 200){
-                    Log.e("AnhLe", "success: " + response.body());
-                    MainObjectSpecialist mainObjectSpecialist = response.body();
-                    specialists = (ArrayList<Specialist>) mainObjectSpecialist.getListSpecialist();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MainObjectSpecialist> call, Throwable t) {
-                //Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    public void loadTypeAdvisory() {
-        GetAllTypesAdvisoryService getAllTypesAdvisoryService = RetrofitFactory.getInstance().createService(GetAllTypesAdvisoryService.class);
-        getAllTypesAdvisoryService.getMainObjectTypeAdvisories(SharedPrefs.getInstance().get("JWT_TOKEN", String.class)).enqueue(new Callback<MainObjectTypeAdivosry>() {
-            @Override
-            public void onResponse(Call<MainObjectTypeAdivosry> call, Response<MainObjectTypeAdivosry> response) {
-                if(response.code() == 200){
-                    Log.e("AnhLe", "success: " + response.body());
-                    MainObjectTypeAdivosry mainObjectTypeAdivosry = response.body();
-                    typeAdvisories = (ArrayList<TypeAdvisory>) mainObjectTypeAdivosry.getTypeAdvisories();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<MainObjectTypeAdivosry> call, Throwable t) {
-                //Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     public static LoadDefaultModel getInstance() {
         if (loadDefaultModel == null) {
             loadDefaultModel = new LoadDefaultModel();
@@ -104,60 +63,88 @@ public class LoadDefaultModel {
         return loadDefaultModel;
     }
 
-    public void loadFavoriteDoctor(final Patient currentPatient , final FragmentActivity fragmentActivity , final CircularProgressButton btnLogin) {
-        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
-        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+    public void registerServiceCheckNetwork(Context context){
+        context.registerReceiver(checkNetWordChangeService, intentFilter);
+    }
+
+    public void unregisterServiceCheckNetwork(Context context){
+        context.unregisterReceiver(checkNetWordChangeService);
+    }
+
+    public void loadAllChatPending(final String currentPatientId){
+        GetListPendingChatService getListPendingChatService = RetrofitFactory.getInstance().createService(GetListPendingChatService.class);
+        getListPendingChatService.getListPendingChatService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatientId).enqueue(new Callback<MainPendingResponse>() {
             @Override
-            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
+            public void onResponse(Call<MainPendingResponse> call, Response<MainPendingResponse> response) {
                 if(response.code() == 200){
-                    MainObjectIDFavorite mainObject = response.body();
-                    if (mainObject != null) {
-                        currentPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
-                        SharedPrefs.getInstance().put("USER_INFO", currentPatient);
-                        Intent intent = new Intent(fragmentActivity, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        fragmentActivity.startActivity(intent);
+                    MainPendingResponse mainObject = response.body();
+                    //check lại time nhe
+                    if(mainObject.getListPending() != null && mainObject.getListPending().size() > 0){
+                        for (IDPending idPending:mainObject.getListPending()) {
+                            handleChatIsPending(idPending);
+                        }
+                        checking(SharedPrefs.getInstance().get("listChatTimeOutNot", List.class));
                     }
+
                 }
-                btnLogin.revertAnimation();
             }
 
             @Override
-            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
-                //Toast.makeText(null, "Kết nốt mạng có vấn đề , không thể tải dữ liệu", Toast.LENGTH_LONG).show();
-                btnLogin.revertAnimation();
+            public void onFailure(Call<MainPendingResponse> call, Throwable t) {
+               Log.e("ErrorPending", "Anh le");
             }
         });
-
     }
 
-    public void startServiceTimeOut(Context context , String idChat){
-        Intent intent = new Intent(context, TimeOutChatService.class);
-        intent.putExtra("idChat",idChat);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 234324243, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (Config.TIME_OUT_CHAT_CONVERSATION * 1000), pendingIntent);
-    }
-
-    public void addIdChatToListTimeOut(String idChat){
-        List<String> listChatTimeOut =SharedPrefs.getInstance().get("listChatTimeOutNot", List.class );
-        if(listChatTimeOut == null){
-            listChatTimeOut = new ArrayList<>();
-            listChatTimeOut.add(idChat);
-            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-        }else {
-            listChatTimeOut.add(idChat);
-            SharedPrefs.getInstance().put("listChatTimeOutNot", listChatTimeOut);
-            Log.e("HelloA", "put success");
+    public void handleChatIsPending(IDPending idPending){
+        if((idPending.getTimeRemain() / 1000) >= Config.TIME_OUT_CHAT_CONVERSATION){
+            Utils.addIdChatToListTimeOut(idPending.getId());
         }
     }
 
-    public void getListPendingChat(){
-        //TODO
+    public void checking(final List<String> listChatTimeOut) {
+        ListRequest listRequest = new ListRequest();
+        listRequest.setListId(listChatTimeOut);
+        if (listRequest.getListId() != null && listRequest.getListId().size() != 0) {
+            CheckStatusChatService checkStatusChatService = RetrofitFactory.getInstance().createService(CheckStatusChatService.class);
+            checkStatusChatService.checkStatusChatService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),listRequest).enqueue(new Callback<ListNotDoneResponse>() {
+                @Override
+                public void onResponse(Call<ListNotDoneResponse> call, Response<ListNotDoneResponse> response) {
+                    Log.e("AnhLe", "success: " + response.toString());
+                    ListNotDoneResponse mainObject = response.body();
+                    if (response.code() == 200 && mainObject != null) {
+                        SharedPrefs.getInstance().put("listChatTimeOutNot", mainObject.getListID());
+                        sendToCheckout();
+                    }
+                }
+                @Override
+                public void onFailure(Call<ListNotDoneResponse> call, Throwable t) {
+                    Log.e("Anhle ","Checking List Response");
+                }
+            });
+        }
     }
 
+    private void sendToCheckout() {
+        ListRequest listRequest = new ListRequest();
+        listRequest.setListId(SharedPrefs.getInstance().get("listChatTimeOutNot", List.class));
+        if (listRequest.getListId() != null && listRequest.getListId().size() != 0) {
+            SendListChatToCheckDoneService sendListChatToCheckDoneService = RetrofitFactory.getInstance().createService(SendListChatToCheckDoneService.class);
+            sendListChatToCheckDoneService.sendListChatToCheckDoneService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),listRequest).enqueue(new Callback<ResponDoneChat>() {
+                @Override
+                public void onResponse(Call<ResponDoneChat> call, Response<ResponDoneChat> response) {
+                    Log.e("AnhLe", "success: " + response.toString());
+                    ResponDoneChat mainObject = response.body();
+                    if (response.code() == 200 && mainObject != null) {
 
+                        SharedPrefs.getInstance().put("listChatTimeOutNot", mainObject.getArrayChatHistoryCheckFailed());
+                    }
+                }
+                @Override
+                public void onFailure(Call<ResponDoneChat> call, Throwable t) {
 
+                }
+            });
+        }
+    }
 }

@@ -15,6 +15,8 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
 public class ZoomImageViewUtils {
     public static void zoomImage(Context context, String urlImage){
+
+        if(context == null || urlImage == null || urlImage.isEmpty()) return;
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.certification_dialog);
 
@@ -35,11 +37,15 @@ public class ZoomImageViewUtils {
         dialog.show();
     }
 
-    public static void loadImageManual(Context context , String url, ImageView imageView){
-        Picasso.with(context).load(url).into(imageView);
+    public static void loadImageManual(Context context, String url, ImageView imageView){
+        if(url != null && !url.isEmpty() && imageView != null){
+            Picasso.with(context).load(url).into(imageView);
+        }
     }
 
     public static void loadCircleImage(Context context , String url, ImageView imageView){
-        Picasso.with(context).load(url).transform(new CropCircleTransformation()).into(imageView);
+        if(url != null && !url.isEmpty() && imageView != null){
+            Picasso.with(context).load(url).transform(new CropCircleTransformation()).into(imageView);
+        }
     }
 }

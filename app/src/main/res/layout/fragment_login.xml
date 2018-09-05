@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#fff">
 
@@ -54,6 +55,7 @@
             android:id="@+id/til_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAlignment="center"
             android:textColor="@color/colorText"
             android:textColorHint="@color/colorHint">
 
@@ -92,6 +94,7 @@
 
             <com.yd.yourdoctorandroid.custormviews.MyTextView
                 android:id="@+id/forgotpass"
+                android:editable="false"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

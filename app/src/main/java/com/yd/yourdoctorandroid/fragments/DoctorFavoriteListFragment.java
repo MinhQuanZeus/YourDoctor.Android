@@ -152,12 +152,12 @@ public class DoctorFavoriteListFragment extends Fragment {
             @Override
             protected void loadMoreItems() {
                 isLoading = true;
-                currentPage += 1; //Increment page index to load the next one
+                currentPage += 10; //Increment page index to load the next one
                 // mocking network delay for API call
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        pbFavorite.setVisibility(View.VISIBLE);
+                        //pbFavorite.setVisibility(View.VISIBLE);
                         loadNextPage();
                     }
                 }, 1000);
@@ -184,44 +184,33 @@ public class DoctorFavoriteListFragment extends Fragment {
     }
 
     private void loadFirstPage() {
-        Log.e("haha", currentPatient.getId());
         GetListDoctorFavoriteService getListDoctorFavoriteService = RetrofitFactory.getInstance().createService(GetListDoctorFavoriteService.class);
-        getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
+        getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", (currentPage + 10) + "").enqueue(new Callback<MainObjectFavoriteList>() {
             @Override
             public void onResponse(Call<MainObjectFavoriteList> call, Response<MainObjectFavoriteList> response) {
                 if(response.code() == 200){
                     MainObjectFavoriteList mainObject = response.body();
-                    Log.e("haha", response.body().toString());
-                    List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
-                    List<Doctor> doctorList = new ArrayList<>();
+                    List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor();
                     if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
-                        for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
-                            Doctor doctor = new Doctor();
-                            doctor.setAvatar(favoriteDoctor.getAvatar());
-                            doctor.setFirstName(favoriteDoctor.getFirstName());
-                            doctor.setMiddleName(favoriteDoctor.getMiddleName());
-                            doctor.setLastName(favoriteDoctor.getLastName());
-                            doctor.setCurrentRating((float) 3.5);
-                            doctor.setDoctorId(favoriteDoctor.get_id());
-                            doctorList.add(doctor);
-                        }
 
-                        doctorFavoriteListAdapter.addAll(doctorList);
+                        doctorFavoriteListAdapter.addAll(favoriteDoctors);
 
-                        if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();
+                        if (favoriteDoctors.size() == 10) doctorFavoriteListAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    pbFavorite.setVisibility(View.GONE);
+
+
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
+                if(pbFavorite != null) pbFavorite.setVisibility(View.GONE);
 
             }
 
             @Override
             public void onFailure(Call<MainObjectFavoriteList> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
-                pbFavorite.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Không thể tải được bác sĩ yêu thích", Toast.LENGTH_LONG).show();
+                if(pbFavorite != null)pbFavorite.setVisibility(View.GONE);
             }
         });
 
@@ -229,36 +218,24 @@ public class DoctorFavoriteListFragment extends Fragment {
 
     private void loadNextPage() {
         GetListDoctorFavoriteService getListDoctorFavoriteService = RetrofitFactory.getInstance().createService(GetListDoctorFavoriteService.class);
-        getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", "5").enqueue(new Callback<MainObjectFavoriteList>() {
+        getListDoctorFavoriteService.getMainObjectFavoriteList(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), currentPage + "", (currentPage + 10) + "").enqueue(new Callback<MainObjectFavoriteList>() {
             @Override
             public void onResponse(Call<MainObjectFavoriteList> call, Response<MainObjectFavoriteList> response) {
                 if(response.code() == 200){
                     MainObjectFavoriteList mainObject = response.body();
-                    // Log.e("haha" , response.body().toString());
-                    List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor().getFavoriteDoctors();
-                    List<Doctor> doctorList = new ArrayList<>();
+                    List<FavoriteDoctor> favoriteDoctors = mainObject.getListFavoriteDoctor();
                     if (favoriteDoctors != null && favoriteDoctors.size() > 0) {
-                        for (FavoriteDoctor favoriteDoctor : favoriteDoctors) {
-                            Doctor doctor = new Doctor();
-                            doctor.setAvatar(favoriteDoctor.getAvatar());
-                            doctor.setFirstName(favoriteDoctor.getFirstName());
-                            doctor.setMiddleName(favoriteDoctor.getLastName());
-                            doctor.setLastName(favoriteDoctor.getLastName());
-                            doctor.setCurrentRating((float) 3.5);
-                            doctorList.add(doctor);
-                        }
 
                         doctorFavoriteListAdapter.removeLoadingFooter();  // 2
                         isLoading = false;   // 3
 
-                        doctorFavoriteListAdapter.addAll(doctorList);   // 4
+                        doctorFavoriteListAdapter.addAll(favoriteDoctors);   // 4
 
-                        if (doctorList.size() == 5) doctorFavoriteListAdapter.addLoadingFooter();  // 5
+                        if (favoriteDoctors.size() == 10) doctorFavoriteListAdapter.addLoadingFooter();  // 5
                         else isLastPage = true;
                     }
-                    pbFavorite.setVisibility(View.GONE);
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
 
             }
@@ -266,7 +243,6 @@ public class DoctorFavoriteListFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectFavoriteList> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                pbFavorite.setVisibility(View.GONE);
             }
         });
 

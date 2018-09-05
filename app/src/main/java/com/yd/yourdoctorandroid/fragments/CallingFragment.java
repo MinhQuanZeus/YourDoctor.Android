@@ -46,6 +46,7 @@ import com.yd.yourdoctorandroid.models.TypeCall;
 import com.yd.yourdoctorandroid.models.VideoCallSession;
 import com.yd.yourdoctorandroid.utils.RxScheduler;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
@@ -198,7 +199,8 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         } else {
             transactionToCalling(videoCallSession.getCalleeId(), videoCallSession.getCallerId(), false);
         }
-        Picasso.with(getContext()).load(videoCallSession.getCalleeAvatar()).transform(new CropCircleTransformation()).into(ivCalleeAvatar);
+        ZoomImageViewUtils.loadCircleImage(getContext(), videoCallSession.getCalleeAvatar(), ivCalleeAvatar);
+
         tvCalleeName.setText(videoCallSession.getCalleeName());
 
         ivDecline.setOnClickListener(new View.OnClickListener() {
@@ -550,11 +552,11 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
     public void startCall() {
         Log.d(TAG, "startCall");
-        if (!(Build.VERSION.SDK_INT < 23 || !checkPermission())) {
-            Log.d(TAG, "request permission");
-            nPermission.requestPermission(getActivity(), Manifest.permission.CAMERA);
-            return;
-        }
+//        if (!(Build.VERSION.SDK_INT < 23 || !checkPermission())) {
+//            Log.d(TAG, "request permission");
+//            nPermission.requestPermission(getActivity(), Manifest.permission.CAMERA);
+//            return;
+//        }
 
         if (rtcClient == null) {
             Log.e(TAG, "AppRTC client is not allocated for a call.");
@@ -594,6 +596,12 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         client.emit("connectedCall", "stop");
         rlCalling.setVisibility(View.GONE);
         rlTimer.setVisibility(View.VISIBLE);
+
+        if (videoCallSession != null){
+            //if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null)
+            tvCallingDoctor.setText(videoCallSession.getCalleeName());
+            //tvCalleeName.setText(videoCallSession.getCalleeName());
+        }
         countTime();
         timerTask.run();
 
@@ -663,7 +671,7 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
             try {
                 JSONObject data = new JSONObject(args[0].toString());
                 Log.d(TAG, data.toString());
-                if (data.getString("response").equalsIgnoreCase("rejected")) {
+                if (data.getString("response").contains("rejected")) {
                     RxScheduler.runOnUi(o -> {
                         logAndToast("Bác sĩ không thể nghe máy lúc này, vui lòng gọi lại sau");
                         disconnect();
@@ -815,10 +823,11 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
 
             @Override
             public void run() {
-                if (!isNetworkConnected()){
+                if (!isNetworkConnected()) {
                     logAndToast("Mất kết nối mạng");
                     stopCalling();
-                };
+                }
+                ;
                 handler.postDelayed(this, 5000);
             }
         }, 5000);
@@ -853,4 +862,5 @@ public class CallingFragment extends Fragment implements IKurentoFragment, NPerm
         return result == PackageManager.PERMISSION_GRANTED &&
                 result1 == PackageManager.PERMISSION_GRANTED;
     }
+
 }

@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.ChatHistoryAdapter;
@@ -141,16 +142,23 @@ public class ListChatHistoryFragment extends Fragment {
                             chatHistoryAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    pbListChatHistory.setVisibility(View.GONE);
+
+
                 } else if (response.code() == 401) {
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
+                }
+                if(pbListChatHistory != null){
+                    pbListChatHistory.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<MainObjectHistoryChat> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
-                pbListChatHistory.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Không tart được dữ liệu", Toast.LENGTH_LONG).show();
+                Log.e("Anhle", "Fail: " + t.getMessage());
+                if(pbListChatHistory != null){
+                    pbListChatHistory.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -178,21 +186,16 @@ public class ListChatHistoryFragment extends Fragment {
                             chatHistoryAdapter.addLoadingFooter();  // 5
                         else isLastPage = true;
                     }
-                    pbListChatHistory.setVisibility(View.GONE);
                 } else if (response.code() == 401) {
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
-
             }
 
             @Override
             public void onFailure(Call<MainObjectHistoryChat> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                pbListChatHistory.setVisibility(View.GONE);
             }
         });
-
-
     }
 
     @Override

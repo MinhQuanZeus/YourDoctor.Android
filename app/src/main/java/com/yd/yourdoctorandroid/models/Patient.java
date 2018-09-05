@@ -146,8 +146,8 @@ public class Patient {
         this.role = role;
     }
 
-    public float getRemainMoney() {
-        return remainMoney;
+    public int getRemainMoney() {
+        return (int) Math.round(remainMoney);
     }
 
     public void setRemainMoney(float remainMoney) {
