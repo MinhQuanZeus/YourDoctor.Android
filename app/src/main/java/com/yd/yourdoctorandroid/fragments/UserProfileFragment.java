@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -168,6 +169,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     Patient currentPatient;
 
 
+    //Update data
+    TextView tvNameUser;
+    ImageView ivAvaUser;
+    ImageView ivAvaUserBackGroud;
+    public void setData(TextView tvNameUser, ImageView ivAvaUser, ImageView ivAvaUserBackGroud){
+        this.tvNameUser = tvNameUser;
+        this.ivAvaUser = ivAvaUser;
+        this.ivAvaUserBackGroud = ivAvaUserBackGroud;
+    }
+
+
     public UserProfileFragment() {
         // Required empty public constructor
     }
@@ -224,7 +236,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             edPhone.setText(currentPatient.getPhoneNumber());
             edAddress.setText(currentPatient.getAddress());
             edBirthday.setText(currentPatient.getBirthday());
-            tv_remainMoney.setText(currentPatient.getRemainMoney() + " đ");
+            tv_remainMoney.setText("Số dư : " + Utils.formatStringNumber(currentPatient.getRemainMoney()) + " đ");
             switch (currentPatient.getGender()) {
                 case 1: {
                     rbMale.setChecked(true);
@@ -313,7 +325,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         dialogChangePassword.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (onValidatePassword(et_new_password.getText().toString(), et_confirm_new_password.getText().toString(), tv_message_change_password)) {
+                if (onValidatePassword(et_old_password.getText().toString(),et_new_password.getText().toString(), et_confirm_new_password.getText().toString(), tv_message_change_password)) {
                     pbProfilePatient.setVisibility(View.VISIBLE);
                     PasswordRequest passwordRequest = new PasswordRequest();
                     passwordRequest.setId(currentPatient.getId());
@@ -329,17 +341,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                             tv_message_change_password.setVisibility(View.VISIBLE);
                             PasswordResponse passwordResponse = response.body();
                             if (response.code() == 200 && passwordResponse.isChangePasswordSuccess()) {
-                                tv_message_change_password.setText(passwordResponse.getMessage().toString());
+                                tv_message_change_password.setText("Thay đổi mật khẩu thành công");
                                 tv_message_change_password.setTextColor(getResources().getColor(R.color.colorPrimary));
                                 et_old_password.setText("");
                                 et_new_password.setText("");
                                 et_confirm_new_password.setText("");
                             } else if(response.code() == 401) {
-                                Utils.backToLogin(getContext());
+                                Utils.backToLogin(getActivity().getApplicationContext());
 
                             }else {
                                 tv_message_change_password.setTextColor(getResources().getColor(R.color.red));
-                                tv_message_change_password.setText("Không thể thay đổi mật khẩu do lỗi máy chủ!");
+                                tv_message_change_password.setText("Mật khẩu cũ không đúng!");
                             }
                             pbProfilePatient.setVisibility(View.GONE);
 
@@ -389,9 +401,14 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     }
 
     private void updateBirthDay(Calendar myCalendar) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR , -100 );
+
         if (myCalendar.getTimeInMillis() >= (Calendar.getInstance().getTimeInMillis())) {
             Toast.makeText(getContext(), "Bạn không thể chọn ngày sinh của bạn sau thời gian hiện tại", Toast.LENGTH_LONG).show();
-        } else {
+        }else if(myCalendar.getTimeInMillis() <= calendar.getTimeInMillis()){
+            Toast.makeText(getContext(), "Năm sinh của bạn không hợp lệ", Toast.LENGTH_LONG).show();
+        }else {
             String myFormat = "dd/MM/yyyy";
             SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
             edBirthday.setText(sdf.format(myCalendar.getTime()));
@@ -484,6 +501,16 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         currentPatient.setBirthday(patientResponse.getUpdateSuccess().getBirthday());
                         SharedPrefs.getInstance().put(USER_INFO, currentPatient);
                         Toast.makeText(getContext(), "Chỉnh sửa thành công", Toast.LENGTH_LONG).show();
+
+                        if(tvNameUser != null && ivAvaUser != null &&  ivAvaUserBackGroud != null){
+                            tvNameUser.setText(currentPatient.getFullName());
+                            ivAvaUserBackGroud.setImageResource(R.drawable.your_doctor_logo);
+                            ivAvaUser.setImageResource(R.drawable.your_doctor_logo);
+                            ZoomImageViewUtils.loadImageManual(getActivity().getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUserBackGroud);
+                            ZoomImageViewUtils.loadCircleImage(getActivity().getApplicationContext(),currentPatient.getAvatar().toString(),ivAvaUser);
+                        }
+
+
                         setScreenFunction(TYPE_CANCEL);
                     }
                 } else {
@@ -559,15 +586,34 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         String fname = edFname.getText().toString();
         String lname = edLname.getText().toString();
+        String mName = edMname.getText().toString();
 
         if (fname == null || fname.trim().length() == 0) {
             tilFullname.setError(getResources().getString(R.string.fname_required));
             return false;
+        }else {
+            if(!Utils.verifyVietnameesName(fname)){
+                tilFullname.setError("Họ không hợp lệ");
+                return false;
+            }
         }
+
+        if(mName != null && mName.trim().length() != 0){
+            if(!Utils.verifyVietnameesName(mName)){
+                tilFullname.setError("Tên đệm không hợp lệ");
+                return false;
+            }
+        }
+
 
         if (lname == null || lname.trim().length() == 0) {
             tilFullname.setError(getResources().getString(R.string.lname_required));
             return false;
+        }else {
+            if(!Utils.verifyVietnameesName(lname)){
+                tilFullname.setError("Tên không hợp lệ");
+                return false;
+            }
         }
 
         tilFullname.setError(null);
@@ -575,11 +621,21 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         return true;
     }
 
-    private boolean onValidatePassword(String newPassword, String confirmPassword, TextView tv_message_change_password) {
+    private boolean onValidatePassword(String oldPassword, String newPassword, String confirmPassword, TextView tv_message_change_password) {
 
         boolean isValidate = true;
         Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
-        if (!pattern.matcher(newPassword).matches()) {
+
+        if(oldPassword.equals("") || newPassword.equals("") || confirmPassword.equals("")){
+            tv_message_change_password.setText("Bạn phải nhập đầy đủ các ô mật khẩu!");
+            tv_message_change_password.setVisibility(View.VISIBLE);
+            isValidate = false;
+        }
+        else if(oldPassword.equals(newPassword)){
+            tv_message_change_password.setText("Mật khẩu mới và mật khẩu cũ không thể giống nhau!");
+            tv_message_change_password.setVisibility(View.VISIBLE);
+            isValidate = false;
+        } else if(!pattern.matcher(newPassword).matches()) {
             tv_message_change_password.setText(getResources().getString(R.string.password_rule));
             tv_message_change_password.setVisibility(View.VISIBLE);
             isValidate = false;

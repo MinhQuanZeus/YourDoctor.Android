@@ -51,10 +51,8 @@ public class ImageUtils {
 
     public void displayAttachImageDialog() {
         CharSequence[] items;
-        if (mImageToBeAttached != null)
-            items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh", "Hủy"};
-        else
-            items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh"};
+
+        items = new CharSequence[]{"Chụp ảnh", "Chọn ảnh"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(fragmentActivity);
         builder.setItems(items, new DialogInterface.OnClickListener() {

@@ -28,6 +28,15 @@
             android:layout_alignParentEnd="true">
 
             <ImageView
+                android:id="@+id/ivReportConversation"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:layout_toStartOf="@id/ivInfo"
+                app:srcCompat="@drawable/ic_report_problem_black_24dp" />
+
+            <ImageView
                 android:id="@+id/ivInfo"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
@@ -49,7 +58,16 @@
 
     </RelativeLayout>
 
-
+    <TextView
+        android:id="@+id/tv_content_question"
+        android:layout_below="@id/tb_rl"
+        android:scrollbars = "vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:maxLines="5"/>
 
     <!--</RelativeLayout>-->
     <!--android:src="@drawable/ic_done_all_black_24dp"-->
@@ -58,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/viewLine"
-        android:layout_below="@id/tb_rl"
+        android:layout_below="@id/tv_content_question"
         android:layout_margin="10dp" />
 
     <!-- A horizontal line between the chatbox and RecyclerView -->

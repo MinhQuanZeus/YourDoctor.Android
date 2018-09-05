@@ -1,143 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primary_text"
-    android:clickable="true"
-    tools:context=".fragments.AdvisoryMenuFragment">
-
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/tb_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:titleTextColor="@color/white" />
-
-
-    <RadioGroup
-        android:id="@+id/rb_group"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tb_main"
-        android:orientation="vertical"
-        android:layout_marginStart="10dp">
-
-        <RadioButton
-            android:id="@+id/rb_choose_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/colorPrimaryDark"
-            android:checked="true"
-            android:text="@string/chat" />
-
-        <RadioButton
-
-            android:id="@+id/rb_choose_video_call"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@color/colorPrimaryDark"
-            android:text="@string/videocall" />
-    </RadioGroup>
-
-
-    <TextView
-        android:id="@+id/tv_speclist"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_below="@id/rb_group"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:text="@string/specialist"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold" />
-
-    <Spinner
-        android:id="@+id/sp_speclist"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@id/rb_group"
-        android:layout_marginTop="5dp"
-        android:layout_toEndOf="@id/tv_speclist"
-        android:textAlignment="center" />
-
     <RelativeLayout
-        android:id="@+id/rl_doctorChoose"
-        android:layout_width="match_parent"
-        android:layout_height="90dp"
-        android:layout_below="@id/sp_speclist"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        >
-
-        <TextView
-            android:id="@+id/tv_logo_chooseDoctor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@id/btn_choose_Doctor"
-            android:text="@string/choose_doctor"
-            android:layout_marginStart="10dp"/>
-
-        <ImageView
-            android:id="@+id/iv_item_doctor_chosen"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_below="@id/tv_logo_chooseDoctor"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:id="@+id/tv_name_doctor_chosen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_logo_chooseDoctor"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@id/iv_item_doctor_chosen"
-            android:layout_toStartOf="@id/btn_choose_Doctor"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <RatingBar
-            android:id="@+id/rb_doctorChosen"
-            style="@style/customRatingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_name_doctor_chosen"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/iv_item_doctor_chosen"
-            android:isIndicator="true"
-            android:progressTint="@color/duskYellow" />
-
-        <Button
-            android:id="@+id/btn_choose_Doctor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/buttonborder"
-            android:text="Chọn"
-            android:textColor="@color/colorPrimaryDark" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rl_chat"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/btn_post"
-        android:layout_below="@id/rl_doctorChoose"
-        android:layout_margin="10dp"
-        android:visibility="visible">
+        android:background="@color/primary_text"
+        android:clickable="true"
+        tools:context=".fragments.AdvisoryMenuFragment">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/tb_main"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            app:titleTextColor="@color/white" />
+
+
+        <TextView
+            android:id="@+id/tv_speclist"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_below="@id/tb_main"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@string/specialist"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_name_specialist_choice"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/tb_main"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_toEndOf="@id/tv_speclist" />
 
         <TextView
             android:id="@+id/tv_typeChat"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/tv_speclist"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
             android:gravity="center"
             android:text="@string/long_question"
             android:textAlignment="center"
@@ -148,77 +61,117 @@
             android:id="@+id/sp_typeChat"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentTop="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@id/tv_name_specialist_choice"
             android:layout_toEndOf="@id/tv_typeChat"
             android:textAlignment="center" />
 
-        <EditText
-            android:id="@+id/et_question"
+        <TextView
+            android:layout_below="@id/tv_typeChat"
+            android:id="@+id/tv_logo_chooseDoctor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_toStartOf="@id/btn_choose_Doctor"
+            android:text="@string/choose_doctor" />
+
+        <Button
+            android:id="@+id/btn_choose_Doctor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@id/sp_typeChat"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/buttonborder"
+            android:text="Chọn"
+            android:textColor="@color/white" />
+        <RelativeLayout
+            android:id="@+id/rl_doctor_choice"
+            android:layout_below="@id/btn_choose_Doctor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+            <ImageView
+                android:id="@+id/iv_item_doctor_chosen"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_status_menu"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_alignBottom="@+id/iv_item_doctor_chosen"
+                android:layout_alignEnd="@+id/iv_item_doctor_chosen"
+                android:src="@drawable/circle_red_line"
+                android:layout_marginEnd="6dp"
+                android:visibility="invisible"
+                civ_border_width="2dp"
+                civ_border_color="@color/white"
+                />
+
+            <TextView
+                android:id="@+id/tv_name_doctor_chosen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:layout_toEndOf="@id/iv_item_doctor_chosen"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <RatingBar
+                android:id="@+id/rb_doctorChosen"
+                style="@style/customRatingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/tv_name_doctor_chosen"
+                android:layout_marginStart="10dp"
+                android:layout_toEndOf="@id/iv_item_doctor_chosen"
+                android:isIndicator="true"
+                android:visibility="invisible"
+                android:progressTint="@color/duskYellow" />
+
+        </RelativeLayout>
+
+
+        <EditText
+            android:id="@+id/et_question"
+            android:layout_margin="16dp"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl_doctor_choice"
             android:background="@drawable/edit_text_background"
             android:backgroundTintMode="@color/colorPrimaryDark"
             android:hint="@string/content_question"
             android:lines="5"
             android:textAlignment="textStart" />
 
-        <!--<TextView-->
-            <!--android:id="@+id/tv_approcha"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@id/et_question"-->
-            <!--android:layout_marginTop="10dp"-->
-            <!--android:text="@string/dateline_reply"-->
-            <!--android:textAlignment="center"-->
-            <!--android:textColor="@color/colorPrimaryDark"-->
-            <!--android:textStyle="bold" />-->
 
-        <!--<RelativeLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_below="@+id/tv_approcha"-->
-            <!--android:layout_marginTop="10dp"-->
-            <!--android:gravity="center">-->
+        <Button
+            android:id="@+id/btn_post"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/et_question"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/buttonstyleithgradient"
+            android:gravity="center"
+            android:text="@string/bottom_button_post_advisory"
+            android:textColor="@color/primary_text" />
 
-            <!--<Button-->
-                <!--android:id="@+id/btn_time"-->
-                <!--android:layout_width="130dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:background="@drawable/buttonborder"-->
-                <!--android:text="@string/btn_time"-->
-                <!--android:textColor="@color/colorPrimaryDark" />-->
-
-            <!--<Button-->
-                <!--android:id="@+id/btn_date"-->
-                <!--android:layout_width="130dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginStart="20dp"-->
-                <!--android:layout_toEndOf="@id/btn_time"-->
-                <!--android:background="@drawable/buttonborder"-->
-                <!--android:text="@string/btn_Date"-->
-                <!--android:textColor="@color/colorPrimaryDark" />-->
-        <!--</RelativeLayout>-->
+        <ProgressBar
+            android:id="@+id/pb_ranking"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_post"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/buttonstyleithgradient"
-        android:gravity="center"
-        android:text="@string/bottom_button_post_advisory"
-        android:textColor="@color/primary_text" />
-    <ProgressBar
-        android:id="@+id/pb_ranking"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        />
-
-</RelativeLayout>

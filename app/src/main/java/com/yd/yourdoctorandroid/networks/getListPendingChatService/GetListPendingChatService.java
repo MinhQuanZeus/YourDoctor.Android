@@ -10,6 +10,6 @@ import retrofit2.http.Query;
 
 public interface GetListPendingChatService {
     @GET("chatshistorys/getListConversationPending/{id_patient}?")
-    Call<MainObjectNotification> getListPendingChatService(@Header("Authorization") String jwt,
+    Call<MainPendingResponse> getListPendingChatService(@Header("Authorization") String jwt,
                                                             @Path("id_patient") String id_patient);
 }

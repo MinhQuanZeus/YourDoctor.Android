@@ -21,9 +21,9 @@ public class RetrofitFactory {
 
     private RetrofitFactory() {
         final OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(2000, TimeUnit.SECONDS)
-                .writeTimeout(2000, TimeUnit.SECONDS)
-                .readTimeout(3000, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(SERVER_URL)

@@ -1,18 +1,20 @@
 package com.yd.yourdoctorandroid.networks.getListDoctorFavorite;
 
 public class FavoriteDoctor {
-    private String _id;
+    private String doctorId;
     private String firstName;
     private String middleName;
     private String lastName;
     private String avatar;
+    private float currentRating;
+    private String specialist;
 
-    public String get_id() {
-        return _id;
+    public String getDoctorId() {
+        return doctorId;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setDoctorId(String doctorId) {
+        this.doctorId = doctorId;
     }
 
     public String getFirstName() {
@@ -45,5 +47,29 @@ public class FavoriteDoctor {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public float getCurrentRating() {
+        return currentRating;
+    }
+
+    public void setCurrentRating(float currentRating) {
+        this.currentRating = currentRating;
+    }
+
+    public String getSpecialist() {
+        return specialist;
+    }
+
+    public void setSpecialist(String specialist) {
+        this.specialist = specialist;
+    }
+
+    public String getFullName() {
+        if(!this.middleName.isEmpty()) {
+            return this.firstName + " " + this.middleName + " " + this.lastName;
+        }else {
+            return this.firstName + " " + this.lastName;
+        }
     }
 }

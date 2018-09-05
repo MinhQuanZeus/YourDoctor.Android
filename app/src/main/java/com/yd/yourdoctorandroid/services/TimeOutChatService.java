@@ -14,6 +14,7 @@ import com.yd.yourdoctorandroid.networks.sendListChatToCheck.SendListChatToCheck
 import com.yd.yourdoctorandroid.utils.LoadDefaultModel;
 import com.yd.yourdoctorandroid.utils.NetworkUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,7 @@ public class TimeOutChatService extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         String idChat = intent.getStringExtra("idChat");
-        LoadDefaultModel.getInstance().addIdChatToListTimeOut(idChat);
-
+        Utils.addIdChatToListTimeOut(idChat);
         if (NetworkUtils.isOnline(context)) {
             List<String> listChatTimeOut = SharedPrefs.getInstance().get("listChatTimeOutNot", List.class);
             checking(listChatTimeOut);

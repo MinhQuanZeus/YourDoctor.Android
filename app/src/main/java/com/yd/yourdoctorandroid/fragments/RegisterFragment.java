@@ -40,8 +40,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.yd.yourdoctorandroid.BuildConfig;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.activities.MainActivity;
 import com.yd.yourdoctorandroid.managers.AzureImageManager;
 import com.yd.yourdoctorandroid.networks.RetrofitFactory;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.GetListIDFavoriteDoctor;
+import com.yd.yourdoctorandroid.networks.getListDoctorFavorite.MainObjectIDFavorite;
 import com.yd.yourdoctorandroid.networks.models.AuthResponse;
 import com.yd.yourdoctorandroid.networks.models.CommonErrorResponse;
 import com.yd.yourdoctorandroid.models.Patient;
@@ -148,6 +151,8 @@ public class RegisterFragment extends Fragment {
     TextInputLayout tilPassword;
     @BindView(R.id.til_confirm_password)
     TextInputLayout tilConfirmPassword;
+    @BindView(R.id.tb_main)
+    Toolbar toolbar;
 
     private Unbinder unbinder;
 
@@ -166,9 +171,8 @@ public class RegisterFragment extends Fragment {
     }
 
     private void setUp(View view) {
+        ButterKnife.bind(this, view);
         filename = UUID.randomUUID().toString();
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.tb_main);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
         toolbar.setTitle(R.string.sign_up);
         toolbar.setTitleTextColor(getResources().getColor(R.color.primary_text));
@@ -225,48 +229,58 @@ public class RegisterFragment extends Fragment {
         });
     }
 
-    private String uploadImage() throws Exception {
-        Log.d("UPLOAD", "uploadImage");
-        final String imageName = AzureImageManager.randomString(10);
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            mImageToBeAttached.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-            byte[] bitmapdata = bos.toByteArray();
-            final ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
-            final int imageLength = bs.available();
-
-            final Handler handler = new Handler();
-
-            Thread th = new Thread(new Runnable() {
-                public void run() {
-
-                    try {
-                        final String fileName = AzureImageManager.UploadImage(imageName, bs, imageLength);
-                        Log.d("UPLOAD", "Image");
-                    } catch (Exception e) {
-                        Log.d("UPLOAD", e.getMessage());
-                        try {
-                            throw new Exception("error");
-                        } catch (Exception e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                }
-            });
-            th.start();
-        } catch (Exception ex) {
-            Log.d("UPLOAD", ex.toString());
-            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
-            return null;
-        }
-        return imageName;
-    }
+//    private String uploadImage() throws Exception {
+//        final String imageName = AzureImageManager.randomString(10);
+//        try {
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            mImageToBeAttached.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+//            byte[] bitmapdata = bos.toByteArray();
+//            final ByteArrayInputStream bs = new ByteArrayInputStream(bitmapdata);
+//            final int imageLength = bs.available();
+//
+//            final Handler handler = new Handler();
+//
+//            Thread th = new Thread(new Runnable() {
+//                public void run() {
+//
+//                    try {
+//                        final String fileName = AzureImageManager.UploadImage(imageName, bs, imageLength);
+//                        Log.d("UPLOAD", "Image");
+//                    } catch (Exception e) {
+//                        Log.d("UPLOAD", e.getMessage());
+//                        try {
+//                            throw new Exception("error");
+//                        } catch (Exception e1) {
+//                            e1.printStackTrace();
+//                        }
+//                    }
+//                }
+//            });
+//            th.start();
+//        } catch (Exception ex) {
+//            Log.d("UPLOAD", ex.toString());
+//            Toast.makeText(getActivity(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+//            return null;
+//        }
+//        return imageName;
+//    }
 
     private void updateBirthDay(Calendar myCalendar) {
-        String myFormat = "dd/MM/yyyy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
-        edBirthday.setText(sdf.format(myCalendar.getTime()));
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -100);
+
+        if (myCalendar.getTimeInMillis() >= (Calendar.getInstance().getTimeInMillis())) {
+            Toast.makeText(getContext(), "Bạn không thể chọn ngày sinh của bạn sau thời gian hiện tại", Toast.LENGTH_LONG).show();
+        } else if (myCalendar.getTimeInMillis() <= calendar.getTimeInMillis()) {
+            Toast.makeText(getContext(), "Năm sinh của bạn không hợp lệ", Toast.LENGTH_LONG).show();
+        } else {
+            String myFormat = "dd/MM/yyyy"; //In which you need put here
+            SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+            edBirthday.setText(sdf.format(myCalendar.getTime()));
+        }
+
     }
 
     private void onSubmit() {
@@ -287,7 +301,7 @@ public class RegisterFragment extends Fragment {
         String birthday = edBirthday.getText().toString();
         String address = edAddress.getText().toString();
         int gender = getGender();
-        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, 1, gender, birthday, address, 1,0, null);
+        Patient patient = new Patient(null, fname, mname, lname, phoneNumber, password, avatar, 1, gender, birthday, address, 1, 0, null);
         MultipartBody.Part avatarUpload = null;
         // Map is used to multipart the file using okhttp3.RequestBody
         File file = null;
@@ -313,24 +327,19 @@ public class RegisterFragment extends Fragment {
                             }
                         }
                         if (response.code() == 200 || response.code() == 201) {
+                            Log.e("RegisterPatient",response.body().getJwtToken());
                             SharedPrefs.getInstance().put(JWT_TOKEN, response.body().getJwtToken());
 
-                            if(SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null){
+                            if (SharedPrefs.getInstance().get(USER_INFO, Patient.class) != null) {
                                 FirebaseMessaging.getInstance().unsubscribeFromTopic(SharedPrefs.getInstance().get(USER_INFO, Patient.class).getId());
                             }
 
                             SharedPrefs.getInstance().put(USER_INFO, response.body().getPatient());
                             FirebaseMessaging.getInstance().subscribeToTopic(response.body().getPatient().getId());
-                            SocketUtils.getInstance().reConnect();
-                            LoadDefaultModel.getInstance().loadFavoriteDoctor( response.body().getPatient(), getActivity(), btnSignUp);
-
+                            LoadDefaultModel.getInstance().registerServiceCheckNetwork(getActivity().getApplicationContext());
+                            loadFavoriteDoctor(SharedPrefs.getInstance().get(USER_INFO,Patient.class));
                         } else {
-                            CommonErrorResponse commonErrorResponse = parseToCommonError(response);
-                            if (commonErrorResponse.getError() != null) {
-                                String error = Utils.getStringResourceByString(getContext(), commonErrorResponse.getError());
-                                Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT).show();
-                                Log.d("RESPONSE", error);
-                            }
+                            Toast.makeText(getActivity(), "Đăng ký không thành công", Toast.LENGTH_LONG).show();
                             btnSignUp.revertAnimation();
                         }
                     }
@@ -349,6 +358,37 @@ public class RegisterFragment extends Fragment {
                         }
                     }
                 });
+    }
+
+    public void loadFavoriteDoctor(final Patient currentPatient) {
+        GetListIDFavoriteDoctor getListIDFavoriteDoctor = RetrofitFactory.getInstance().createService(GetListIDFavoriteDoctor.class);
+        getListIDFavoriteDoctor.getMainObjectIDFavorite(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId()).enqueue(new Callback<MainObjectIDFavorite>() {
+            @Override
+            public void onResponse(Call<MainObjectIDFavorite> call, Response<MainObjectIDFavorite> response) {
+                if(response.code() == 200){
+                    MainObjectIDFavorite mainObject = response.body();
+                    if (mainObject != null) {
+                        Patient newPatient = currentPatient;
+                        newPatient.setFavoriteDoctors(mainObject.getListIDFavoriteDoctor());
+                        SharedPrefs.getInstance().put("USER_INFO", newPatient);
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(intent);
+                    }
+                }else {
+                    Toast.makeText(getContext(), "Đăng ký không thành công!", Toast.LENGTH_LONG).show();
+                }
+                if(btnSignUp != null) btnSignUp.revertAnimation();
+            }
+
+            @Override
+            public void onFailure(Call<MainObjectIDFavorite> call, Throwable t) {
+                Toast.makeText(getContext(), "Kết nốt mạng có vấn đề, không thể tải dữ liệu", Toast.LENGTH_LONG).show();
+                if(btnSignUp != null) btnSignUp.revertAnimation();
+            }
+        });
+
     }
 
     private void enableAll() {
@@ -407,16 +447,36 @@ public class RegisterFragment extends Fragment {
         if (fname == null || fname.trim().length() == 0) {
             isValidate = false;
             tilFname.setError(getResources().getString(R.string.fname_required));
-        } else {
+        }else if(!Utils.verifyVietnameesName(fname)){
+            isValidate = false;
+            tilFname.setError("Họ Không hợp lệ");
+        }
+        else {
             tilFname.setError(null);
         }
 
         if (lname == null || lname.trim().length() == 0) {
             isValidate = false;
             tillname.setError(getResources().getString(R.string.lname_required));
-        } else {
+        }else if(!Utils.verifyVietnameesName(lname)){
+            isValidate = false;
+            tillname.setError("Tên Không hợp lệ");
+        }
+        else {
             tillname.setError(null);
         }
+
+        if(mname != null && mname.length() > 0){
+            if(!Utils.verifyVietnameesName(mname)){
+                isValidate = false;
+                tilMname.setError("Tên đệm Không hợp lệ");
+            }else {
+                tilMname.setError(null);
+            }
+        }else {
+            tilMname.setError(null);
+        }
+
 
         if (!pattern.matcher(password).matches()) {
             isValidate = false;
@@ -552,7 +612,6 @@ public class RegisterFragment extends Fragment {
         intent.setType("image/*");
         startActivityForResult(Intent.createChooser(intent, "Select File"), REQUEST_CHOOSE_PHOTO);
     }
-
 
 
     private void displayAttachImageDialog() {

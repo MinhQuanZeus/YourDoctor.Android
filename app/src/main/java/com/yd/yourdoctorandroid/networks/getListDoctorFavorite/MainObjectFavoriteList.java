@@ -1,13 +1,15 @@
 package com.yd.yourdoctorandroid.networks.getListDoctorFavorite;
 
-public class MainObjectFavoriteList {
-    private ListFavoriteDoctor listFavoriteDoctor;
+import java.util.List;
 
-    public ListFavoriteDoctor getListFavoriteDoctor() {
+public class MainObjectFavoriteList {
+    private List<FavoriteDoctor> listFavoriteDoctor;
+
+    public List<FavoriteDoctor> getListFavoriteDoctor() {
         return listFavoriteDoctor;
     }
 
-    public void setListFavoriteDoctor(ListFavoriteDoctor listFavoriteDoctor) {
+    public void setListFavoriteDoctor(List<FavoriteDoctor> listFavoriteDoctor) {
         this.listFavoriteDoctor = listFavoriteDoctor;
     }
 }

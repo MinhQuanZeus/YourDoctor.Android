@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:orientation="vertical"
+
+    tools:context=".fragments.ConfirmEndChatFragment">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tbConfirmEnd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tbConfirmEnd"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/iv_ava_confirm"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/tv_logo_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/iv_ava_confirm"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Cuộc tư vấn với BS. Le thế anh đã kết thúc"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/tv_messgae_confirm"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/tv_logo_confirm"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:maxLines="5"-->
+            <!--android:text="Cuộc tư vấn với BS. Le thế anh đã kết thúc"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="17sp" />-->
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_logo_confirm"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp">
+
+            <Button
+                android:id="@+id/btn_rate_confirm"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/buttonstyleithgradient"
+                android:text="Đánh giá"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_report"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/btn_rate_confirm"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/buttonstyleithgradient"
+                android:text="Báo cáo"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/btn_report"
+                android:layout_marginStart="30dp"
+                android:background="@drawable/buttonstyleithgradient"
+                android:text="Xác nhận"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>

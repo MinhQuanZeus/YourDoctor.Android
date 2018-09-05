@@ -18,6 +18,7 @@ import android.widget.ProgressBar;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.adapters.DoctorFavoriteListAdapter;
 import com.yd.yourdoctorandroid.adapters.NotificationAdapter;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.managers.PaginationScrollListener;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Notification;
@@ -30,6 +31,11 @@ import com.yd.yourdoctorandroid.networks.getListNotification.GetListNotification
 import com.yd.yourdoctorandroid.networks.getListNotification.MainObjectNotification;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
 import com.yd.yourdoctorandroid.utils.Utils;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +81,7 @@ public class NotifyFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_notify, container, false);
         ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
         currentPatient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
         notificationAdapter = new NotificationAdapter(getContext());
         setUpListNotification();
@@ -127,7 +134,9 @@ public class NotifyFragment extends Fragment {
     }
 
     private void loadFirstPage() {
-        Log.e("haha", currentPatient.getId());
+        if(pbNotificaton != null){
+            pbNotificaton.setVisibility(View.VISIBLE);
+        }
         GetListNotificationService getListNotificationService = RetrofitFactory.getInstance().createService(GetListNotificationService.class);
         getListNotificationService.getListNotificationService(SharedPrefs.getInstance().get("JWT_TOKEN", String.class),currentPatient.getId(), 10 +"", currentPage + "").enqueue(new Callback<MainObjectNotification>() {
             @Override
@@ -142,16 +151,21 @@ public class NotifyFragment extends Fragment {
                         if (notifications.size() == 10) notificationAdapter.addLoadingFooter();
                         else isLastPage = true;
                     }
-                    pbNotificaton.setVisibility(View.GONE);
+
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
+                if(pbNotificaton != null){
+                    pbNotificaton.setVisibility(View.GONE);
+                }
+
             }
 
             @Override
             public void onFailure(Call<MainObjectNotification> call, Throwable t) {
-                Log.d("Anhle", "Fail: " + t.getMessage());
-                pbNotificaton.setVisibility(View.GONE);
+                if(pbNotificaton != null){
+                    pbNotificaton.setVisibility(View.GONE);
+                }
             }
         });
 
@@ -169,7 +183,6 @@ public class NotifyFragment extends Fragment {
 
                     if (notifications != null && notifications.size() > 0) {
 
-
                         notificationAdapter.removeLoadingFooter();  // 2
                         isLoading = false;   // 3
 
@@ -178,9 +191,8 @@ public class NotifyFragment extends Fragment {
                         if (notifications.size() == 5) notificationAdapter.addLoadingFooter();  // 5
                         else isLastPage = true;
                     }
-                    //pbNotificaton.setVisibility(View.GONE);
                 }else if(response.code() == 401){
-                    Utils.backToLogin(getContext());
+                    Utils.backToLogin(getActivity().getApplicationContext());
                 }
 
             }
@@ -188,15 +200,33 @@ public class NotifyFragment extends Fragment {
             @Override
             public void onFailure(Call<MainObjectNotification> call, Throwable t) {
                 Log.d("Anhle", "Fail: " + t.getMessage());
-                //pbNotificaton.setVisibility(View.GONE);
             }
         });
 
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(EventSend eventSend) {
+        if(eventSend.getType() == 3){
+            try{
+                notificationAdapter.clear();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadFirstPage();
+                    }
+                }, 1000);
+            }catch(Exception e){
+
+            }
+
+        }
+    }
+
     @Override
     public void onDestroyView() {
+        EventBus.getDefault().unregister(this);
         super.onDestroyView();
     }
 }

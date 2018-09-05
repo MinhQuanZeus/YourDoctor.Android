@@ -12,14 +12,21 @@ import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.yd.yourdoctorandroid.R;
+import com.yd.yourdoctorandroid.YourDoctorApplication;
+import com.yd.yourdoctorandroid.activities.AuthActivity;
 import com.yd.yourdoctorandroid.activities.ChatActivity;
+import com.yd.yourdoctorandroid.events.EventSend;
 import com.yd.yourdoctorandroid.models.Doctor;
 import com.yd.yourdoctorandroid.models.Patient;
 import com.yd.yourdoctorandroid.utils.NotificationUtils;
 import com.yd.yourdoctorandroid.utils.SharedPrefs;
+import com.yd.yourdoctorandroid.utils.Utils;
+
+import org.greenrobot.eventbus.EventBus;
 
 
 public class YDFirebaseMessagingService extends FirebaseMessagingService {
@@ -31,6 +38,8 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     private String storageId;
     private String message;
     private String createTime;
+    private String remainMoney;
+    private String levelReport;
 
     private String title;
     private String description;
@@ -41,6 +50,8 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
     private PendingIntent pendingIntent;
     private NotificationCompat.Builder builder;
     private NotificationManager notifManager;
+    private Patient patient;
+    private TaskStackBuilder stackBuilder;
 
     public YDFirebaseMessagingService() {
         super();
@@ -48,6 +59,7 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        //if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) == null) return;
         if (remoteMessage == null) {
             Log.e(TAG, "Notify is null");
             return;
@@ -55,13 +67,25 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             senderId = remoteMessage.getData().get("senderId");
             nameSender = remoteMessage.getData().get("nameSender");
             receiveId = remoteMessage.getData().get("receiveId");
-            type = Integer.parseInt(remoteMessage.getData().get("type"));
+            try{
+                type = Integer.parseInt(remoteMessage.getData().get("type"));
+            }catch (Exception e){
+
+            }
             storageId = remoteMessage.getData().get("storageId");
             message = remoteMessage.getData().get("message");
             createTime = remoteMessage.getData().get("createTime");
+            remainMoney = remoteMessage.getData().get("remainMoney");
+            levelReport = remoteMessage.getData().get("levelReport");
 
-            if(SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null){
-                showNotification();
+            if (SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                if(type == 5 && levelReport != null && levelReport.equals("5")){
+                    showNotification();
+                }else {
+                    showNotification();
+                    EventBus.getDefault().post(new EventSend(3));
+                }
+
             }
 
         }
@@ -89,15 +113,15 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                 case 1: {
                     intent = new Intent(getApplicationContext(), ChatActivity.class);
                     Log.e("Notify is here", "Notify is here");
-                    Log.e("sender id " , senderId);
-                    Log.e("storageId" , storageId);
-                    intent.putExtra("chatHistoryId",storageId);
-                    intent.putExtra("doctorChoiceId",senderId);
+                    Log.e("sender id ", senderId);
+                    Log.e("storageId", storageId);
+                    intent.putExtra("chatHistoryId", storageId);
+                    intent.putExtra("doctorChoiceId", senderId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder = TaskStackBuilder.create(this);
                     stackBuilder.addNextIntent(intent);
-                    PendingIntent pendingIntent =
+                    pendingIntent =
                             stackBuilder.getPendingIntent(
                                     0,
                                     PendingIntent.FLAG_UPDATE_CURRENT
@@ -109,16 +133,86 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setContentText(message)  // required
                             .setDefaults(Notification.DEFAULT_ALL)
                             .setAutoCancel(true)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setContentIntent(pendingIntent)
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     break;
                 }
                 case 3: {
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try {
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        } catch (Exception e) {
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
 
                     builder.setContentTitle("Thông báo Thanh Toán")  // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required
                             .setContentText(message)  // required
+                            .setContentIntent(pendingIntent)
                             .setDefaults(Notification.DEFAULT_ALL)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
+                            .setAutoCancel(true)
+                            .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+                    break;
+                }case 5:{
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try {
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        } catch (Exception e) {
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
+
+                    try{
+                        if(levelReport != null && levelReport.equals("5")){
+                            YourDoctorApplication.self().getSocket().disconnect();
+                            Utils.backToLogin(getApplicationContext());
+                        }
+                    }catch (Exception e){
+
+                    }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
+                    builder.setContentTitle("Thông báo Báo cáo người dùng")  // required
+                            .setSmallIcon(R.drawable.your_doctor_logo) // required
+                            .setContentText(message)  // required
+                            .setContentIntent(pendingIntent)
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setAutoCancel(true)
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
                     break;
@@ -133,13 +227,13 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
             switch (type) {
                 case 1: {
                     intent = new Intent(getApplicationContext(), ChatActivity.class);
-                    intent.putExtra("chatHistoryId",storageId);
-                    intent.putExtra("doctorChoiceId",senderId);
+                    intent.putExtra("chatHistoryId", storageId);
+                    intent.putExtra("doctorChoiceId", senderId);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder = TaskStackBuilder.create(this);
                     stackBuilder.addNextIntent(intent);
-                    PendingIntent pendingIntent =
+                    pendingIntent =
                             stackBuilder.getPendingIntent(
                                     0,
                                     PendingIntent.FLAG_UPDATE_CURRENT
@@ -152,11 +246,35 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setContentIntent(pendingIntent)
                             .setTicker(message)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
                             .setPriority(Notification.PRIORITY_HIGH);
                     break;
                 }
                 case 3: {
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try {
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        } catch (Exception e) {
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
 
                     builder.setContentTitle("Thông báo thanh toán")                           // required
                             .setSmallIcon(R.drawable.your_doctor_logo) // required
@@ -165,6 +283,54 @@ public class YDFirebaseMessagingService extends FirebaseMessagingService {
                             .setAutoCancel(true)
                             .setContentIntent(pendingIntent)
                             .setTicker(message)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
+                            .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                            .setPriority(Notification.PRIORITY_HIGH);
+                    break;
+                }
+                case 5:{
+                    if (remainMoney != null && !remainMoney.equals("") && SharedPrefs.getInstance().get("USER_INFO", Patient.class) != null) {
+                        patient = SharedPrefs.getInstance().get("USER_INFO", Patient.class);
+                        try {
+                            patient.setRemainMoney(Float.parseFloat(remainMoney));
+                            SharedPrefs.getInstance().put("USER_INFO", patient);
+                            EventBus.getDefault().post(new EventSend(1));
+                        } catch (Exception e) {
+                            Log.e("LoiMessageFirebase :", "remainMoney");
+                        }
+
+                    }
+
+                    try{
+                        if(levelReport != null && levelReport.equals("5")){
+                            YourDoctorApplication.self().getSocket().disconnect();
+                            Utils.backToLogin(getApplicationContext());
+                        }
+                    }catch (Exception e){
+
+                    }
+
+                    intent = new Intent(getApplicationContext(), AuthActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    stackBuilder = TaskStackBuilder.create(this);
+                    stackBuilder.addNextIntent(intent);
+                    pendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
+                    builder.setContentTitle("Thông báo báo cáo người dùng")                           // required
+                            .setSmallIcon(R.drawable.your_doctor_logo) // required
+                            .setContentText(message)  // required
+                            .setDefaults(Notification.DEFAULT_ALL)
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setTicker(message)
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
                             .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
                             .setPriority(Notification.PRIORITY_HIGH);
                     break;

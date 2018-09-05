@@ -13,5 +13,5 @@ public interface GetListHistoryChat {
     Call<MainObjectHistoryChat> getListHistoryChat(@Header("Authorization") String jwt,
                                                             @Path("id_patient") String id_patient,
                                                             @Query("pageSize") String pageSize,
-                                                            @Query("page") String page );
+                                                            @Query("page") String page);
 }

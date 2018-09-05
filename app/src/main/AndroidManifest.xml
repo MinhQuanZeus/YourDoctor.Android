@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -25,6 +26,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -36,8 +39,9 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activities.MainActivity"></activity>
-        <activity android:name=".activities.ChatActivity"></activity>
+        <activity android:name=".activities.MainActivity"/>
+        <activity android:name=".activities.ChatActivity"/>
+
         <activity android:name=".activities.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -45,14 +49,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.VideoCallActivity"></activity>
 
-        <receiver android:name=".services.TimeOutChatService" />
-        <receiver android:name=".services.CheckNetWordChangeService">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+        <activity android:name=".activities.VideoCallActivity"/>
 
         <service
             android:name=".services.YDFirebaseMessagingService"
@@ -61,15 +59,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <!-- <service -->
-        <!-- android:name=".services.YDFirebaseInstanceIDService" -->
-        <!-- android:exported="false"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="com.google.firebase.INSTANCE_ID_EVENT" /> -->
-        <!-- </intent-filter> -->
-        <!-- </service> -->
-        <activity android:name=".activities.ReaderActivity"></activity>
+        <activity android:name=".activities.ReaderActivity"/>
     </application>
 
 </manifest>

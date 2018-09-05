@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.yd.yourdoctorandroid.R;
 import com.yd.yourdoctorandroid.models.Doctor;
+import com.yd.yourdoctorandroid.utils.ZoomImageViewUtils;
 
 import java.util.List;
 
@@ -90,7 +91,7 @@ public class DoctorVideoCallAdapter extends RecyclerView.Adapter<DoctorVideoCall
         public void setData(Doctor doctorModel) {
             this.doctorModel = doctorModel;
             if (doctorModel != null) {
-                Picasso.with(context).load(doctorModel.getAvatar()).transform(new CropCircleTransformation()).into(ivAvatar);
+                ZoomImageViewUtils.loadCircleImage(context,doctorModel.getAvatar(),ivAvatar);
                 ivCall.setImageResource(R.drawable.ic_video_call_black_24dp);
                 tvName.setText(doctorModel.getFullName());
                 rbRating.setRating(doctorModel.getCurrentRating());

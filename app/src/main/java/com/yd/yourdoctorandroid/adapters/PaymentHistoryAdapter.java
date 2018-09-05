@@ -21,16 +21,11 @@ import java.util.List;
 public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAdapter.PaymentHistoryViewHolder> {
     private List<ObjectPaymentResponse> objectPaymentResponses;
     private Context context;
-    private View.OnClickListener onClickListener;
     private boolean isLoadingAdded = false;
 
     private static final int ITEM = 0;
     private static final int LOADING = 1;
 
-
-    public void setOnItemClickListener(View.OnClickListener onItemClickListener) {
-        this.onClickListener = onItemClickListener;
-    }
 
     public PaymentHistoryAdapter(Context context) {
 
@@ -141,7 +136,7 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
         return objectPaymentResponses == null ? 0 : objectPaymentResponses.size();
     }
 
-    public class PaymentHistoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class PaymentHistoryViewHolder extends RecyclerView.ViewHolder {
         ImageView ivPaymentHistory;
         TextView tvTitlePayment;
         TextView tvContentPayment;
@@ -157,8 +152,6 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
             tvTimePayment = itemView.findViewById(R.id.tv_time_payment);
 
 
-            itemView.setOnClickListener(this);
-            itemView.setOnLongClickListener(this);
         }
 
         public void setData(ObjectPaymentResponse objectPaymentResponse) {
@@ -166,14 +159,17 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
             this.objectPaymentResponse = objectPaymentResponse;
 
             if (objectPaymentResponse != null && context != null) {
+                try {
+                    ZoomImageViewUtils.loadCircleImage(context, objectPaymentResponse.getFromUser().getAvatar(), ivPaymentHistory);
+                    //ivNotification.setImageDrawable(context.getResources().getDrawable(R.drawable.your_doctor_logo));
+                    tvTitlePayment.setText("Tư vấn " + objectPaymentResponse.getTypeAdvisoryID().getName()
+                            + " bởi BS." + objectPaymentResponse.getFromUser().getFullName());
+                } catch (Exception e) {
 
-                ZoomImageViewUtils.loadCircleImage(context, objectPaymentResponse.getFromUser().getAvatar(), ivPaymentHistory);
-                //ivNotification.setImageDrawable(context.getResources().getDrawable(R.drawable.your_doctor_logo));
-                tvTitlePayment.setText("Cuộc tư vấn " + objectPaymentResponse.getTypeAdvisoryID().getName()
-                        + " với BS." + objectPaymentResponse.getFromUser().getFullName());
-                tvContentPayment.setText("Số tiền giao dịch " + objectPaymentResponse.getAmount() + " VND, "
-                        + "số tiền hiện tại " + objectPaymentResponse.getRemainMoney() + " VND");
-                tvTimePayment.setText("Thời gian: " + Utils.convertTimeFromMonggo(objectPaymentResponse.getUpdatedAt()));
+                }
+                tvContentPayment.setText("Phí thanh toán: " + Utils.formatStringNumber(objectPaymentResponse.getAmount()) + " VND\n"
+                        + "Số dư hiện tại: " + Utils.formatStringNumber(objectPaymentResponse.getRemainMoney()) + " VND");
+                tvTimePayment.setText("Thời gian: " + Utils.convertTime(objectPaymentResponse.getUpdatedAt()));
 
 
             }
@@ -184,20 +180,6 @@ public class PaymentHistoryAdapter extends RecyclerView.Adapter<PaymentHistoryAd
             return objectPaymentResponse;
         }
 
-        public void setItemClickListener(ItemClickListener itemClickListener) {
-            this.itemClickListener = itemClickListener;
-        }
-
-        @Override
-        public void onClick(View v) {
-            itemClickListener.onClick(v, getAdapterPosition(), false);
-        }
-
-        @Override
-        public boolean onLongClick(View v) {
-            itemClickListener.onClick(v, getAdapterPosition(), true);
-            return true;
-        }
     }
 
     protected class LoadingVH extends PaymentHistoryViewHolder {
